@@ -1,4 +1,4 @@
-##music-ally
+## music-ally
 
 🌟숙명 중앙 동아리 SOLUX 송티티 팀
 
