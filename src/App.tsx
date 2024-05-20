@@ -48,7 +48,7 @@ function App() {
 
   return (
     <Wrapper>
-      {/* <GlobalStyles /> */}
+      {<GlobalStyles /> }
       <RouterProvider router={router} />
     </Wrapper>
   )
