@@ -28,7 +28,6 @@ const Logo = styled.img`
     height: 25px;
 `
 
-// export const GOOGLE_REST_API_KEY = '546543909975-l5o9sl09237bkj369r10u5tb7ssqt0qf.apps.googleusercontent.com'
 
 export default function GoogleButton(){
     
