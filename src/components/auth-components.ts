@@ -51,14 +51,15 @@ export const Switcher = styled.span`
 export const Title = styled.h1`
     color: #BFBFBF;
     font-weight: 400;
-    margin: 50px 0;
+    margin-top: 50px;
+    margin-bottom: 40px;
 `
 
 export const Divider = styled.div`
-    width: 50%;
+    width: 100%;
     height: 0.5px;
     background-color: #BFBFBF;
-    margin: 45px 10px;
+    margin: 45px 0px;
     display: flex;
     justify-content: center; /* 가운데 정렬 */
     align-items: center; /* 가운데 정렬 */
@@ -86,7 +87,6 @@ export const Form = styled.form`
     display: flex;
     flex-direction: column;
     gap: 20px;
-    margin-bottom: 10px;
     width: 100%;
 `
 
@@ -111,7 +111,6 @@ export const Input = styled.input`
     color: #BFBFBF;
     box-sizing: border-box; // padding 조절하여도 너비 그대로
     border: 1px solid #ffffff; /* 테두리 색상과 두께 조절 */
-
 
     &[type = "submit"] {
         cursor: pointer;
