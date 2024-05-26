@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Input, LeftHalf, Name, RightHalf, RightWrapper, Row1, Switcher, Title, Wrapper } from "../components/auth-components";
 import styled from "styled-components";
+import CustomRadio from "../components/gender-select";
 
 interface TextProps {
     isError ?: boolean;
@@ -67,6 +68,8 @@ const DaySelect = ()  => (
         ))}
     </Select>
 );
+
+
 
 export default function SignUp() {
     const [email, setEmail] = useState("");
@@ -175,6 +178,13 @@ export default function SignUp() {
                             <MonthSelect />
                             <DaySelect />
                         </Row1>
+                        {/* 성별 입력 */}
+                        <Name> 성별 </Name>
+                        <CustomRadio />
+                        <Input 
+                            type="submit"
+                            value = "가입하기"
+                        />
                     </Form>
                 </RightWrapper>
             </RightHalf>
