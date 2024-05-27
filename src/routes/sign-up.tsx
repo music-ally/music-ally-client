@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { Input, LeftHalf, Name, RightHalf, RightWrapper, Row1, Switcher, Title, Wrapper } from "../components/auth-components";
+import { Input, LeftHalf, Name, RightHalf, RightWrapper, Switcher, Title, Wrapper } from "../components/auth-components";
 import styled from "styled-components";
 import CustomRadio from "../components/gender-select";
+import Birthday from "../components/birth-select";
 
 interface TextProps {
     isError ?: boolean;
@@ -30,45 +31,6 @@ const Divider = styled.div`
     justify-content: center; /* 가운데 정렬 */
     align-items: center; /* 가운데 정렬 */
 `
-
-const Select = styled.select`
-    padding: 15px;
-    border-radius: 10px;
-    width: 30%;
-    font-size: 16px;
-    background-color: black;
-    color: #BFBFBF;
-    box-sizing: border-box; // padding 조절하여도 너비 그대로
-    border: 1px solid #ffffff; 
-`
-
-const YearSelect = ()  => (
-    <Select>
-        <option value="">Year</option>
-        {Array.from( { length:100 }, (_, i) => new Date().getFullYear() - i).map(year => (
-            <option key={year} value={year}>{year}</option>
-        ))}
-    </Select>
-);
-
-const MonthSelect = ()  => (
-    <Select>
-        <option value="">Month</option>
-        {Array.from( { length:12 }, (_, i) => i + 1).map(month => (
-            <option key={month} value={month}>{month}</option>
-        ))}
-    </Select>
-);
-
-const DaySelect = ()  => (
-    <Select>
-        <option value="">Day</option>
-        {Array.from( { length:31 }, (_, i) => i + 1).map(day => (
-            <option key={day} value={day}>{day}</option>
-        ))}
-    </Select>
-);
-
 
 
 export default function SignUp() {
@@ -173,11 +135,7 @@ export default function SignUp() {
                         <Divider/>
                         {/* 생년월일 입력 */}
                         <Name> 생년월일 </Name>
-                        <Row1>
-                            <YearSelect />
-                            <MonthSelect />
-                            <DaySelect />
-                        </Row1>
+                        <Birthday />
                         {/* 성별 입력 */}
                         <Name> 성별 </Name>
                         <CustomRadio />
