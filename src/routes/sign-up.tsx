@@ -181,6 +181,9 @@ export default function SignUp() {
                         {/* 성별 입력 */}
                         <Name> 성별 </Name>
                         <CustomRadio />
+                        {/* 거주지 ( 시/ 도 ) */}
+                        <Name> 거주지 </Name>
+                        <Input />
                         <Input 
                             type="submit"
                             value = "가입하기"
