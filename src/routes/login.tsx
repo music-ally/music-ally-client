@@ -153,7 +153,7 @@ export default function Login() {
                     {/* 구글로그인 버튼 */}
                     <GoogleButton />
                     {/* 카카오로그인 버튼 */}
-                    <KakaoButton />
+                    <KakaoButton onClick={onclick} />
                     {/* 구분선 */}
                     <Row>
                         <Divider/>

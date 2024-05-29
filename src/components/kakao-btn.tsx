@@ -23,13 +23,16 @@ const Button = styled.span`
 const Logo = styled.img`
     height: 25px;
 `
-
-export default function KakaoButton(){
+interface KakaoButtonLogin{
+    onClick:()=>void;
+}
+const KakaoButton: React.FC<KakaoButtonLogin>=({onClick})=>{
     return(
-        <Button>
+        <Button onClick={onClick}>
             <Logo src="/kakao-logo.svg" />
             카카오톡으로 계속하기
         </Button>
-    )
+    );
+};
 
-}
+export default KakaoButton;
