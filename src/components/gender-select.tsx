@@ -31,7 +31,7 @@ const StyledLabel = styled.label<LabelProps>` // interface를 사용하여 타�
         };
 `;
 
-export default function CustomRadio() {
+export default function GenderSelect() {
     const [gender, setGender] = useState("");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

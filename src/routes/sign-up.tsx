@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Input, LeftHalf, Name, RightHalf, RightWrapper, Switcher, Title, Wrapper } from "../components/auth-components";
 import styled from "styled-components";
-import CustomRadio from "../components/gender-select";
+import GenderSelect from "../components/gender-select";
 import Birthday from "../components/birth-select";
 
 interface TextProps {
@@ -138,7 +138,7 @@ export default function SignUp() {
                         <Birthday />
                         {/* 성별 입력 */}
                         <Name> 성별 </Name>
-                        <CustomRadio />
+                        <GenderSelect />
                         {/* 거주지 ( 시/ 도 ) */}
                         <Name> 거주지 </Name>
                         <Input />
