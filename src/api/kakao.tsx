@@ -14,7 +14,7 @@ interface KakaoError{
 }
 
 const Kakao:React.FC=()=>{
-    const kakaoClientId:string=process.env.REACT_APP_KAKAO_JAVASCRIPT_KEY;
+    const kakaoClientId:string=process.env.VITE_KAKAO_JAVASCRIPT_KEY;
     const kakaoOnSuccess = async(data:KakaoResponse)=>{
         console.log(data);
         const idToken = data.response.access_token;
