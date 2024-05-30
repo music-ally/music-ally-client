@@ -29,8 +29,15 @@ const StyledLabel = styled.label<LabelProps>` // interface를 사용하여 타�
     background-color: ${props => props.checked ? '#BFBFBF' : 'black'};
 
     input {
-        display: none;
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        margin: 0;
+        padding: 0;
+        border: none;
     };
+
     &:hover {
                 opacity: 0.8;
         };
