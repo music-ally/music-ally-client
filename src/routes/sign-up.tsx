@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { LeftHalf, Name, RightHalf, RightWrapper, Row1, Switcher, Title, Wrapper } from "../components/auth-components";
 import styled from "styled-components";
@@ -57,6 +57,8 @@ const Input = styled.input`
 `
 
 export default function SignUp() {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -103,6 +105,24 @@ export default function SignUp() {
         if( password !== confirmPassword ){
             alert("비밀번호가 일치하지 않습니다.");
             return;
+        }
+
+        try{
+            // 회원가입 정보 백엔드 전달
+            // 비밀번호 확인, required 필수는 프론트에서 처리
+            // 백에서는 email과 nickname이 unique한지 확인
+            console.log({
+                email,
+                password, // 비밀번호 확인은 서버에서 다시 검증해야 합니다.
+                nickname,
+                gender,
+                birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
+            });
+
+            navigate("/login");
+        } catch (error) {
+            // 오류 발생 시 처리 로직
+            console.error("회원가입 오류 : ", error);
         }
     };
 
