@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { LeftHalf, Name, RightHalf, RightWrapper, Row1, Switcher, Title, Wrapper } from "../components/auth-components";
 import styled from "styled-components";
+import isPropValid from '@emotion/is-prop-valid';
 import GenderSelect from "../components/gender-select";
 import Birthday from "../components/birth-select";
 import Address from "../components/address-select";
@@ -10,11 +11,13 @@ interface TextProps {
     isError ?: boolean;
 }
 
-const Text = styled.span<TextProps>`
-    font-size: 10px;
-    color: ${({ isError }) => isError ? '#FF6666' : '#CBCBCB'};
-    margin-bottom: 5px;
-`
+const Text = styled.span.withConfig({
+    shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isError',
+  })<TextProps>`
+      font-size: 10px;
+      color: ${({ isError }) => isError ? '#FF6666' : '#CBCBCB'};
+      margin-bottom: 5px;
+  `;
 
 const Form = styled.form`
     display: flex;
@@ -120,10 +123,29 @@ export default function SignUp() {
             });
 
             navigate("/login");
-        } catch (error) {
-            // 오류 발생 시 처리 로직
-            console.error("회원가입 오류 : ", error);
-        }
+
+            // // 회원가입 정보 백엔드로 전달
+            // const response = await axios.post('http://백엔드url/register', {
+            //     email,
+            //     password, // 비밀번호 확인은 서버에서 다시 검증해야 합니다.
+            //     nickname,
+            //     gender,
+            //     birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
+            // });
+
+            // // 성공적으로 회원가입 정보가 전달되었다면, 로그인 페이지로 이동
+            // navigate("/login");
+
+            // // 백엔드에서 반환된 데이터를 콘솔에 출력 (개발 목적)
+            // console.log(response.data);
+
+            // 비동기이므로
+            // const onSubmit = async (e) => { ~~
+
+            } catch (error) {
+                // 오류 발생 시 처리 로직
+                console.error("회원가입 오류 : ", error);
+            }
     };
 
     return (
