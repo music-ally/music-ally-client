@@ -51,6 +51,7 @@ export default function GenderSelect({ gender, setGender}: GenderSelectProps) {
                 value="female"
                 checked={gender === 'female'}
                 onChange={handleChange}
+                required
                 />
                 여성
             </StyledLabel>
@@ -61,6 +62,7 @@ export default function GenderSelect({ gender, setGender}: GenderSelectProps) {
                 value="male"
                 checked={gender === 'male'}
                 onChange={handleChange}
+                required
                 />
                 남성
             </StyledLabel>

@@ -20,7 +20,7 @@ const Select = styled.select`
 
 // 각각의 Select 컴포넌트에 props를 추가하여 상태와 상태 설정 함수를 받을 수 있도록 변경
 const YearSelect: React.FC<SelectProps> = ({ value, onChange }) => (
-    <Select value={value} onChange={onChange}>
+    <Select value={value} onChange={onChange} required>
         <option value="">Year</option>
         {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
             <option key={year} value={year}>{year}</option>
@@ -29,7 +29,7 @@ const YearSelect: React.FC<SelectProps> = ({ value, onChange }) => (
 );
 
 const MonthSelect: React.FC<SelectProps> = ({ value, onChange }) => (
-    <Select value={value} onChange={onChange}>
+    <Select value={value} onChange={onChange} required>
         <option value="">Month</option>
         {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
             <option key={month} value={month}>{month}</option>
@@ -38,7 +38,7 @@ const MonthSelect: React.FC<SelectProps> = ({ value, onChange }) => (
 );
 
 const DaySelect: React.FC<SelectProps> = ({ value, onChange }) => (
-    <Select value={value} onChange={onChange}>
+    <Select value={value} onChange={onChange} required>
         <option value="">Day</option>
         {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
             <option key={day} value={day}>{day}</option>
