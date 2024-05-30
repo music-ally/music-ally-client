@@ -1,27 +1,44 @@
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Cookies from 'js-cookie';
 import GoogleButton from "../components/google-btn";
 import KakaoButton from "../components/kakao-btn";
-import React, { useState } from "react";
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Divider, DividerText, Form, Input, LeftHalf, Name, RightHalf, RightWrapper, Row, Row1, ShowPwButton, Switcher, Title, Wrapper } from "../components/auth-components";
 
-
-// 내부에 패딩을 줘야 하는데 flex 요소 때문인지 움직이네...
-
-
 export default function Login() {
     const MYAPI = import.meta.env.VITE_GOOGLE_API_KEY;
     const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
-    const passwordVisible = (e : React.MouseEvent<HTMLButtonElement>) => {
+    // 비밀번호 표시/숨기기 기능
+    const passwordVisible = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setShowPassword(!showPassword);
     };
 
-    const onSubmit = (e : React.FormEvent<HTMLFormElement>) => {
+    // 폼 제출 처리 함수
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        try {
+            // axios 요청: 로그인 엔드포인트로 이메일과 비밀번호를 전송
+            const response = await axios.post('/api/auth/login', { email, password });
+            const { token } = response.data;
+
+            // JWT 토큰을 쿠키에 저장
+            Cookies.set('token', token);
+
+            // 홈 페이지 또는 다른 보호된 경로로 이동
+            navigate('/home');
+        } catch (error) {
+            console.error('Login failed:', error);
+            alert('로그인을 실패했습니다. 이메일이나 비밀번호를 확인하세요.');
+        }
     };
 
     return (
@@ -32,47 +49,46 @@ export default function Login() {
                     <Link to="/sign-up">Musically가 처음이라면? &rarr;</Link>
                 </Switcher>
                 <RightWrapper>
-                    <Title> 로그인 </Title>
+                    <Title>로그인</Title>
                     {/* 구글로그인 버튼 */}
-                    <GoogleOAuthProvider clientId={ MYAPI }>
+                    <GoogleOAuthProvider clientId={MYAPI}>
                         <GoogleButton />
                     </GoogleOAuthProvider>
                     {/* 카카오로그인 버튼 */}
                     <KakaoButton />
                     {/* 구분선 */}
                     <Row>
-                        <Divider/>
-                            <DividerText>OR</DividerText>
-                        <Divider/>
+                        <Divider />
+                        <DividerText>OR</DividerText>
+                        <Divider />
                     </Row>
                     {/* 로그인 input */}
-                    <Form onSubmit={ onSubmit }>
-                        <Name>
-                            이메일
-                        </Name>
-                        <Input 
+                    <Form onSubmit={onSubmit}>
+                        <Name>이메일</Name>
+                        <Input
                             name="email"
                             type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                         <Row1>
-                            <Name>
-                                비밀번호
-                            </Name>
-                            <ShowPwButton onClick={ passwordVisible }>
+                            <Name>비밀번호</Name>
+                            <ShowPwButton onClick={passwordVisible}>
                                 {showPassword ? <FiEyeOff /> : <FiEye />}
-                                {showPassword ? " Hide":" Show" }
+                                {showPassword ? " Hide" : " Show"}
                             </ShowPwButton>
                         </Row1>
-                        <Input 
+                        <Input
                             name="password"
-                            //type="password"
-                            type={showPassword ? "text" : "password" }
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
                         />
-                        <Input 
+                        <Input
                             type="submit"
-                            value = "로그인하기"
+                            value="로그인하기"
                         />
                     </Form>
                 </RightWrapper>
