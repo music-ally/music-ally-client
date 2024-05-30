@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { Input, LeftHalf, Name, RightHalf, RightWrapper, Switcher, Title, Wrapper } from "../components/auth-components";
+import { LeftHalf, Name, RightHalf, RightWrapper, Row1, Switcher, Title, Wrapper } from "../components/auth-components";
 import styled from "styled-components";
 import GenderSelect from "../components/gender-select";
 import Birthday from "../components/birth-select";
+import Address from "../components/address-select";
 
 interface TextProps {
     isError ?: boolean;
@@ -32,6 +33,28 @@ const Divider = styled.div`
     align-items: center; /* 가운데 정렬 */
 `
 
+const Input = styled.input`
+    padding: 15px;
+    border-radius: 10px;
+    width: 100%;
+    font-size: 16px;
+    background-color: black;
+    color: #BFBFBF;
+    box-sizing: border-box; // padding 조절하여도 너비 그대로
+    border: 1px solid #ffffff; /* 테두리 색상과 두께 조절 */
+
+    &[type = "submit"] {
+        cursor: pointer;
+        &:hover {
+            opacity: 0.8;
+        };
+        background-color: white;
+        color: #222222;
+        font-weight: bold;
+        width: 100%;
+        margin-top: 10px;
+    }
+`
 
 export default function SignUp() {
     const [email, setEmail] = useState("");
@@ -41,6 +64,13 @@ export default function SignUp() {
     const [pwMessage, setPwMessege] = useState("");
     const [isError, setIsError] = useState(false);
 
+    const [gender, setGender] = useState("");
+
+    const [year, setYear] = useState("");
+    const [month, setMonth] = useState("");
+    const [day, setDay] = useState("");
+
+    const [address, setAddress] = useState("");
 
     const onChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         const { target : {name, value}} = e;
@@ -135,13 +165,13 @@ export default function SignUp() {
                         <Divider/>
                         {/* 생년월일 입력 */}
                         <Name> 생년월일 </Name>
-                        <Birthday />
+                        <Birthday year={year} month={month} day={day} setYear={setYear} setMonth={setMonth} setDay={setDay} />
                         {/* 성별 입력 */}
                         <Name> 성별 </Name>
-                        <GenderSelect />
+                        <GenderSelect gender={gender} setGender={setGender} />
                         {/* 거주지 ( 시/ 도 ) */}
                         <Name> 거주지 </Name>
-                        <Input />
+                        <Address address={address} setAddress={setAddress}/>
                         <Input 
                             type="submit"
                             value = "가입하기"
