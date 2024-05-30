@@ -13,6 +13,7 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState(''); // 에러 메시지 상태 추가
     const navigate = useNavigate();
 
     // 비밀번호 표시/숨기기 기능
@@ -24,6 +25,7 @@ export default function Login() {
     // 폼 제출 처리 함수
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setError(''); // 이전 에러 메시지 초기화
 
         try {
             // axios 요청: 로그인 엔드포인트로 이메일과 비밀번호를 전송
@@ -37,7 +39,7 @@ export default function Login() {
             navigate('/home');
         } catch (error) {
             console.error('Login failed:', error);
-            alert('로그인을 실패했습니다. 이메일이나 비밀번호를 확인하세요.');
+            setError('로그인을 실패했습니다. 이메일이나 비밀번호를 확인하세요.'); // 에러 메시지 설정
         }
     };
 
@@ -74,6 +76,8 @@ export default function Login() {
                         />
                         <Row1>
                             <Name>비밀번호</Name>
+                            {/* 에러 메시지 표시 */}
+                            {error && <span style={{ color: 'red', fontSize: '0.8em', marginLeft: '5px', marginRight: '10px' }}>{error}</span>}
                             <ShowPwButton onClick={passwordVisible}>
                                 {showPassword ? <FiEyeOff /> : <FiEye />}
                                 {showPassword ? " Hide" : " Show"}
