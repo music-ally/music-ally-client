@@ -91,20 +91,39 @@ export default function SignUp() {
     };
 
     useEffect(() => {
-        if( password && confirmPassword ) {
-            if( password === confirmPassword ){
+        // Password regex condition: 8-12 characters, must contain letters and numbers
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
+    
+        if (password) {
+            if (!passwordRegex.test(password)) {
+                setPwMessege("비밀번호는 8~12자이며, 영어와 숫자를 포함해야 합니다.");
+                setIsError(true);
+            } else if (password && confirmPassword && password === confirmPassword) {
                 setPwMessege("비밀번호가 일치합니다.");
                 setIsError(false);
-            } else {
+            } else if (password && confirmPassword && password !== confirmPassword) {
                 setPwMessege("비밀번호가 일치하지 않습니다. 다시 입력해 주십시오.");
                 setIsError(true);
+            } else {
+                setPwMessege("");
+                setIsError(false);
             }
+        } else {
+            setPwMessege("");
+            setIsError(false);
         }
     }, [password, confirmPassword]);
+    
 
 
     const onSubmit = (e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
+
+        if( !passwordRegex.test(password) ) {
+            alert("비밀번호는 8~12자 사이이며, 영어와 숫자를 반드시 포함해야 합니다.");
+            return;
+        }
         if( password !== confirmPassword ){
             alert("비밀번호가 일치하지 않습니다.");
             return;
@@ -178,7 +197,7 @@ export default function SignUp() {
                             name="password"
                             value={password}
                             type="password"
-                            placeholder="비밀번호"
+                            placeholder="비밀번호 (8~12자리, 영어와 숫자를 포함하세요)"
                             required
                         />
                         <Input
