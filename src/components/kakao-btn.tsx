@@ -1,5 +1,4 @@
 import styled from "styled-components";
-
 const Button = styled.span`
     margin-top: 20px;
     background-color: #FDE600;
@@ -23,16 +22,17 @@ const Button = styled.span`
 const Logo = styled.img`
     height: 25px;
 `
-interface KakaoButtonLogin{
-    onClick:()=>void;
+interface KakaoButtonProps{
+    onClick:() => void;
 }
-const KakaoButton: React.FC<KakaoButtonLogin>=({onClick})=>{
+const KakaoButton: React.FC<KakaoButtonProps>=({onClick})=>{
     return(
         <Button onClick={onClick}>
             <Logo src="/kakao-logo.svg" />
             카카오톡으로 계속하기
         </Button>
-    );
-};
+    )
+
+}
 
 export default KakaoButton;

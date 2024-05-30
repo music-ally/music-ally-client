@@ -22,10 +22,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-<<<<<<< HEAD
 /.env
-=======
-
-# 환경변수
-.env
->>>>>>> 28a989bfa4c0dd67c90fd31e5a553347b9992e91

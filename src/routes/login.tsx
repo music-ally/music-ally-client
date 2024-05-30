@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import GoogleButton from "../components/google-btn";
-import KakaoButton from "../components/kakao-btn";
 import React, { useState } from "react";
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Divider, DividerText, Form, Input, LeftHalf, Name, RightHalf, RightWrapper, Row, Row1, ShowPwButton, Switcher, Title, Wrapper } from "../components/auth-components";
+import KakaoOauth from "../api/kakao";
 
 
 // 내부에 패딩을 줘야 하는데 flex 요소 때문인지 움직이네...
@@ -38,7 +38,7 @@ export default function Login() {
                         <GoogleButton />
                     </GoogleOAuthProvider>
                     {/* 카카오로그인 버튼 */}
-                    <KakaoButton onClick={onclick} />
+                    <KakaoOauth />
                     {/* 구분선 */}
                     <Row>
                         <Divider/>
