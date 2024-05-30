@@ -6,6 +6,11 @@ interface LabelProps {
   checked: boolean;
 }
 
+interface GenderSelectProps {
+    gender: string;
+    setGender: React.Dispatch<React.SetStateAction<string>>;
+}
+
 const StyledDiv = styled.div`
     display: flex;
     justify-content: space-between;
@@ -31,8 +36,7 @@ const StyledLabel = styled.label<LabelProps>` // interface를 사용하여 타�
         };
 `;
 
-export default function GenderSelect() {
-    const [gender, setGender] = useState("");
+export default function GenderSelect({ gender, setGender}: GenderSelectProps) {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setGender(e.target.value);
@@ -40,26 +44,26 @@ export default function GenderSelect() {
 
     return (
         <StyledDiv>
-        <StyledLabel checked={gender === 'female'}>
-            <input
-            type="radio"
-            name="gender"
-            value="female"
-            checked={gender === 'female'}
-            onChange={handleChange}
-            />
-            여성
-        </StyledLabel>
-        <StyledLabel checked={gender === 'male'}>
-            <input
-            type="radio"
-            name="gender"
-            value="male"
-            checked={gender === 'male'}
-            onChange={handleChange}
-            />
-            남성
-        </StyledLabel>
+            <StyledLabel checked={gender === 'female'}>
+                <input
+                type="radio"
+                name="gender"
+                value="female"
+                checked={gender === 'female'}
+                onChange={handleChange}
+                />
+                여성
+            </StyledLabel>
+            <StyledLabel checked={gender === 'male'}>
+                <input
+                type="radio"
+                name="gender"
+                value="male"
+                checked={gender === 'male'}
+                onChange={handleChange}
+                />
+                남성
+            </StyledLabel>
         </StyledDiv>
     );
 };
