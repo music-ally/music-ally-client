@@ -9,6 +9,7 @@ const KakaoOauth: React.FC=()=>{
         try{
             // const res=await axios.post('http://localhost:3000/login',{code})
             // console.log('Access Token:',res.data.access_token);
+            window.location.href = "http://localhost:3000";
         }catch(error){
             console.error(error);
         }
@@ -22,9 +23,7 @@ const KakaoOauth: React.FC=()=>{
         <KakaoLogin
             token={import.meta.env.VITE_REST_API_KEY}
             onSuccess={handleSuccess}
-            onFailure={handleFailure}
-            getProfile={true}
-            useLoginForm={true}
+            onFail={handleFailure}
             render={
                 (props)=>(
                     <KakaoButton onClick={props.onClick}/>
