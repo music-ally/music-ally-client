@@ -190,7 +190,7 @@ export default function SignUp() {
             navigate("/login");
 
             // // 회원가입 정보 백엔드로 전달
-            // const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/register`, {
+            // const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/register`, {
             //     email,
             //     password, // 비밀번호 확인은 서버에서 다시 검증해야 합니다.
             //     nickname,
