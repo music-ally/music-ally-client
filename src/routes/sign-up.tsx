@@ -11,6 +11,7 @@ import axios from "axios";
 interface TextProps {
     isError ?: boolean;
     isEmailError ?: boolean;
+    isNameError ?: boolean
 }
 
 const Text = styled.span.withConfig({
@@ -23,7 +24,7 @@ const Text = styled.span.withConfig({
 
 const AlertText = styled.span<TextProps>`
     font-size: 10px;
-    color: ${({ isEmailError }) => isEmailError ? '#FF6666' : '#CBCBCB'};
+    color: ${({ isEmailError, isNameError }) => (isEmailError || isNameError) ? '#FF6666' : '#CBCBCB'};
     margin-bottom: 5px;
 `
 
@@ -80,6 +81,8 @@ export default function SignUp() {
     const [isError, setIsError] = useState(false);
 
     const [nickname, setNickname] = useState("");
+    const [nicknameMsg, setNicknameMsg] = useState("");
+    const [isNameError, setIsNameError] = useState(false);
 
     const [gender, setGender] = useState("");
 
@@ -89,24 +92,31 @@ export default function SignUp() {
 
     const [address, setAddress] = useState("");
 
-    const handleBlur = async (e : React.ChangeEvent<HTMLInputElement>) => {
-        try{
-            // .env 파일에 백엔드 주소 추가
-            // const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/check-email`, { email: value });
-            // const response = await axios.post('/api/check-email', {email: value});
-            // if(response.data.exists){
-            //     setEmailMsg("이미 존재하는 이메일입니다. ");
-            //     setIsEmailError(true);
-            // } else{
-            //     setEmailMsg("사용 가능한 이메일입니다.")
-            //     setIsEmailError(false);
-            // }
-            setEmailMsg("이미 존재하는 이메일입니다. ");
-            setIsEmailError(true);
-        } catch(error) {
-            console.error("이메일 중복 확인 오류: ", error);
+    const handleBlur = async (e: React.ChangeEvent<HTMLInputElement>, checkType: 'email' | 'nickname') => {
+        try {
+            // 입력 값 추출
+            const value = e.target.value;
+            console.log(`${checkType} onBlur 호출됨, 입력값: `, value); // onBlur 이벤트 확인
+    
+            // 백엔드 경로와 상태 업데이트 함수를 조건에 따라 선택
+            const apiUrl = checkType === 'email' ? '/api/check-email' : '/api/check-nickname';
+            const setMsg = checkType === 'email' ? setEmailMsg : setNicknameMsg;
+            const setMsgError = checkType === 'email' ? setIsEmailError : setIsNameError;
+    
+            // 여기서는 응답 여부와 상관없이 메시지를 출력해 보겠습니다.
+            // 나중에 응답을 기반으로 조건부 로직을 추가할 수 있습니다.
+            setMsg(`이미 존재하는 ${checkType === 'email' ? '이메일' : '닉네임'}입니다.`);
+            setMsgError(true);
+            console.log(`${checkType} 메시지 설정됨`); // 메시지 설정 확인
+    
+        } catch (error) {
+            console.error(`${checkType === 'email' ? '이메일' : '닉네임'} 중복 확인 오류: `, error);
         }
     }
+    
+    
+
+    // setIsEmailError(true) 이면 submit 불가하도록
     
 
     const onChange = async (e : React.ChangeEvent<HTMLInputElement>) => {
@@ -215,11 +225,11 @@ export default function SignUp() {
                             name="email"
                             value={email}
                             type="email"
-                            onBlur={handleBlur}
+                            onBlur={(e) => handleBlur(e, 'email')}
                             placeholder="이메일"
                             required
                         />
-                        <AlertText isError = {isEmailError}>
+                        <AlertText isEmailError = {isEmailError}>
                             {emailMsg}
                             {/* 다른 곳 클릭하면 중복 메시지 발생
                             */}
@@ -248,12 +258,15 @@ export default function SignUp() {
                             name="nickname"
                             value={nickname}
                             type="name"
+                            onBlur={(e) => handleBlur(e, 'nickname')}
                             placeholder="닉네임"
                             required
                         />
-                        <Text>
-                            이미 존재하는 닉네임입니다.
-                        </Text>
+                        <AlertText isNameError = {isNameError}>
+                            {nicknameMsg}
+                            {/* 다른 곳 클릭하면 중복 메시지 발생
+                            */}
+                        </AlertText>
                         {/* 구분선 */}
                         <Divider/>
                         {/* 생년월일 입력 */}
