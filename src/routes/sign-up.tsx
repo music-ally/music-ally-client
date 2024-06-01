@@ -6,9 +6,11 @@ import isPropValid from '@emotion/is-prop-valid';
 import GenderSelect from "../components/gender-select";
 import Birthday from "../components/birth-select";
 import Address from "../components/address-select";
+import axios from "axios";
 
 interface TextProps {
     isError ?: boolean;
+    isEmailError ?: boolean;
 }
 
 const Text = styled.span.withConfig({
@@ -18,6 +20,12 @@ const Text = styled.span.withConfig({
       color: ${({ isError }) => isError ? '#FF6666' : '#CBCBCB'};
       margin-bottom: 5px;
   `;
+
+const AlertText = styled.span<TextProps>`
+    font-size: 10px;
+    color: ${({ isEmailError }) => isEmailError ? '#FF6666' : '#CBCBCB'};
+    margin-bottom: 5px;
+`
 
 const Form = styled.form`
     display: flex;
@@ -63,11 +71,15 @@ export default function SignUp() {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
+    const [emailMsg, setEmailMsg] = useState("");
+    const [isEmailError, setIsEmailError] = useState(false);
+
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [nickname, setNickname] = useState("");
     const [pwMessage, setPwMessege] = useState("");
     const [isError, setIsError] = useState(false);
+
+    const [nickname, setNickname] = useState("");
 
     const [gender, setGender] = useState("");
 
@@ -77,7 +89,27 @@ export default function SignUp() {
 
     const [address, setAddress] = useState("");
 
-    const onChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    const handleBlur = async (e : React.ChangeEvent<HTMLInputElement>) => {
+        try{
+            // .env 파일에 백엔드 주소 추가
+            // const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/check-email`, { email: value });
+            // const response = await axios.post('/api/check-email', {email: value});
+            // if(response.data.exists){
+            //     setEmailMsg("이미 존재하는 이메일입니다. ");
+            //     setIsEmailError(true);
+            // } else{
+            //     setEmailMsg("사용 가능한 이메일입니다.")
+            //     setIsEmailError(false);
+            // }
+            setEmailMsg("이미 존재하는 이메일입니다. ");
+            setIsEmailError(true);
+        } catch(error) {
+            console.error("이메일 중복 확인 오류: ", error);
+        }
+    }
+    
+
+    const onChange = async (e : React.ChangeEvent<HTMLInputElement>) => {
         const { target : {name, value}} = e;
         if(name === "email"){
             setEmail(value);
@@ -116,7 +148,7 @@ export default function SignUp() {
     
 
 
-    const onSubmit = (e : React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
 
@@ -144,7 +176,7 @@ export default function SignUp() {
             navigate("/login");
 
             // // 회원가입 정보 백엔드로 전달
-            // const response = await axios.post('http://백엔드url/register', {
+            // const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/register`, {
             //     email,
             //     password, // 비밀번호 확인은 서버에서 다시 검증해야 합니다.
             //     nickname,
@@ -157,9 +189,6 @@ export default function SignUp() {
 
             // // 백엔드에서 반환된 데이터를 콘솔에 출력 (개발 목적)
             // console.log(response.data);
-
-            // 비동기이므로
-            // const onSubmit = async (e) => { ~~
 
             } catch (error) {
                 // 오류 발생 시 처리 로직
@@ -186,12 +215,15 @@ export default function SignUp() {
                             name="email"
                             value={email}
                             type="email"
+                            onBlur={handleBlur}
                             placeholder="이메일"
                             required
                         />
-                        <Text>
-                            이미 존재하는 이메일입니다.
-                        </Text>
+                        <AlertText isError = {isEmailError}>
+                            {emailMsg}
+                            {/* 다른 곳 클릭하면 중복 메시지 발생
+                            */}
+                        </AlertText>
                         <Input
                             onChange={onChange}
                             name="password"
