@@ -96,24 +96,28 @@ export default function SignUp() {
         try {
             // 입력 값 추출
             const value = e.target.value;
-            console.log(`${checkType} onBlur 호출됨, 입력값: `, value); // onBlur 이벤트 확인
     
             // 백엔드 경로와 상태 업데이트 함수를 조건에 따라 선택
             const apiUrl = checkType === 'email' ? '/api/check-email' : '/api/check-nickname';
             const setMsg = checkType === 'email' ? setEmailMsg : setNicknameMsg;
             const setMsgError = checkType === 'email' ? setIsEmailError : setIsNameError;
     
-            // 여기서는 응답 여부와 상관없이 메시지를 출력해 보겠습니다.
-            // 나중에 응답을 기반으로 조건부 로직을 추가할 수 있습니다.
+            // .env 파일에 백엔드 주소 추가하여 요청 보내기
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}${apiUrl}`, { [checkType]: value });
+    
+            if (response.data.exists) {
+                setMsg(`이미 존재하는 ${checkType === 'email' ? '이메일' : '닉네임'}입니다.`);
+                setMsgError(true);
+            } else {
+                setMsg(`사용 가능한 ${checkType === 'email' ? '이메일' : '닉네임'}입니다.`);
+                setMsgError(false);
+            }
             setMsg(`이미 존재하는 ${checkType === 'email' ? '이메일' : '닉네임'}입니다.`);
             setMsgError(true);
-            console.log(`${checkType} 메시지 설정됨`); // 메시지 설정 확인
-    
         } catch (error) {
             console.error(`${checkType === 'email' ? '이메일' : '닉네임'} 중복 확인 오류: `, error);
         }
     }
-    
     
 
     // setIsEmailError(true) 이면 submit 불가하도록
