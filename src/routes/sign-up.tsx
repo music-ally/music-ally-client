@@ -166,12 +166,28 @@ export default function SignUp() {
 
     const onSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // 이메일 중복 오류 검사
+        if (isEmailError) {
+            alert("이미 사용중인 이메일입니다.");
+            return;
+        }
+
+        // 닉네임 중복 오류 검사
+        if (isNameError) {
+            alert("이미 사용중인 닉네임입니다.");
+            return;
+        }
+
+        // 비밀번호 조건 검사
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
 
         if( !passwordRegex.test(password) ) {
             alert("비밀번호는 8~12자 사이이며, 영어와 숫자를 반드시 포함해야 합니다.");
             return;
         }
+
+        // 비밀번호 일치 검사
         if( password !== confirmPassword ){
             alert("비밀번호가 일치하지 않습니다.");
             return;
