@@ -22,7 +22,9 @@ const Text = styled.span.withConfig({
       margin-bottom: 5px;
   `;
 
-const AlertText = styled.span<TextProps>`
+const AlertText = styled.span.withConfig({
+    shouldForwardProp: (prop) => isPropValid(prop) && !['isEmailError, isNameError'].includes(prop)
+})<TextProps>`
     font-size: 10px;
     color: ${({ isEmailError, isNameError }) => (isEmailError || isNameError) ? '#FF6666' : '#CBCBCB'};
     margin-bottom: 5px;
