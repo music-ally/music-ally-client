@@ -28,14 +28,40 @@ const Logo = styled.img`
     height: 25px;
 `
 
+interface UserInfo {
+    email: string;
+}
 
 export default function GoogleButton(){
     
     const navigate = useNavigate();
-    const onClick = () => {
-        // // redirect to the home page
-        // navigate("/");
+
+    const checkEmailExistence = async (email: string): Promise<boolean> => {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/check-email`, {
+                email: email,
+            }, {
+                withCredentials: true // 쿠키 포함 요청
+            });
+            return response.data.exists;
+        } catch(error) {
+            console.error('Email 존재 여부 확인 오류: ', error);
+            throw error;
+        }
     };
+
+    const fetchData = () => {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/protected`, {
+            withCredentials: true // 쿠키 포함 요청
+        })
+        .then(response => {
+            console.log('Protected data: ', response.data);
+            navigate("/"); //요청 성공 후 홈으로 redirection
+        })
+        .catch(error => {
+            console.error('Error fetching protected data: ', error);
+        })
+    }
 
     const login = useGoogleLogin({
         onSuccess: async (credentialResponse) => {
@@ -46,7 +72,7 @@ export default function GoogleButton(){
                 // navigate("/");
 
                 // 토큰으로 사용자 정보 가져오기
-                const {data} = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+                const {data} = await axios.get<UserInfo>('https://www.googleapis.com/oauth2/v3/userinfo', {
                     headers: {
                         Authorization: `Bearer ${credentialResponse.access_token}`,
                     },
@@ -54,21 +80,19 @@ export default function GoogleButton(){
 
                 // 일단 지금은 백엔드 소통 않고 받은 이메일 정보 직접 이동 처리
                 navigate("/sns-signup", {state: {email: data.email}});
+                
+                ////
+                /*
+                if else 문 이용해서 email 백엔드에 존재하면 바로 로그인
+                존재하지 않으면 sns-signup으로 이동
+                */
+               const emailExists = await checkEmailExistence(data.email);
 
-
-            /*
-                // 추후 백엔드에 쿠키를 포함한 요청 보내기 코드
-                axios.get('http://백엔드도메인.com/api/protected', {
-                    withCredentials: true // 쿠키 포함 요청
-                })
-                .then(response => {
-                    console.log('Protected data: ', response.data);
-                    navigate("/"); //요청 성공 후 홈으로 redirection
-                })
-                .catch(error => {
-                    console.error('Error fetching protected data: ', error);
-                })
-            */
+               if(emailExists) {
+                    fetchData(); // 이메일 존재하면 보호된 데이터 요청
+               } else {
+                    navigate("/sns-signup", {state: {email: data.email}});
+               }
 
             } catch (error) {
                 console.log("로그인 성공, 그러나 토큰 디코딩 에러:", error);
