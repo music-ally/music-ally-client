@@ -85,17 +85,20 @@ export default function SnsSignup(){
     const handleBlur = async (e : React.ChangeEvent<HTMLInputElement>) => {
         try{
             // .env 파일에 백엔드 주소 추가
-            // const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/check-nickname`, { nickname: value });
-            // const response = await axios.post('/api/check-nickname', {nickname: value});
-            // if(response.data.exists){
-            //     setEmailMsg("이미 존재하는 닉네임입니다. ");
-            //     setIsEmailError(true);
-            // } else{
-            //     setEmailMsg("사용 가능한 닉네임입니다.")
-            //     setIsEmailError(false);
-            // }
+            /* 
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/check-nickname`, { nickname: value });
+            const response = await axios.post('/api/check-nickname', {nickname: value});
+            if(response.data.exists){
+                setNicknameMsg("이미 존재하는 닉네임입니다. ");
+                setIsNameError(true);
+            } else{
+                setNicknameMsg("사용 가능한 닉네임입니다.")
+                setIsNameError(false);
+            }
             setNicknameMsg("이미 존재하는 닉네임입니다. ");
             setIsNameError(true);
+            
+            */
         } catch(error) {
             console.error("닉네임 중복 확인 오류: ", error);
         }
@@ -117,7 +120,7 @@ export default function SnsSignup(){
             alert("이미 사용중인 닉네임입니다.");
             return;
         }
-        
+
 
         try{
             // 회원가입 정보 백엔드 전달
@@ -175,7 +178,8 @@ export default function SnsSignup(){
                             value={nickname}
                             type="name"
                             onBlur={handleBlur}
-                            placeholder="닉네임"
+                            placeholder="닉네임 (최대 20자)"
+                            maxLength={20}
                             required
                         />
                         <AlertText isError = {isNameError}>
