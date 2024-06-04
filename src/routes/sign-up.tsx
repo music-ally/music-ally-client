@@ -281,7 +281,8 @@ export default function SignUp() {
                             value={nickname}
                             type="name"
                             onBlur={(e) => handleBlur(e, 'nickname')}
-                            placeholder="닉네임"
+                            placeholder="닉네임 (최대 20자)"
+                            maxLength={20}
                             required
                         />
                         <AlertText isNameError = {isNameError}>
