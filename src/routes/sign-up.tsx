@@ -197,30 +197,34 @@ export default function SignUp() {
             // 회원가입 정보 백엔드 전달
             // 비밀번호 확인, required 필수는 프론트에서 처리
             // 백에서는 email과 nickname이 unique한지 확인
+            /*
             console.log({
                 email,
                 password, // 비밀번호 확인은 서버에서 다시 검증해야 합니다.
                 nickname,
                 gender,
                 birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
+                address,
             });
 
             navigate("/login");
+            */
 
-            // // 회원가입 정보 백엔드로 전달
-            // const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/register`, {
-            //     email,
-            //     password, // 비밀번호 확인은 서버에서 다시 검증해야 합니다.
-            //     nickname,
-            //     gender,
-            //     birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-            // });
+            // 회원가입 정보 백엔드로 전달
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/register`, {
+                email,
+                password, // 비밀번호 확인은 서버에서 다시 검증해야 합니다.
+                nickname,
+                gender,
+                birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
+                address,
+            });
 
-            // // 성공적으로 회원가입 정보가 전달되었다면, 로그인 페이지로 이동
-            // navigate("/login");
+            // 성공적으로 회원가입 정보가 전달되었다면, 로그인 페이지로 이동
+            navigate("/login");
 
-            // // 백엔드에서 반환된 데이터를 콘솔에 출력 (개발 목적)
-            // console.log(response.data);
+            // 백엔드에서 반환된 데이터를 콘솔에 출력 (개발 목적)
+            console.log(response.data);
 
             } catch (error) {
                 // 오류 발생 시 처리 로직

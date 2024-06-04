@@ -84,10 +84,12 @@ export default function SnsSignup(){
     
     const handleBlur = async (e : React.ChangeEvent<HTMLInputElement>) => {
         try{
+            // 입력 값 추출
+            const value = e.target.value;
             // .env 파일에 백엔드 주소 추가
-            /* 
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/check-nickname`, { nickname: value });
-            const response = await axios.post('/api/check-nickname', {nickname: value});
+            /* */
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/check-nickname`, { nickname: value });
+            
             if(response.data.exists){
                 setNicknameMsg("이미 존재하는 닉네임입니다. ");
                 setIsNameError(true);
@@ -98,7 +100,7 @@ export default function SnsSignup(){
             setNicknameMsg("이미 존재하는 닉네임입니다. ");
             setIsNameError(true);
             
-            */
+            
         } catch(error) {
             console.error("닉네임 중복 확인 오류: ", error);
         }
@@ -126,29 +128,32 @@ export default function SnsSignup(){
             // 회원가입 정보 백엔드 전달
             // 비밀번호 확인, required 필수는 프론트에서 처리
             // 백에서는 email과 nickname이 unique한지 확인
+            /* 
             console.log({
                 email,
                 nickname,
                 gender,
                 birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
+                address,
             });
+            */
 
             navigate("/login");
 
-            // // 회원가입 정보 백엔드로 전달
-            // const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/register`, {
-            //     email,
-            //     password, // 비밀번호 확인은 서버에서 다시 검증해야 합니다.
-            //     nickname,
-            //     gender,
-            //     birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-            // });
+            // 회원가입 정보 백엔드로 전달
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/register`, {
+                email,
+                nickname,
+                gender,
+                birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
+                address,
+            });
 
-            // // 성공적으로 회원가입 정보가 전달되었다면, 로그인 페이지로 이동
-            // navigate("/login");
+            // 성공적으로 회원가입 정보가 전달되었다면, 로그인 페이지로 이동
+            navigate("/login");
 
-            // // 백엔드에서 반환된 데이터를 콘솔에 출력 (개발 목적)
-            // console.log(response.data);
+            // 백엔드에서 반환된 데이터를 콘솔에 출력 (개발 목적)
+            console.log(response.data);
 
             } catch (error) {
                 // 오류 발생 시 처리 로직
