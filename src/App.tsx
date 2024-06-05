@@ -13,7 +13,7 @@ const router = createBrowserRouter([
     element : <Layout />,
     children: [
       {
-        path: "",
+        path: "/home",
         element: <Home />,
       },
       {
@@ -48,7 +48,7 @@ function App() {
 
   return (
     <Wrapper>
-      {/* <GlobalStyles /> */}
+      {<GlobalStyles /> }
       <RouterProvider router={router} />
     </Wrapper>
   )

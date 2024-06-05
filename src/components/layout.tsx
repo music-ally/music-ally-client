@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import {Outlet} from 'react-router-dom';
 
 // 상단 네비게이션 바 등
 
