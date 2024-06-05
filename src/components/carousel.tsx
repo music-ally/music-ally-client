@@ -125,3 +125,52 @@ const Component: React.FC = () => {
 };
 
 export default Component;
+
+
+/* 이미지를 백에서 가져오는 경우 
+
+const Component: React.FC = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [images, setImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    // 백엔드에서 이미지 URL을 가져오는 함수 (임시로 지정. fetchImagesFromBackend 함수는 백엔드 API로부터 이미지 URL을 가져오는 로직으로 대체해야 함)
+    fetchImagesFromBackend()
+      .then(data => setImages(data))
+      .catch(error => console.error('Error fetching images:', error));
+  }, []);
+
+  const handleLeftButtonClick = () => {
+    setCurrentIndex(prevIndex => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
+  };
+
+  const handleRightButtonClick = () => {
+    setCurrentIndex(prevIndex => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
+  };
+
+  return (
+    <>
+      <GlobalStyle /> 
+      <Container>
+        <ContentWrapper>
+          <Title>믿고 보는 배우 ㅇㅇㅇ의 출연작</Title>
+          <Row>
+            <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
+            <ImageRow>
+              {images.map((image, index) => (
+                <Image
+                  key={index}
+                  src={image}
+                  style={{ display: index < 4 ? 'block' : 'none' }}
+                />
+              ))}
+            </ImageRow>
+            <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
+          </Row>
+        </ContentWrapper>
+      </Container>
+    </>
+  );
+};
+
+export default Component; */
