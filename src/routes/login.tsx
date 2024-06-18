@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from 'js-cookie';
 import GoogleButton from "../components/google-btn";
-import React, { useState } from "react";
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Divider, DividerText, Form, Input, LeftHalf, Name, RightHalf, RightWrapper, Row, Row1, ShowPwButton, Switcher, Title, Wrapper } from "../components/auth-components";
