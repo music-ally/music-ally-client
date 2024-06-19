@@ -12,7 +12,7 @@ const Kakao: React.FC = () => {
         const script = document.createElement('script');
         script.src = 'https://developers.kakao.com/sdk/js/kakao.min.js';
         script.onload = () => {
-            const javascriptKey = import.meta.env.VITE_kakao_JAVASCRIPT_KEY;
+            const javascriptKey = import.meta.env.VITE_KAKAO_JAVASCRIPT_API;
             if (window.Kakao && !window.Kakao.isInitialized()) {
                 window.Kakao.init(javascriptKey);
             }
@@ -20,7 +20,7 @@ const Kakao: React.FC = () => {
         document.head.appendChild(script);
         
         if (window.Kakao && !window.Kakao.isInitialized()) {
-            const javascriptKey = import.meta.env.VITE_JAVASCRIPT_KEY;
+            const javascriptKey = import.meta.env.VITE_KAKAO_JAVASCRIPT_API;
             window.Kakao.init(javascriptKey);
         }
     }, []);
@@ -62,7 +62,7 @@ const Kakao: React.FC = () => {
         <div>
             <KakaoButton onClick={loginKakao} />
         </div>
-    );
+    );      
 };
 
 export default Kakao;
