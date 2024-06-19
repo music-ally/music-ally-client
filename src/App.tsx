@@ -6,6 +6,7 @@ import styled from "styled-components";
 import Login from "./routes/login";
 import SignUp from "./routes/sign-up";
 import { createGlobalStyle } from "styled-components";
+import SnsSignup from "./routes/sns-signup";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
     path: "/sign-up",
     element: <SignUp />
   },
+  {
+    path: "/sns-signup",
+    element: <SnsSignup />
+  }
 
 ]);
 
