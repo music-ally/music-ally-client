@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from 'react-router-dom';
 import { FiSearch, FiBell } from 'react-icons/fi';
 import styled from 'styled-components';
+import NaverMap from "../api/naver-map";
 
 const HeaderContainer = styled.div`
     display: flex;
@@ -89,7 +90,7 @@ const Header: React.FC = () => {
           <NavLink to="/actor">Actor</NavLink>
           <NavLink to="/mypage">My page</NavLink>
           <FiBell size={24} color="#EED18F" />
-        </Nav> 
+        </Nav>
       </HeaderContainer>
     );
   };
