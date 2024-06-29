@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     element : <Layout />,
     children: [
       {
-        path: "/home",
+        path: "home",
         element: <Home />,
       },
       {
@@ -39,6 +39,12 @@ const router = createBrowserRouter([
 ]);
 
 const GlobalStyles = createGlobalStyle`
+  * {
+    margin-top: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   body{
     background-color: black;
     color: white;
