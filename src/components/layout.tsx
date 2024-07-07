@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from 'react-router-dom';
 import { FiSearch, FiBell } from 'react-icons/fi';
 import styled from 'styled-components';
-import NaverMap from "../api/naver-map";
 
 const HeaderContainer = styled.div`
     display: flex;
