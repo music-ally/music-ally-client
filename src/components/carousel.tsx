@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import DetailModal from './detail-modal';
 
 // 글로벌 스타일 정의
 const GlobalStyle = createGlobalStyle`
@@ -49,13 +50,14 @@ const ImageRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 17px; /* 이미지 간격 조절 */
+  gap: 17px; 
 `;
 
 const Image = styled.img`
   border-radius: 20.5px;
   width: 275.2px;
   height: 389.3px;
+  cursor: pointer; 
 `;
 
 const Button = styled.img`
@@ -76,9 +78,18 @@ const RightButton = styled(Button)`
   right: -25px;
 `;
 
-const Component: React.FC = () => {
+const Carousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const images = ["/musicalposter-1.jpeg", "/musicalposter-2.jpeg", "/musicalposter-3.jpeg", "/musicalposter-4.jpeg", "/musicalposter-5.jpeg", "/musicalposter-6.jpeg"];
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedMusicalID, setSelectedMusicalID] = useState<string>('');
+  const images = [
+    { id: '1', url: '/musicalposter-1.jpeg' },
+    { id: '2', url: '/musicalposter-2.jpeg' },
+    { id: '3', url: '/musicalposter-3.jpeg' },
+    { id: '4', url: '/musicalposter-4.jpeg' },
+    { id: '5', url: '/musicalposter-5.jpeg' },
+    { id: '6', url: '/musicalposter-6.jpeg' },
+  ];
 
   const handleLeftButtonClick = () => {
     setCurrentIndex((prevIndex) => {
@@ -94,6 +105,15 @@ const Component: React.FC = () => {
     });
   };
 
+  const handleImageClick = (musicalID: string) => {
+    setSelectedMusicalID(musicalID);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <GlobalStyle /> {/* 글로벌 스타일 적용 */}
@@ -107,8 +127,9 @@ const Component: React.FC = () => {
                 const displayIndex = (index + currentIndex) % images.length;
                 return (
                   <Image
-                    key={index}
-                    src={images[displayIndex]}
+                    key={image.id}
+                    src={images[displayIndex].url}
+                    onClick={() => handleImageClick(images[displayIndex].id)} 
                     style={{
                       display: index < 4 ? 'block' : 'none',
                     }}
@@ -119,58 +140,10 @@ const Component: React.FC = () => {
             <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
           </Row>
         </ContentWrapper>
+        {isModalOpen && <DetailModal musical_ID={selectedMusicalID} onClose={handleCloseModal} />}
       </Container>
     </>
   );
 };
 
-export default Component;
-
-
-/* 이미지를 백에서 가져오는 경우 
-
-const Component: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [images, setImages] = useState<string[]>([]);
-
-  useEffect(() => {
-    // 백엔드에서 이미지 URL을 가져오는 함수 (임시로 지정. fetchImagesFromBackend 함수는 백엔드 API로부터 이미지 URL을 가져오는 로직으로 대체해야 함)
-    fetchImagesFromBackend()
-      .then(data => setImages(data))
-      .catch(error => console.error('Error fetching images:', error));
-  }, []);
-
-  const handleLeftButtonClick = () => {
-    setCurrentIndex(prevIndex => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
-  };
-
-  const handleRightButtonClick = () => {
-    setCurrentIndex(prevIndex => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
-  };
-
-  return (
-    <>
-      <GlobalStyle /> 
-      <Container>
-        <ContentWrapper>
-          <Title>믿고 보는 배우 ㅇㅇㅇ의 출연작</Title>
-          <Row>
-            <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
-            <ImageRow>
-              {images.map((image, index) => (
-                <Image
-                  key={index}
-                  src={image}
-                  style={{ display: index < 4 ? 'block' : 'none' }}
-                />
-              ))}
-            </ImageRow>
-            <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
-          </Row>
-        </ContentWrapper>
-      </Container>
-    </>
-  );
-};
-
-export default Component; */
+export default Carousel;

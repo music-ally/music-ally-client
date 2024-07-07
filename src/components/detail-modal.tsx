@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import styled from 'styled-components';
 import NaverMap from '../api/naver-map';
 
 interface MusicalDetails {
@@ -19,6 +20,37 @@ interface DetailModalProps {
   musical_ID: string;
   onClose: () => void;
 }
+
+const ModalBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalContainer = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  position: relative;
+  max-width: 800px;
+  width: 100%;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+`;
 
 const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
   const [musicalDetails, setMusicalDetails] = useState<MusicalDetails | null>(null);
@@ -50,9 +82,9 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
   }
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <button className="close-button" onClick={onClose}>X</button>
+    <ModalBackground onClick={onClose}>
+      <ModalContainer onClick={(e) => e.stopPropagation()}>
+        <CloseButton onClick={onClose}>X</CloseButton>
         <div className="detail-modal">
           <div className="poster">
             <img src={musicalDetails.image_url} alt={`${musicalDetails.title} Poster`} />
@@ -87,8 +119,8 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </ModalContainer>
+    </ModalBackground>
   );
 };
 
