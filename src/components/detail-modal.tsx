@@ -17,9 +17,10 @@ interface MusicalDetails {
 
 interface DetailModalProps {
   musical_ID: string;
+  onClose: () => void;
 }
 
-const DetailModal: React.FC<DetailModalProps> = ({ musical_ID }) => {
+const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
   const [musicalDetails, setMusicalDetails] = useState<MusicalDetails | null>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
@@ -49,41 +50,43 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID }) => {
   }
 
   return (
-    <div className="detail-modal">
-      <div className="poster">
-        <img src={musicalDetails.image_url} alt={`${musicalDetails.title} Poster`} />
-        <div className="info">
-          <h1>{musicalDetails.title}</h1>
-          <p>{musicalDetails.sub_title}</p>
-          <p>{musicalDetails.genre}</p>
-          <p>{musicalDetails.date}</p>
-          <p>{musicalDetails.place}</p>
-          <p>{musicalDetails.age_limit}</p>
-          <p>{musicalDetails.runtime}</p>
-          {musicalDetails.website && <p><a href={musicalDetails.website}>Website</a></p>}
-          {musicalDetails.cast.length > 0 && (
-            <>
-              <h2>캐스팅</h2>
-              <p>{musicalDetails.cast.join(', ')}</p>
-            </>
-          )}
-          <div className="bookmark">
-            <button onClick={handleBookmarkClick} className="bookmark-button">
-              <img src={isBookmarked ? "filled-bookmark-url" : "empty-bookmark-url"} alt="Bookmark" />
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <button className="close-button" onClick={onClose}>X</button>
+        <div className="detail-modal">
+          <div className="poster">
+            <img src={musicalDetails.image_url} alt={`${musicalDetails.title} Poster`} />
+            <div className="info">
+              <h1>{musicalDetails.title}</h1>
+              <p>{musicalDetails.sub_title}</p>
+              <p>{musicalDetails.genre}</p>
+              <h2>공연일정</h2>
+              <p>{musicalDetails.date}</p>
+              {musicalDetails.cast.length > 0 && (
+                <>
+                  <h2>캐스팅</h2>
+                  <p>{musicalDetails.cast.join(', ')}</p>
+                </>
+              )}
+              <div className="bookmark">
+                <button onClick={handleBookmarkClick} className="bookmark-button">
+                  <img src={isBookmarked ? "filled-bookmark-url" : "empty-bookmark-url"} alt="Bookmark" />
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="map">
+            <h2>공연 장소</h2>
+            <NaverMap />
+            <p>{musicalDetails.place}</p>
+          </div>
+          <div className='Review'>
+            <h2>Review</h2>
+            <button onClick={handleReviewClick} className="review-button">
+              <img src="write-review-button-url" alt="Write Review" />
             </button>
-
           </div>
         </div>
-      </div>
-      <div className="map">
-        <h2>공연 장소</h2>
-        <NaverMap />
-      </div>
-      <div className='Review'>
-      <h2>Review</h2>
-      <button onClick={handleReviewClick} className="review-button">
-        <img src="write-review-button-url" alt="Write Review" />
-      </button>
       </div>
     </div>
   );
