@@ -1,12 +1,13 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import Layout from "./components/layout";
 import Home from "./routes/home";
-import MyProfile from "./routes/myprofile";
+import MyPage from "./routes/myprofile";
 import styled from "styled-components";
 import Login from "./routes/login";
 import SignUp from "./routes/sign-up";
 import { createGlobalStyle } from "styled-components";
 import SnsSignup from "./routes/sns-signup";
+import EditProfile from "./routes/editprofile";
 
 const router = createBrowserRouter([
   {
@@ -18,8 +19,12 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "myprofile",
-        element: <MyProfile />,
+        path: "mypage",
+        element: <MyPage />,
+      },
+      {
+        path: "mypage/edit",
+        element: <EditProfile />,
       },
     ]
   },
