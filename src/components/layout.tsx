@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from 'react-router-dom';
 import { FiSearch, FiBell } from 'react-icons/fi';
 import styled from 'styled-components';
+import Carousel from "./carousel";
 
 const HeaderContainer = styled.div`
     display: flex;
@@ -88,6 +89,7 @@ const Header: React.FC = () => {
           <NavLink to="/review">Review</NavLink>
           <NavLink to="/actor">Actor</NavLink>
           <NavLink to="/mypage">My page</NavLink>
+          <Carousel/>
           <FiBell size={24} color="#EED18F" />
         </Nav>
       </HeaderContainer>
