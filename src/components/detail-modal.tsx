@@ -6,13 +6,9 @@ import NaverMap from '../api/naver-map';
 interface MusicalDetails {
   image_url: string;
   title: string;
-  sub_title: string;
   genre: string;
   date: string;
   place: string;
-  age_limit: string;
-  runtime: string;
-  website: string;
   cast: string[];
 }
 
@@ -90,7 +86,6 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
             <img src={musicalDetails.image_url} alt={`${musicalDetails.title} Poster`} />
             <div className="info">
               <h1>{musicalDetails.title}</h1>
-              <p>{musicalDetails.sub_title}</p>
               <p>{musicalDetails.genre}</p>
               <h2>공연일정</h2>
               <p>{musicalDetails.date}</p>
