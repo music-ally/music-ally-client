@@ -1,5 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import Layout from "./components/layout";
+import Layout2 from "./components/layout2";
 import Home from "./routes/home";
 import MyPage from "./routes/myprofile";
 import styled from "styled-components";
@@ -19,12 +20,18 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "mypage",
-        element: <MyPage />,
-      },
-      {
         path: "mypage/edit",
         element: <EditProfile />,
+      },
+    ]
+  },
+  {
+    path: "/",
+    element: <Layout2 />,
+    children: [
+      {
+        path: "mypage",
+        element: <MyPage />,
       },
     ]
   },
