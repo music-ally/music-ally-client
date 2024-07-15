@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 import bgimg from "../assets/bgimage_01.png"
 import profileimg from "../assets/profileimg.png"
 import Address from "../components/address-select";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -118,6 +118,11 @@ const Input = styled.input`
         align-self: self-end;
     }
 `
+
+const ProfileBtn = styled.input`
+    
+`
+
 interface FormData {
     email: string,
     nickname: string,
@@ -129,6 +134,8 @@ interface FormData {
 
 export default function EditProfile() {
     const navigate = useNavigate();
+    // const [image, setImage] = useState<string>(profileimg);
+    const [imgFile, setImgFile] = useState<string|ArrayBuffer|null>();
     const [formData, setFormData] = useState<FormData>({
        email: '',
        nickname: '',
@@ -140,6 +147,7 @@ export default function EditProfile() {
 
     // 데이터 가져오기
     useEffect(() => {
+        setImgFile(profileimg); // 근데 이렇게 하면 이미 프사가 있는 사람은 어떻게 나타나는지?
         const fetchData = async() => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/mypage`);
@@ -149,25 +157,51 @@ export default function EditProfile() {
                     address: response.data.address,
                     password: '',
                     confirmPassword: '',
-                    profileImage: null,
+                    profileImage: response.data.profileImage,
                 });
+
+                // 프로필 이미지 설정
+                if(response.data && response.data.profileImage) {
+                    setImgFile(response.data.profileImage);
+                } else {
+                    setImgFile(profileimg);
+                }
             } catch (error) {
                 console.error("User 데이터 가져오기 오류 : ", error);
                 // alert("사용자 데이터 가져오기 실패");
             }
         };
         fetchData();
-    });
+    }, [profileimg]);
 
     // 폼 입력마다 상태 업데이트
     const onChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
         setFormData({ ...formData, [name]: value});
     };
-
+    
+    
+    const imgRef = useRef<HTMLInputElement | null>(null);
+    // 프로필 사진 업로드 버튼
+    // 업로드 후 바로 미리보기. formdata 저장
     const onFileChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
         if(e.target.files && e.target.files[0]) {
-            setFormData({ ...formData, profileImage: e.target.files[0] as File});
+            const file: File = e.target.files[0];
+            setFormData({ ...formData, profileImage: file });
+
+            // 미리보기 이미지 설정? 파일 업로드 시 화면에 같이 보이기
+            if (imgRef.current && imgRef.current.files && imgRef.current.files.length > 0){
+                //const file = imgRef.current.files[0];
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = () => {
+                    setImgFile(reader.result);
+                };
+            }
+        } else {
+            setImgFile(profileimg);
+            setFormData({ ...formData, profileImage: null});
         }
     };
 
@@ -210,7 +244,7 @@ export default function EditProfile() {
         }
 
         // 서버 데이터 전송 trycatch, axios.patch.
-        
+        // 제출 성공하면 mypage로 navigate
     }
 
     return (
@@ -218,10 +252,17 @@ export default function EditProfile() {
             <LeftHalf>
                 {/* <ProfileImage src={formData.profileImage ? URL.createObjectURL(formData.profileImage) : profileimg} alt="Profile" />
                 */}
-                <ProfileImage src={profileimg} />
+                {imgFile && typeof imgFile === 'string' && <ProfileImage src={imgFile} />}
                 <MyProfile>
                     <Nickname> {formData.nickname || '닉네임'} </Nickname>
                     <Email> {formData.email || 'email@email.com'}</Email>
+                    <ProfileBtn 
+                        type="file"
+                        id="profile"
+                        onChange={onFileChange}
+                        ref={imgRef}
+                        accept="image/*"
+                    />
                 </MyProfile>
             </LeftHalf>
             <RightHalf>
