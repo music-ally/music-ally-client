@@ -1,3 +1,228 @@
-export default function MyProfile() {
-    return <h1> my profile! </h1>
+import { useLocation, useNavigate } from "react-router-dom";
+import GoogleUserInfo from "../components/GoogleUserInfo";
+import { useEffect, useState } from "react";
+import Cookies from 'js-cookie';
+import { styled } from "styled-components";
+import profileimg from "../assets/profileimg.png"
+import arrow from "/arrow_right.png"
+import Component from "../components/mypage-carousel";
+import axios from "axios";
+import LeaveModal from "../components/leaveModal";
+
+const Wrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-bottom: 30px;
+`
+
+const PropfileWrapper = styled.div`
+    height: 500px;
+    //background-color: lightslategray;
+    display: flex;
+`
+const ProfileImageWrapper = styled.div`
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+const ProfileInfoWrapper = styled.div`
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    //align-items: center;
+    flex-direction: column;
+`
+
+const BtnWrapper = styled.div`
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    //align-items: center;
+    flex-direction: column;
+`
+
+const NavBtn = styled.button`
+    background: url(/arrow_right.png) no-repeat;
+    height: 32px;
+    background-size: contain;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+            opacity: 0.8;
+    };
+`
+
+const Title = styled.div`
+    margin: 0 5px 15px 5px;
+    display: inline-block;
+    word-break: break-word;
+    font-family: 'Inter-SemiBold', sans-serif;
+    font-weight: 600;
+    font-size: 34px;
+    color: white;
+`
+
+const ProfileImage = styled.img`
+    width: 272px;
+    height: 272px;
+    border-radius: 50%;
+    object-fit: cover;
+`;
+
+const Nickname = styled.h3`
+    font-size: 34px;
+    margin: 5px 0;
+`
+
+const Email = styled.h3`
+    font-size: 20px;
+    color: #BABABA;
+`
+
+const MyInfo = styled.div`
+    font-size: 24px;
+    font-weight: 600;
+    display: flex;
+    flex-direction: row;
+`
+
+const MyInfoName = styled.div`
+    color: #BABABA;
+    margin-right: 10px;
+`
+
+const MyInfoNum = styled.div`
+    color: white;
+    margin-right: 20px;
+`
+
+const CaroName = styled.div`
+    font-family: 'Inter-SemiBold', sans-serif;
+    font-weight: 600;
+    font-size: 30px;
+    margin: 20px 64px;
+`
+
+const DividerText = styled.span`
+    display: inline-block; /* 블록 요소로 설정하여 가로 크기를 설정할 수 있게 함 */
+    margin: 35px 10px; /* 좌우 마진 추가 */
+    color: white;
+    cursor: pointer;
+    text-decoration: underline;
+    &:hover {
+        opacity: 0.8; /* 호버 시 약간 투명하게 */
+    }
+`
+
+const Row = styled.div`
+    display: flex;
+    margin: 10px 0;
+    justify-content: space-evenly;
+`
+
+interface User {
+    nickname: string;
+    email: string;
+    following_num: number;
+    follower_num: number;
+    review_num: number;
+    bookmark_num: number;
+}
+
+export default function MyPage() {
+    const navigate = useNavigate();
+    const [user, setUser] = useState<User>({
+        nickname: '닉네임',
+        email: 'email',
+        following_num: 0,
+        follower_num: 0,
+        review_num: 0,
+        bookmark_num: 0,
+    });
+    const [profile, setProfile] = useState<string>(profileimg);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/mypage`);
+                setUser(response.data.data);
+            } catch (error) {
+                console.error("Fetch data error : ", error);
+            }
+        };
+        fetchData();
+    }, []);
+/*
+    // {userData.nickname} 등으로 불러오기~~
+ */ 
+
+    const onNavClick = () => {
+        navigate('/mypage/edit');
+    }
+
+    const handleLogout = async () => {
+        try {
+            await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`);
+            navigate('/login');
+        } catch (error) {
+            console.error('로그아웃 실패: ', error);
+        }
+    };
+
+    const handleLeave = async () => {
+        try {
+            await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/auth/leave`);
+            navigate('/login');
+        } catch (error) {
+            console.error('탈퇴 실패: ', error);
+        }
+    }
+
+    return (
+        <Wrapper>
+            <PropfileWrapper>
+                <ProfileImageWrapper>
+                    <ProfileImage src={ profileimg }/>
+                </ProfileImageWrapper>
+                <ProfileInfoWrapper>
+                <Nickname> {'닉네임' || user.nickname} </Nickname>
+                    
+                    <Email> email@email.com</Email>
+                    <MyInfo>
+                        <MyInfoName>팔로잉</MyInfoName>
+                        <MyInfoNum>0</MyInfoNum>
+                        <MyInfoName>팔로워</MyInfoName>
+                        <MyInfoNum>0</MyInfoNum>
+                        <MyInfoName>|</MyInfoName>
+                        <MyInfoName>리뷰</MyInfoName>
+                        <MyInfoNum>0</MyInfoNum>
+                        <MyInfoName>찜</MyInfoName>
+                        <MyInfoNum>0</MyInfoNum>
+                    </MyInfo>
+                </ProfileInfoWrapper>
+                <BtnWrapper>
+                    <NavBtn onClick={onNavClick}/>
+                </BtnWrapper>
+            </PropfileWrapper>
+            <CaroName> 내가 작성한 리뷰 </CaroName>
+            <Component />
+            <CaroName> 내가 찜한 뮤지컬 </CaroName>
+            <Component />
+            <Row>
+                <DividerText onClick={ handleLogout }>로그아웃</DividerText>
+                <DividerText onClick={() => setIsModalOpen(true)}>탈퇴</DividerText>
+                {isModalOpen && (
+                    <LeaveModal 
+                        
+                    />
+                )}
+            </Row>
+            
+        </Wrapper>
+    );
 }
