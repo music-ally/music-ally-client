@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
 // 글로벌 스타일 정의
@@ -76,20 +76,43 @@ const RightButton = styled(Button)`
   right: -25px;
 `;
 
-const Component: React.FC = () => {
+interface Props {}
+
+const Component: React.FC<Props> = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const images = ["/musicalposter-1.jpeg", "/musicalposter-2.jpeg", "/musicalposter-3.jpeg", "/musicalposter-4.jpeg", "/musicalposter-5.jpeg", "/musicalposter-6.jpeg"];
+  const [displayImages, setDisplayImages] = useState<string[]>([]);
+
+  const images = [
+    "/musicalposter-1.jpeg",
+    "/musicalposter-2.jpeg",
+    "/musicalposter-3.jpeg",
+    "/musicalposter-4.jpeg",
+    "/musicalposter-5.jpeg",
+    "/musicalposter-6.jpeg",
+  ];
+
+  useEffect(() => {
+    const newImages = [...images];
+    const remainder = newImages.length % 4;
+    if (remainder !== 0) {
+      const emptySlots = 4 - remainder;
+      for (let i = 0; i < emptySlots; i++) {
+        newImages.push("/empty.png");
+      }
+    }
+    setDisplayImages(newImages);
+  }, [images]);
 
   const handleLeftButtonClick = () => {
     setCurrentIndex((prevIndex) => {
-      const newIndex = prevIndex === 0 ? images.length - 1 : prevIndex - 1;
+      const newIndex = prevIndex === 0 ? displayImages.length - 4 : prevIndex - 4;
       return newIndex;
     });
   };
 
   const handleRightButtonClick = () => {
     setCurrentIndex((prevIndex) => {
-      const newIndex = prevIndex === images.length - 1 ? 0 : prevIndex + 1;
+      const newIndex = prevIndex === displayImages.length - 4 ? 0 : prevIndex + 4;
       return newIndex;
     });
   };
@@ -101,22 +124,17 @@ const Component: React.FC = () => {
         <ContentWrapper>
           <Title>믿고 보는 배우 ㅇㅇㅇ의 출연작</Title>
           <Row>
-            <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
+            {displayImages.length > 4 && (
+              <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
+            )}
             <ImageRow>
-              {images.map((image, index) => {
-                const displayIndex = (index + currentIndex) % images.length;
-                return (
-                  <Image
-                    key={index}
-                    src={images[displayIndex]}
-                    style={{
-                      display: index < 4 ? 'block' : 'none',
-                    }}
-                  />
-                );
-              })}
+              {displayImages.slice(currentIndex, currentIndex + 4).map((image, index) => (
+                <Image key={index} src={image} />
+              ))}
             </ImageRow>
-            <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
+            {displayImages.length > 4 && (
+              <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
+            )}
           </Row>
         </ContentWrapper>
       </Container>
@@ -125,52 +143,3 @@ const Component: React.FC = () => {
 };
 
 export default Component;
-
-
-/* 이미지를 백에서 가져오는 경우 
-
-const Component: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [images, setImages] = useState<string[]>([]);
-
-  useEffect(() => {
-    // 백엔드에서 이미지 URL을 가져오는 함수 (임시로 지정. fetchImagesFromBackend 함수는 백엔드 API로부터 이미지 URL을 가져오는 로직으로 대체해야 함)
-    fetchImagesFromBackend()
-      .then(data => setImages(data))
-      .catch(error => console.error('Error fetching images:', error));
-  }, []);
-
-  const handleLeftButtonClick = () => {
-    setCurrentIndex(prevIndex => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
-  };
-
-  const handleRightButtonClick = () => {
-    setCurrentIndex(prevIndex => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
-  };
-
-  return (
-    <>
-      <GlobalStyle /> 
-      <Container>
-        <ContentWrapper>
-          <Title>믿고 보는 배우 ㅇㅇㅇ의 출연작</Title>
-          <Row>
-            <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
-            <ImageRow>
-              {images.map((image, index) => (
-                <Image
-                  key={index}
-                  src={image}
-                  style={{ display: index < 4 ? 'block' : 'none' }}
-                />
-              ))}
-            </ImageRow>
-            <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
-          </Row>
-        </ContentWrapper>
-      </Container>
-    </>
-  );
-};
-
-export default Component; */
