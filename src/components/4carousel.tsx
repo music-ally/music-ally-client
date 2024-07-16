@@ -24,20 +24,6 @@ const ContentWrapper = styled.div`
   align-items: flex-start;
 `;
 
-const Title = styled.div`
-  margin: 0 5px 15px 5px;
-  display: inline-block;
-  word-break: break-word;
-  font-family: 'Inter-SemiBold', sans-serif;
-  font-weight: 800;
-  font-size: 34px;
-  letter-spacing: 1px;
-  line-height: 1.5;
-  background: linear-gradient(90deg, #E8E1B1, #BB9D59);
-  color: transparent;
-  background-clip: text;
-`;
-
 const Row = styled.div`
   display: flex;
   flex-direction: row;
@@ -122,7 +108,6 @@ const Component: React.FC<Props> = () => {
       <GlobalStyle /> {/* 글로벌 스타일 적용 */}
       <Container>
         <ContentWrapper>
-          <Title>믿고 보는 배우 ㅇㅇㅇ의 출연작</Title>
           <Row>
             {displayImages.length > 4 && (
               <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
