@@ -1,0 +1,214 @@
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { styled } from "styled-components";
+import profileimg from "../assets/profileimg.png"
+import Component from "../components/mypage-carousel";
+import axios from "axios";
+
+const Wrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-bottom: 30px;
+`
+
+const PropfileWrapper = styled.div`
+    height: 500px;
+    //background-color: lightslategray;
+    display: flex;
+`
+const ProfileImageWrapper = styled.div`
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+const ProfileInfoWrapper = styled.div`
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    //align-items: center;
+    flex-direction: column;
+`
+
+const BtnWrapper = styled.div`
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    //align-items: center;
+    flex-direction: column;
+`
+
+const Button = styled.button`
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 107px;
+    &:hover {
+            opacity: 0.8;
+    };
+`
+
+const ButtonImage = styled.img<{ src: string }>`
+    width: 100%;
+    height: 100%;
+    //border-radius: 12.99px;
+    src: url(${props => props.src});
+    
+`;
+
+const ProfileImage = styled.img`
+    width: 272px;
+    height: 272px;
+    border-radius: 50%;
+    object-fit: cover;
+`;
+
+const Nickname = styled.h3`
+    font-size: 34px;
+    margin: 5px 0;
+`
+
+const Email = styled.h3`
+    font-size: 20px;
+    color: #BABABA;
+`
+
+const MyInfo = styled.div`
+    font-size: 24px;
+    font-weight: 600;
+    display: flex;
+    flex-direction: row;
+`
+
+const MyInfoName = styled.div`
+    color: #BABABA;
+    margin-right: 10px;
+`
+
+const MyInfoNum = styled.div`
+    color: white;
+    margin-right: 20px;
+`
+
+const CaroName = styled.div`
+    font-family: 'Inter-SemiBold', sans-serif;
+    font-weight: 600;
+    font-size: 30px;
+    margin: 20px 64px;
+`
+
+const DividerText = styled.span`
+    display: inline-block; /* 블록 요소로 설정하여 가로 크기를 설정할 수 있게 함 */
+    margin: 35px 10px; /* 좌우 마진 추가 */
+    color: white;
+    cursor: pointer;
+    text-decoration: underline;
+    &:hover {
+        opacity: 0.8; /* 호버 시 약간 투명하게 */
+    }
+`
+
+const Row = styled.div`
+    display: flex;
+    margin: 10px 0;
+    justify-content: space-between;
+`
+
+interface UserProfile {
+    nickname: string;
+    email: string;
+    following_num: number;
+    follower_num: number;
+    review_num: number;
+    bookmark_num: number;
+    profile_image: string | null;
+    is_following: boolean
+}
+
+export default function UserProfile() {
+    const { userId } = useParams<{ userId: string }>();
+    const [user, setUser] = useState<UserProfile>({
+        nickname: '닉네임',
+        email: 'email',
+        following_num: 0,
+        follower_num: 0,
+        review_num: 0,
+        bookmark_num: 0,
+        profile_image: null,
+        is_following: false,
+    });
+
+    const [isFollowing, setIsFollowing] = useState<boolean>(false);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`);
+                setUser(response.data);
+            } catch (error) {
+                console.error('Fetching profile error : ', error);
+            }
+        };
+        fetchUser();
+    }, [userId]);
+    
+    const handleFollowClick = async () => {
+        try {
+            if(user.is_following) {
+                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+            } else {
+                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+            }
+
+            // 화면 상태 업데이트
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`);
+            setUser(response.data);
+        } catch (error) {
+            console.error('follow, unfollow error : ', error);
+        }
+        /*
+        if(isFollowing){
+            setIsFollowing(false);
+        } else {
+            setIsFollowing(true);
+        } */
+    }
+
+    return (
+        <Wrapper>
+            <PropfileWrapper>
+                <ProfileImageWrapper>
+                    <ProfileImage src={ user.profile_image || profileimg }/>
+                </ProfileImageWrapper>
+                <ProfileInfoWrapper>
+                    <Row>
+                        <Nickname> {user.nickname || '닉네임'} </Nickname>
+                        <Button onClick={handleFollowClick}>
+                            <ButtonImage src={user.is_following ? '/following_btn.svg' : '/follow_btn.svg'}/>
+                        </Button>
+                    </Row>
+                    <Email> {user.email || 'email@email.com'}</Email>
+                    <MyInfo>
+                        <MyInfoName>팔로잉</MyInfoName>
+                        <MyInfoNum>{user.following_num || '0'}</MyInfoNum>
+                        <MyInfoName>팔로워</MyInfoName>
+                        <MyInfoNum> {user.follower_num || '0'}</MyInfoNum>
+                        <MyInfoName>|</MyInfoName>
+                        <MyInfoName>리뷰</MyInfoName>
+                        <MyInfoNum>{user.review_num || '0'}</MyInfoNum>
+                        <MyInfoName>찜</MyInfoName>
+                        <MyInfoNum>{user.bookmark_num || '0'}</MyInfoNum>
+                    </MyInfo>
+                </ProfileInfoWrapper>
+                <BtnWrapper>
+                    
+                </BtnWrapper>
+            </PropfileWrapper>
+            <CaroName> {user.nickname || '닉네임'}님이 작성한 리뷰 </CaroName>
+            <Component />
+            <CaroName> {user.nickname || '닉네임'}님이 찜한 뮤지컬 </CaroName>
+            <Component />
+        </Wrapper>
+    );
+}

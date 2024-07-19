@@ -9,6 +9,7 @@ import SignUp from "./routes/sign-up";
 import { createGlobalStyle } from "styled-components";
 import SnsSignup from "./routes/sns-signup";
 import EditProfile from "./routes/editprofile";
+import UserProfile from "./routes/userprofile";
 
 const router = createBrowserRouter([
   {
@@ -19,10 +20,7 @@ const router = createBrowserRouter([
         path: "home",
         element: <Home />,
       },
-      {
-        path: "mypage/edit",
-        element: <EditProfile />,
-      },
+      
     ]
   },
   {
@@ -33,6 +31,14 @@ const router = createBrowserRouter([
         path: "mypage",
         element: <MyPage />,
       },
+      {
+        path: "mypage/edit",
+        element: <EditProfile />,
+      },
+      {
+        path: "profile/:userId",
+        element: <UserProfile />
+      }
     ]
   },
   {
