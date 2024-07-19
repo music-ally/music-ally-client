@@ -150,7 +150,7 @@ export default function MyPage() {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/mypage`);
-                setUser(response.data.data);
+                setUser(response.data);
             } catch (error) {
                 console.error("Fetch data error : ", error);
             }
@@ -190,19 +190,18 @@ export default function MyPage() {
                     <ProfileImage src={ profileimg }/>
                 </ProfileImageWrapper>
                 <ProfileInfoWrapper>
-                <Nickname> {'닉네임' || user.nickname} </Nickname>
-                    
-                    <Email> email@email.com</Email>
+                <Nickname> {user.nickname || '닉네임'} </Nickname>
+                    <Email> {user.email || 'email@email.com'}</Email>
                     <MyInfo>
                         <MyInfoName>팔로잉</MyInfoName>
-                        <MyInfoNum>0</MyInfoNum>
+                        <MyInfoNum>{user.following_num || '0'}</MyInfoNum>
                         <MyInfoName>팔로워</MyInfoName>
-                        <MyInfoNum>0</MyInfoNum>
+                        <MyInfoNum> {user.follower_num || '0'}</MyInfoNum>
                         <MyInfoName>|</MyInfoName>
                         <MyInfoName>리뷰</MyInfoName>
-                        <MyInfoNum>0</MyInfoNum>
+                        <MyInfoNum>{user.review_num || '0'}</MyInfoNum>
                         <MyInfoName>찜</MyInfoName>
-                        <MyInfoNum>0</MyInfoNum>
+                        <MyInfoNum>{user.bookmark_num || '0'}</MyInfoNum>
                     </MyInfo>
                 </ProfileInfoWrapper>
                 <BtnWrapper>
@@ -215,9 +214,11 @@ export default function MyPage() {
             <Component />
             <Row>
                 <DividerText onClick={ handleLogout }>로그아웃</DividerText>
-                <DividerText onClick={() => setIsModalOpen(true)}>탈퇴</DividerText>
+                <DividerText onClick={() => setIsModalOpen(true)}>뮤지컬리 탈퇴하기</DividerText>
                 {isModalOpen && (
                     <LeaveModal 
+                        onConfirm = {handleLeave}
+                        onCancel = {() => setIsModalOpen(false)}
                         
                     />
                 )}
