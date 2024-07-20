@@ -3,7 +3,7 @@ import GoogleUserInfo from "../components/GoogleUserInfo";
 import { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import { styled } from "styled-components";
-import profileimg from "../assets/profileimg.png"
+import profileimg from "/profileimg.png"
 import arrow from "/arrow_right.png"
 import Component from "../components/mypage-carousel";
 import axios from "axios";

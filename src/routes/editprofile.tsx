@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import bgimg from "../assets/bgimage_01.png"
-import profileimg from "../assets/profileimg.png"
+import profileimg from "/profileimg.png"
 import Address from "../components/address-select";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";

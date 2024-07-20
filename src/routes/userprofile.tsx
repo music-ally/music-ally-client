@@ -1,9 +1,11 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import profileimg from "../assets/profileimg.png"
+import profileimg from "/profileimg.png"
 import Component from "../components/mypage-carousel";
 import axios from "axios";
+import FollowerModal from "../components/followerModal";
+import FollowingModal from "../components/followingModal";
 
 const Wrapper = styled.div`
     display: flex;
@@ -115,6 +117,12 @@ const Row = styled.div`
     justify-content: space-between;
 `
 
+const ModalWrapper = styled.div`
+    cursor: pointer;
+    margin: 0%;
+    display: flex;
+`
+
 interface UserProfile {
     nickname: string;
     email: string;
@@ -175,6 +183,16 @@ export default function UserProfile() {
         } */
     }
 
+    const [followModal, setFollowModal] = useState<string|null>();
+
+    const handleModalOpen = (content: string) => {
+        setFollowModal(content);
+    };
+
+    const handleModalClose = () => {
+        setFollowModal(null);
+      };
+    
     return (
         <Wrapper>
             <PropfileWrapper>
@@ -190,10 +208,22 @@ export default function UserProfile() {
                     </Row>
                     <Email> {user.email || 'email@email.com'}</Email>
                     <MyInfo>
-                        <MyInfoName>팔로잉</MyInfoName>
-                        <MyInfoNum>{user.following_num || '0'}</MyInfoNum>
-                        <MyInfoName>팔로워</MyInfoName>
-                        <MyInfoNum> {user.follower_num || '0'}</MyInfoNum>
+                        <ModalWrapper onClick={() => handleModalOpen('following')}>
+                            <MyInfoName>팔로잉</MyInfoName>
+                            <MyInfoNum>{user.following_num || '0'}</MyInfoNum>
+                        </ModalWrapper>
+                        <ModalWrapper onClick={() => handleModalOpen('follower')}>
+                            <MyInfoName>팔로워</MyInfoName>
+                            <MyInfoNum> {user.follower_num || '0'}</MyInfoNum>
+                        </ModalWrapper>
+
+                        {followModal === 'follower' && (
+                            <FollowerModal onClose={handleModalClose} />
+                        )}
+                        {followModal === 'following' && (
+                            <FollowingModal onClose={handleModalClose} />
+                        )}
+
                         <MyInfoName>|</MyInfoName>
                         <MyInfoName>리뷰</MyInfoName>
                         <MyInfoNum>{user.review_num || '0'}</MyInfoNum>

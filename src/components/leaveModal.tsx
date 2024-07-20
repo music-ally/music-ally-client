@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import profileimg from "../assets/profileimg.png"
+import profileimg from "/profileimg.png"
 import { useState } from "react";
 
 const Modal = styled.div`
