@@ -147,8 +147,6 @@ export default function UserProfile() {
         is_following: false,
     });
 
-    const [isFollowing, setIsFollowing] = useState<boolean>(false);
-
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -217,11 +215,11 @@ export default function UserProfile() {
                             <MyInfoNum> {user.follower_num || '0'}</MyInfoNum>
                         </ModalWrapper>
 
-                        {followModal === 'follower' && (
-                            <FollowerModal onClose={handleModalClose} />
+                        {followModal === 'follower' && userId && (
+                            <FollowerModal userId={userId} onClose={handleModalClose} />
                         )}
-                        {followModal === 'following' && (
-                            <FollowingModal onClose={handleModalClose} />
+                        {followModal === 'following' && userId && (
+                            <FollowingModal userId={userId} onClose={handleModalClose} />
                         )}
 
                         <MyInfoName>|</MyInfoName>

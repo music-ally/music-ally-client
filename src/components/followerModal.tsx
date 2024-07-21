@@ -109,17 +109,21 @@ interface FollowerModalProps {
 
 export default function FollowerModal ({userId, onClose} : FollowerModalProps) {
     const [followers, setFollowers] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         // api 호출
-        const fetchFollwers = async() => {
+        const fetchFollowers = async() => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follower`);
-                setFollowers(response.data.follower_list);
+                setFollowers(response.data.follow_list);
             } catch (error) {
                 console.error("Error fetching followers: ", error);
             } 
+            // finally {
+            //     setLoading(false);
+            // }
         };
-        fetchFollwers();
+        fetchFollowers();
 
         // 배경 스크롤 금지
         document.body.style.overflow = 'hidden';
@@ -140,7 +144,19 @@ export default function FollowerModal ({userId, onClose} : FollowerModalProps) {
                 <Divider />
                 <ModalContent>
                     <ProfileCard />
-                    
+                    {loading ? (
+                        <div>Loading...</div>
+                    ):(
+                        followers.map((follower) => (
+                            <ProfileCard 
+                                key={follower.user_id}
+                                // profileImage=""
+                                nickname={follower.nickname}
+                                email={follower.email}
+                                is_following={follower.is_following}
+                            />
+                        ))
+                    )}
                 </ModalContent>
             </Modal>
         </Overlay>

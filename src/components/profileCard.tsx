@@ -1,3 +1,4 @@
+import axios from "axios";
 import React from "react";
 import styled from "styled-components";
 
@@ -61,7 +62,9 @@ interface ProfileCardProps {
     profileImage?: string;
     nickname?: string;
     email?: string;
-    buttonImage?: string;
+    userId: string;
+    is_following: boolean;
+    onFollowStatusChange: (userId: string, isFollowing: boolean) => void;
 }
 
 export default function ProfileCard(
@@ -69,8 +72,24 @@ export default function ProfileCard(
     profileImage = '/profileimg.png',
     nickname = '닉네임',
     email = '이메일',
-    buttonImage = '/follow_btn.svg',
+    userId,
+    is_following,
+    onFollowStatusChange,
 } : ProfileCardProps) {
+    const handleFollowClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        try {
+            if(is_following){
+                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+                onFollowStatusChange(userId, false);
+            } else {
+                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+                onFollowStatusChange(userId, true);
+            }
+        } catch (error) {
+            console.error("Error updating follow status:", error);
+        }
+    }
     return (
         <Card>
             <ProfileImg src={profileImage}  />
@@ -78,8 +97,8 @@ export default function ProfileCard(
                     <Nickname>{nickname}</Nickname>
                     <Email>{email}</Email>
                 </Info>
-                <Button>
-                    <ButtonImage src={buttonImage} />
+                <Button onClick={ handleFollowClick }>
+                    <ButtonImage src={is_following ? "/following_btn_full.svg" : "/follow_btn.svg"} />
                 </Button>
         </Card>
     );
@@ -89,6 +108,10 @@ export default function ProfileCard(
 ProfileCard.defaultProps = {
     profileImage: '/profileimg.png',
     nickname: '닉네임',
-    email: '이메일d',
-    buttonImage: '/follow_btn.svg',
+    email: '이메일',
+    is_following: true,
+    userId: 'abc',
+    onFollowStatusChange: (userId: string, isFollowing: boolean) => {
+        console.log(`User ID: ${userId}, Following: ${isFollowing}`);
+    },
 };
