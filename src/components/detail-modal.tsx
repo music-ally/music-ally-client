@@ -27,6 +27,7 @@ const ModalBackground = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 `;
 
 const ModalContainer = styled.div`
@@ -41,6 +42,8 @@ const ModalContainer = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  margin-top: 50px;
+  z-index: 1001;
 `;
 
 const CloseButton = styled.button`
@@ -58,6 +61,8 @@ const Poster = styled.img`
   width: 400px;
   height: 600px;
   border-radius: 10px;
+  margin-top: 50px;
+  margin-left:30px;
 `;
 
 const InfoContainer = styled.div`
@@ -72,6 +77,8 @@ const Info = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-top: 171px;
+  margin-left: 71px;
 `;
 
 const TitleContainer = styled.div`
@@ -84,11 +91,13 @@ const Title = styled.h1`
   font-size: 2.5em;
   color: #e3bf3d;
   flex-grow: 1;
+  margin-bottom: 20px;
 `;
 
 const Subtitle = styled.p`
   margin: 10px 0;
   font-size: 1.2em;
+  margin-bottom: 33px;
 `;
 
 const Section = styled.div`
@@ -99,6 +108,7 @@ const SectionTitle = styled.h2`
   margin: 0;
   font-size: 1.5em;
   color: #e3bf3d;
+  margin-bottom: 33px;
 `;
 
 const Cast = styled.p`
@@ -110,7 +120,7 @@ const BookmarkButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  margin-left: 20px;
+  margin-left: 8px;
 `;
 
 const BookmarkIcon = styled.img`
