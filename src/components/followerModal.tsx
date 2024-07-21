@@ -147,7 +147,7 @@ export default function FollowerModal ({userId, onClose} : FollowerModalProps) {
                     {loading ? (
                         <div>Loading...</div>
                     ):(
-                        followers.map((follower) => (
+                        followers && followers.map((follower) => (
                             <ProfileCard 
                                 key={follower.user_id}
                                 // profileImage=""

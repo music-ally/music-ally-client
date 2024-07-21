@@ -147,7 +147,7 @@ export default function FollowingModal ({userId, onClose} : FollowingModalProps)
                     {loading ? (
                         <div>Loading...</div>
                     ):(
-                        followings.map((following) => (
+                        followings && followings.map((following) => (
                             <ProfileCard
                                 key={following.user_id}
                                 nickname={following.nickname}
