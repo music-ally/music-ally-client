@@ -29,7 +29,7 @@ const LeftAlignedContainer = styled.div`
 // BestReview 제목 스타일
 const BestReviewTitle = styled.h2`
   font-size: 75px;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Bebas', sans-serif;
   color: #BB9D59; /* 글자색 설정 */
   background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
   -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
@@ -43,7 +43,7 @@ const BestReviewTitle = styled.h2`
 // BasicReview 제목 스타일
 const BasicReviewTitle = styled.h2`
   font-size: 75px;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Bebas', sans-serif;
   color: #BB9D59; /* 글자색 설정 */
   background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
   -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
