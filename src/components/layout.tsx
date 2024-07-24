@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FiSearch, FiBell } from 'react-icons/fi';
-
+import Carousel from "./reviewcarousel";
 
 const HeaderContainer = styled.div`
     display: flex;
@@ -78,6 +78,23 @@ const NavLink = styled(Link)`
 
 const Header: React.FC = () => {
     return (
+<<<<<<< HEAD
+      <HeaderContainer>
+        <Logo src="/header-Logo.png" alt="Logo" />
+        <SearchContainer>
+          <FiSearch size={20} color="#251611"/>
+          <SearchInput type="text" placeholder="<뮤지컬>이 궁금해!" />
+        </SearchContainer>
+        <Nav>
+          <NavLink to="/">Main</NavLink>
+          <NavLink to="/review">Review</NavLink>
+          <NavLink to="/actor">Actor</NavLink>
+          <NavLink to="/mypage">My page</NavLink>
+          <Carousel/>
+          <FiBell size={24} color="#EED18F" />
+        </Nav>
+      </HeaderContainer>
+=======
         <HeaderContainer>
             <Logo src="/header-Logo.png" alt="Logo" />
             <SearchContainer>
@@ -92,6 +109,7 @@ const Header: React.FC = () => {
                 <FiBell size={24} color="#EED18F" />
             </Nav>
         </HeaderContainer>
+>>>>>>> 11723a8a2c6226486f3636a3fee6d0335a229e7f
     );
 };
 
