@@ -228,7 +228,7 @@ export default function MyPage() {
             <CaroName> 내가 작성한 리뷰 </CaroName>
             <Carousel4 />
             <CaroName> 내가 찜한 뮤지컬 </CaroName>
-            <Component />
+            <Carousel4 />
             <Row>
                 <DividerText onClick={ handleLogout }>로그아웃</DividerText>
                 <DividerText onClick={() => setIsModalOpen(true)}>뮤지컬리 탈퇴하기</DividerText>
