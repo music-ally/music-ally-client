@@ -1,12 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import profileimg from "/profileimg.png"
 import Component from "../components/mypage-carousel";
 import axios from "axios";
-import LeaveModal from "../components/leaveModal";
-import MyFollowingModal from "../components/myFollowingModal";
-import MyFollowerModal from "../components/myFollowerModal";
+import FollowerModal from "../components/followerModal";
+import FollowingModal from "../components/followingModal";
 
 const Wrapper = styled.div`
     display: flex;
@@ -42,18 +41,23 @@ const BtnWrapper = styled.div`
     flex-direction: column;
 `
 
-const NavBtn = styled.button`
-    background: url(/arrow_right.png) no-repeat;
-    height: 32px;
-    background-size: contain;
-    border: none;
+const Button = styled.button`
     cursor: pointer;
-
+    border: none;
+    background: none;
+    width: 107px;
     &:hover {
             opacity: 0.8;
     };
 `
 
+const ButtonImage = styled.img<{ src: string }>`
+    width: 100%;
+    height: 100%;
+    //border-radius: 12.99px;
+    src: url(${props => props.src});
+    
+`;
 
 const ProfileImage = styled.img`
     width: 272px;
@@ -110,7 +114,7 @@ const DividerText = styled.span`
 const Row = styled.div`
     display: flex;
     margin: 10px 0;
-    justify-content: space-evenly;
+    justify-content: space-between;
 `
 
 const ModalWrapper = styled.div`
@@ -119,64 +123,62 @@ const ModalWrapper = styled.div`
     display: flex;
 `
 
-interface User {
+interface UserProfile {
     nickname: string;
     email: string;
     following_num: number;
     follower_num: number;
     review_num: number;
     bookmark_num: number;
+    profile_image: string | null;
+    is_following: boolean
 }
 
-export default function MyPage() {
-    const navigate = useNavigate();
-    const [user, setUser] = useState<User>({
+export default function UserProfile() {
+    const { userId } = useParams<{ userId: string }>();
+    const [user, setUser] = useState<UserProfile>({
         nickname: '닉네임',
         email: 'email',
         following_num: 0,
         follower_num: 0,
         review_num: 0,
         bookmark_num: 0,
+        profile_image: null,
+        is_following: false,
     });
-    const [profile, setProfile] = useState<string>(profileimg);
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchUser = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/mypage`);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`);
                 setUser(response.data);
             } catch (error) {
-                console.error("Fetch data error : ", error);
+                console.error('Fetching profile error : ', error);
             }
         };
-        fetchData();
-    }, []);
-/*
-    // {userData.nickname} 등으로 불러오기~~
- */ 
-
-    const onNavClick = () => {
-        navigate('/mypage/edit');
-    }
-
-    const handleLogout = async () => {
+        fetchUser();
+    }, [userId]);
+    
+    const handleFollowClick = async () => {
         try {
-            await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`);
-            navigate('/login');
-        } catch (error) {
-            console.error('로그아웃 실패: ', error);
-        }
-    };
+            if(user.is_following) {
+                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+            } else {
+                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+            }
 
-    const handleLeave = async () => {
-        try {
-            await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/auth/leave`);
-            navigate('/login');
+            // 화면 상태 업데이트
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`);
+            setUser(response.data);
         } catch (error) {
-            console.error('탈퇴 실패: ', error);
+            console.error('follow, unfollow error : ', error);
         }
+        /*
+        if(isFollowing){
+            setIsFollowing(false);
+        } else {
+            setIsFollowing(true);
+        } */
     }
 
     const [followModal, setFollowModal] = useState<string|null>();
@@ -188,15 +190,20 @@ export default function MyPage() {
     const handleModalClose = () => {
         setFollowModal(null);
       };
-
+    
     return (
         <Wrapper>
             <PropfileWrapper>
                 <ProfileImageWrapper>
-                    <ProfileImage src={ profileimg }/>
+                    <ProfileImage src={ user.profile_image || profileimg }/>
                 </ProfileImageWrapper>
                 <ProfileInfoWrapper>
-                <Nickname> {user.nickname || '닉네임'} </Nickname>
+                    <Row>
+                        <Nickname> {user.nickname || '닉네임'} </Nickname>
+                        <Button onClick={handleFollowClick}>
+                            <ButtonImage src={user.is_following ? '/following_btn.svg' : '/follow_btn.svg'}/>
+                        </Button>
+                    </Row>
                     <Email> {user.email || 'email@email.com'}</Email>
                     <MyInfo>
                         <ModalWrapper onClick={() => handleModalOpen('following')}>
@@ -207,11 +214,12 @@ export default function MyPage() {
                             <MyInfoName>팔로워</MyInfoName>
                             <MyInfoNum> {user.follower_num || '0'}</MyInfoNum>
                         </ModalWrapper>
-                        {followModal === 'follower' && (
-                            <MyFollowerModal onClose={handleModalClose} />
+
+                        {followModal === 'follower' && userId && (
+                            <FollowerModal userId={userId} onClose={handleModalClose} />
                         )}
-                        {followModal === 'following' && (
-                            <MyFollowingModal onClose={handleModalClose} />
+                        {followModal === 'following' && userId && (
+                            <FollowingModal userId={userId} onClose={handleModalClose} />
                         )}
 
                         <MyInfoName>|</MyInfoName>
@@ -222,25 +230,13 @@ export default function MyPage() {
                     </MyInfo>
                 </ProfileInfoWrapper>
                 <BtnWrapper>
-                    <NavBtn onClick={onNavClick}/>
+                    
                 </BtnWrapper>
             </PropfileWrapper>
-            <CaroName> 내가 작성한 리뷰 </CaroName>
+            <CaroName> {user.nickname || '닉네임'}님이 작성한 리뷰 </CaroName>
             <Component />
-            <CaroName> 내가 찜한 뮤지컬 </CaroName>
+            <CaroName> {user.nickname || '닉네임'}님이 찜한 뮤지컬 </CaroName>
             <Component />
-            <Row>
-                <DividerText onClick={ handleLogout }>로그아웃</DividerText>
-                <DividerText onClick={() => setIsModalOpen(true)}>뮤지컬리 탈퇴하기</DividerText>
-                {isModalOpen && (
-                    <LeaveModal 
-                        onConfirm = {handleLeave}
-                        onCancel = {() => setIsModalOpen(false)}
-                        
-                    />
-                )}
-            </Row>
-            
         </Wrapper>
     );
 }

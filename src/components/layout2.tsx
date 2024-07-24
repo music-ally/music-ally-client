@@ -3,13 +3,13 @@ import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FiSearch, FiBell } from 'react-icons/fi';
-
+import bgimg from "../assets/bgimage_01.png"
 
 const HeaderContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-image: url('/header-background.png'); // 배경 이미지 경로
+    //background-image: url('/header-background.png'); // 배경 이미지 경로
     background-size: cover;
     background-position: center;
     padding: 10px 20px;
@@ -101,6 +101,7 @@ const FixedWidthWrapper = styled.div`
     min-width: 1280px;
     margin: 0 auto;
     padding: 0;
+    background-image: url(${bgimg});
 `;
 
 const Layout: React.FC = () => {
