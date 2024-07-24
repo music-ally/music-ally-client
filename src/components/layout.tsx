@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from 'react-router-dom';
 import { FiSearch, FiBell } from 'react-icons/fi';
 import styled from 'styled-components';
-import Carousel from "./carousel";
+import Carousel from "./1carousel";
 
 const HeaderContainer = styled.div`
     display: flex;

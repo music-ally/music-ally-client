@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import NaverMap from '../api/naver-map';
+import ReviewComponent from './review.tsx';
 // import axios from 'axios';
 
 interface MusicalDetails {
@@ -15,6 +16,11 @@ interface MusicalDetails {
 interface DetailModalProps {
   musical_ID: string;
   onClose: () => void;
+}
+
+interface Review {
+  id: number;
+  content: string;
 }
 
 const ModalBackground = styled.div`
@@ -170,8 +176,6 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
   const handleReviewClick = () => {
     console.log('리뷰 작성 버튼 클릭됨');
   };
-
-  // 더미 데이터
   const dummyData: MusicalDetails = {
     image_url: "https://via.placeholder.com/400x600",
     title: "레미제라블",
@@ -221,9 +225,10 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
         <ReviewSection>
           <SectionTitle>Review</SectionTitle>
           <ReviewButton onClick={handleReviewClick}>
-            <ReviewIcon src="review-write.svg" alt="Write Review" />
+            <ReviewIcon src="review-write.svg" alt="리뷰작성" />
             리뷰 작성
           </ReviewButton>
+          <ReviewComponent/>
         </ReviewSection>
       </ModalContainer>
     </ModalBackground>
