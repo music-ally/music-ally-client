@@ -2,11 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import profileimg from "/profileimg.png"
-import Component from "../components/mypage-carousel";
 import axios from "axios";
 import LeaveModal from "../components/leaveModal";
 import MyFollowingModal from "../components/myFollowingModal";
 import MyFollowerModal from "../components/myFollowerModal";
+import Carousel4 from "../components/mypage-carousel";
 
 const Wrapper = styled.div`
     display: flex;
@@ -226,7 +226,7 @@ export default function MyPage() {
                 </BtnWrapper>
             </PropfileWrapper>
             <CaroName> 내가 작성한 리뷰 </CaroName>
-            <Component />
+            <Carousel4 />
             <CaroName> 내가 찜한 뮤지컬 </CaroName>
             <Component />
             <Row>
