@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import ModalTest from './modalTest';
-import basicimg from "../assets/carousel_basic.png";
-import ReviewModalTest from './reviewModalTest';
+import DetailModal from './detail-modal';
 
 // 글로벌 스타일 정의
 const GlobalStyle = createGlobalStyle`
@@ -38,7 +36,7 @@ const ImageRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 17px; 
+  gap: 17px; /* 이미지 간격 조절 */
 `;
 
 const Image = styled.img`
@@ -68,19 +66,19 @@ const RightButton = styled(Button)`
 
 interface Props {}
 
-const Carousel4: React.FC<Props> = () => {
+const Component: React.FC<Props> = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayImages, setDisplayImages] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
 
   const images = [
-    basicimg,
-    basicimg,
-    basicimg,
-    basicimg,
-    basicimg,
-    basicimg,
+    "/musicalposter-1.jpeg",
+    "/musicalposter-2.jpeg",
+    "/musicalposter-3.jpeg",
+    "/musicalposter-4.jpeg",
+    "/musicalposter-5.jpeg",
+    "/musicalposter-6.jpeg",
   ];
 
   useEffect(() => {
@@ -109,7 +107,7 @@ const Carousel4: React.FC<Props> = () => {
     });
   };
 
-const handleImageClick = (image: string) => {
+  const handleImageClick = (image: string) => {
     setSelectedImage(image);
     setIsModalOpen(true);
   };
@@ -137,10 +135,10 @@ const handleImageClick = (image: string) => {
             )}
           </Row>
         </ContentWrapper>
-        {isModalOpen && <ReviewModalTest reviewId='' onClose={handleCloseModal} />}
+        {isModalOpen && <DetailModal image={selectedImage} onClose={handleCloseModal} />}
       </Container>
     </>
   );
 };
 
-export default Carousel4;
+export default Component;
