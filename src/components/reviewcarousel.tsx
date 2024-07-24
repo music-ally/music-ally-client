@@ -25,20 +25,6 @@ const ContentWrapper = styled.div`
   align-items: flex-start;
 `;
 
-const Title = styled.div`
-  margin: 0 5px 15px 5px;
-  display: inline-block;
-  word-break: break-word;
-  font-family: 'Inter-SemiBold', sans-serif;
-  font-weight: 800;
-  font-size: 34px;
-  letter-spacing: 1px;
-  line-height: 1.5;
-  background: linear-gradient(90deg, #E8E1B1, #BB9D59);
-  color: transparent;
-  background-clip: text;
-`;
-
 const Row = styled.div`
   display: flex;
   flex-direction: row;
@@ -50,7 +36,7 @@ const ImageRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 17px; 
+  gap: 17px;
 `;
 
 const Image = styled.img`
@@ -78,7 +64,7 @@ const RightButton = styled(Button)`
   right: -25px;
 `;
 
-const Carousel: React.FC = () => {
+const Component: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMusicalID, setSelectedMusicalID] = useState<string>('');
@@ -92,17 +78,11 @@ const Carousel: React.FC = () => {
   ];
 
   const handleLeftButtonClick = () => {
-    setCurrentIndex((prevIndex) => {
-      const newIndex = prevIndex === 0 ? images.length - 1 : prevIndex - 1;
-      return newIndex;
-    });
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
   };
 
   const handleRightButtonClick = () => {
-    setCurrentIndex((prevIndex) => {
-      const newIndex = prevIndex === images.length - 1 ? 0 : prevIndex + 1;
-      return newIndex;
-    });
+    setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
   };
 
   const handleImageClick = (musicalID: string) => {
@@ -119,23 +99,16 @@ const Carousel: React.FC = () => {
       <GlobalStyle /> {/* 글로벌 스타일 적용 */}
       <Container>
         <ContentWrapper>
-          <Title>믿고 보는 배우 ㅇㅇㅇ의 출연작</Title>
           <Row>
             <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
             <ImageRow>
-              {images.map((image, index) => {
-                const displayIndex = (index + currentIndex) % images.length;
-                return (
-                  <Image
-                    key={image.id}
-                    src={images[displayIndex].url}
-                    onClick={() => handleImageClick(images[displayIndex].id)} 
-                    style={{
-                      display: index < 4 ? 'block' : 'none',
-                    }}
-                  />
-                );
-              })}
+              {images.slice(currentIndex, currentIndex + 4).map((image) => (
+                <Image
+                  key={image.id}
+                  src={image.url}
+                  onClick={() => handleImageClick(image.id)} 
+                />
+              ))}
             </ImageRow>
             <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
           </Row>
@@ -146,4 +119,4 @@ const Carousel: React.FC = () => {
   );
 };
 
-export default Carousel;
+export default Component;
