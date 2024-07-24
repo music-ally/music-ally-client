@@ -18,11 +18,6 @@ interface DetailModalProps {
   onClose: () => void;
 }
 
-interface Review {
-  id: number;
-  content: string;
-}
-
 const ModalBackground = styled.div`
   position: fixed;
   top: 0;
@@ -134,22 +129,30 @@ const BookmarkIcon = styled.img`
   height: 30px;
 `;
 
+
 const ReviewSection = styled.div`
   margin-top: 20px;
 `;
+
+const ReviewcomponentSection = styled.div`
+  margin-left : 120px;
+   & > div {
+    margin-bottom: 18px;
+  }
+`
 
 const ReviewButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
   display: flex;
-  align-items: center;
 `;
 
 const ReviewIcon = styled.img`
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
+  width: 25px;
+  height: 25px;
+  margin-top: -65px;
+  margin-left : 1100px;
 `;
 
 const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
@@ -226,9 +229,12 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
           <SectionTitle>Review</SectionTitle>
           <ReviewButton onClick={handleReviewClick}>
             <ReviewIcon src="review-write.svg" alt="리뷰작성" />
-            리뷰 작성
           </ReviewButton>
+          <ReviewcomponentSection>
           <ReviewComponent/>
+          <ReviewComponent/>
+          <ReviewComponent/>
+          </ReviewcomponentSection>
         </ReviewSection>
       </ModalContainer>
     </ModalBackground>
