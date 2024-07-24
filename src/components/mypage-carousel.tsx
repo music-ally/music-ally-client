@@ -79,20 +79,6 @@ const RightButton = styled(Button)`
   right: -25px;
 `;
 
-<<<<<<< HEAD:src/components/1carousel.tsx
-const Carousel: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedMusicalID, setSelectedMusicalID] = useState<string>('');
-  const images = [
-    { id: '1', url: '/musicalposter-1.jpeg' },
-    { id: '2', url: '/musicalposter-2.jpeg' },
-    { id: '3', url: '/musicalposter-3.jpeg' },
-    { id: '4', url: '/musicalposter-4.jpeg' },
-    { id: '5', url: '/musicalposter-5.jpeg' },
-    { id: '6', url: '/musicalposter-6.jpeg' },
-  ];
-=======
 const Component: React.FC = () => {
     // 기본 이미지 설정
     // 한번에 4개씩 보이니 기본은 기본 이미지로 설정
@@ -101,6 +87,8 @@ const Component: React.FC = () => {
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [images, setImages] = useState<string[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedMusicalID, setSelectedMusicalID] = useState<string>('');
     /* 
     const images = [
         basicimg,
@@ -129,7 +117,6 @@ const Component: React.FC = () => {
         };
         fetchImages();
     }, []);
->>>>>>> 11723a8a2c6226486f3636a3fee6d0335a229e7f:src/components/mypage-carousel.tsx
 
   const handleLeftButtonClick = () => {
     setCurrentIndex((prevIndex) => {
@@ -185,8 +172,4 @@ const Component: React.FC = () => {
   );
 };
 
-<<<<<<< HEAD:src/components/1carousel.tsx
-export default Carousel;
-=======
 export default Component;
->>>>>>> 11723a8a2c6226486f3636a3fee6d0335a229e7f:src/components/mypage-carousel.tsx
