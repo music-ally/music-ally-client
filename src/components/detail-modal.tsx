@@ -106,12 +106,10 @@ const Section = styled.div`
 `;
 
 const SectionTitle = styled.h2`
+  margin: 0;
   font-size: 1.5em;
   color: #e3bf3d;
   margin-bottom: 33px;
-  margin-left: 500px;
-  display: flex;
-  width : 100px;
 `;
 
 const Cast = styled.p`
@@ -148,15 +146,13 @@ const ReviewButton = styled.button`
   border: none;
   cursor: pointer;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 1100px;
 `;
 
 const ReviewIcon = styled.img`
   width: 25px;
   height: 25px;
-  margin-top: -80px;
+  margin-top: -65px;
+  margin-left : 1100px;
 `;
 
 const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
