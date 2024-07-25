@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReviewCarousel from './reviewcarousel';
 import styled from 'styled-components';
 
@@ -12,23 +12,50 @@ const Title = styled.h1`
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom : 15px; 
+    margin-bottom: 15px; 
 `;
 
 const Container = styled.div`
-    margin-top : 200px;
-`
+    margin-top: 200px;
+`;
 
 const Actor: React.FC = () => {
+    const [title, setTitle] = useState('');
+    const [musicalId, setMusicalId] = useState(0);
+
+    useEffect(() => {
+        // Commented out fetch call for backend connection
+        // fetch('/actor/musical/:num')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         setTitle(data.title);
+        //         setMusicalId(data.id);
+        //     });
+
+        // 더미데이터
+        const musicals = [
+            { musicalId: 1, title: '레미제라블' },
+            { musicalId: 2, title: '오페라의 유령' },
+            { musicalId: 3, title: '지킬 앤 하이드' },
+            { musicalId: 4, title: '위키드' },
+            { musicalId: 5, title: '캐츠' }
+        ];
+
+        const randomMusical = musicals[Math.floor(Math.random() * musicals.length)];
+        setTitle(randomMusical.title);
+        setMusicalId(randomMusical.musicalId);
+        console.log(`musicalID잘 넘어가고 있는지 ${randomMusical.musicalId}`);
+    }, []);
+
     return (
         <Container>
-            <Title>레미제라블 출연진을 한눈에 보기!</Title>
+            <Title>{title} 출연진을 한눈에 보기!</Title>
             <ReviewCarousel />
 
-            <Title>가수 출신 뮤지컬 배우 누가 있을까?</Title>
+            <Title>가수 출신 뮤지컬 배우 모아보기</Title>
             <ReviewCarousel />
 
-            <Title>2030 최애 배우 모아보기</Title>
+            <Title>최근 핫한 배우 모아보기</Title>
             <ReviewCarousel />
         </Container>
     );
