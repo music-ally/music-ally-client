@@ -2,14 +2,15 @@ import React from "react";
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FiSearch, FiBell } from 'react-icons/fi';
+import { FiBell } from 'react-icons/fi';
 import bgimg from "../assets/bgimage_01.png"
+import SearchContainer from './searchcontainer.tsx';
 
 const HeaderContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    //background-image: url('/header-background.png'); // 배경 이미지 경로
+    //background-image: url('/header-background.png'); 
     background-size: cover;
     background-position: center;
     padding: 10px 20px;
@@ -20,7 +21,7 @@ const Logo = styled.img`
     height: 63px;
 `;
 
-const SearchContainer = styled.div`
+const Search = styled.div`
     display: flex;
     width: 329px;
     height: 32.779px;
@@ -31,24 +32,6 @@ const SearchContainer = styled.div`
     border-radius: 6.617px;
     border: 0.827px solid #E0E0E0;
     background: rgba(255, 255, 255, 0.90);
-`;
-
-const SearchInput = styled.input`
-    overflow: hidden;
-    color: #828282;
-    text-overflow: ellipsis;
-    font-family: Inter;
-    font-size: 14.568px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 19.852px;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    border-radius: 6.617px;
-    border : none;
-    flex: 1 0 0;
-    background-color: transparent;
 `;
 
 const Nav = styled.nav`
@@ -80,10 +63,9 @@ const Header: React.FC = () => {
     return (
         <HeaderContainer>
             <Logo src="/header-Logo.png" alt="Logo" />
-            <SearchContainer>
-                <FiSearch size={20} color="#251611"/>
-                <SearchInput type="text" placeholder="<뮤지컬>이 궁금해!" />
-            </SearchContainer>
+            <Search>
+                <SearchContainer/>
+            </Search>
             <Nav>
                 <NavLink to="/">Main</NavLink>
                 <NavLink to="/review">Review</NavLink>
