@@ -6,7 +6,7 @@ interface NotificationData {
 }
 
 interface NotificationProps {
-  type: 'review_like' | 'new_follower' | 'follow_confirmation';
+  type: 'review_like' | 'new_follower';
   data: NotificationData;
 }
 
@@ -17,8 +17,6 @@ const Notification: React.FC<NotificationProps> = ({ type, data }) => {
       return <div>{data.user} 외 {data.count}명이 내 리뷰를 좋아합니다.</div>;
     case 'new_follower':
       return <div>{data.user}님이 회원님을 팔로우하기 시작했습니다.</div>;
-    case 'follow_confirmation':
-      return <div>{data.user}님을 팔로우하기 시작했습니다.</div>;
     default:
       return null;
   }
@@ -28,12 +26,26 @@ const NotificationList: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationProps[]>([]);
 
   useEffect(() => {
-    const socket = new WebSocket('ws://your-api-endpoint');
-    socket.onmessage = (event) => {
-      const newNotification = JSON.parse(event.data);
-      setNotifications((prev) => [...prev, newNotification]);
-    };
-    return () => socket.close();
+    // const socket = new WebSocket('ws://your-api-endpoint');
+    // socket.onmessage = (event) => {
+    //   const newNotification = JSON.parse(event.data);
+    //   setNotifications((prev) => [...prev, newNotification]);
+    // };
+    // return () => socket.close();
+
+    // 더미 데이터를 위한 타이머 설정
+    const interval = setInterval(() => {
+      const dummyNotification: NotificationProps = {
+        type: 'review_like',
+        data: {
+          user: '사용자1',
+          count: Math.floor(Math.random() * 10) + 1,
+        },
+      };
+      setNotifications((prev) => [...prev, dummyNotification]);
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -44,18 +56,19 @@ const NotificationList: React.FC = () => {
     </div>
   );
 };
+
 const NotificationToggle: React.FC = () => {
   const [isEnabled, setIsEnabled] = useState(true);
 
   const toggleNotifications = () => {
     setIsEnabled(!isEnabled);
-    fetch('http://your-api-endpoint/notifications/toggle', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ enabled: !isEnabled }),
-    });
+    // fetch('http://your-api-endpoint/notifications/toggle', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ enabled: !isEnabled }),
+    // });
   };
 
   return (
@@ -65,7 +78,7 @@ const NotificationToggle: React.FC = () => {
   );
 };
 
-const NotificationSystem: React.FC = () => {
+const Notifi: React.FC = () => {
   return (
     <div>
       <h2>알림</h2>
@@ -75,4 +88,4 @@ const NotificationSystem: React.FC = () => {
   );
 };
 
-export default NotificationSystem;
+export default Notifi;
