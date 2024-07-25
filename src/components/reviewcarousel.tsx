@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+// src/components/ReviewCarousel.tsx
+
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import DetailModal from './detail-modal';
 
 // 글로벌 스타일 정의
@@ -10,6 +12,10 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 600;
     font-style: normal;
   }
+
+  body {
+    font-family: 'Inter-SemiBold', sans-serif;
+  }
 `;
 
 const Container = styled.div`
@@ -17,7 +23,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom : 72px;
 `;
 
 const ContentWrapper = styled.div`
@@ -40,11 +45,44 @@ const ImageRow = styled.div`
   gap: 17px;
 `;
 
-const Image = styled.img`
+const ImageWrapper = styled.div`
+  position: relative;
   border-radius: 20.5px;
+  overflow: hidden;
+  cursor: pointer;
   width: 275.2px;
   height: 389.3px;
-  cursor: pointer; 
+
+  &:hover .gradient {
+    opacity: 0.8;
+  }
+`;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const GradientOverlay = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+`;
+
+const ImageText = styled.div`
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+  color: #FAFAFA;
+  font-size: 23pt;
+  z-index: 1;
 `;
 
 const Button = styled.img`
@@ -65,25 +103,41 @@ const RightButton = styled(Button)`
   right: -25px;
 `;
 
-const Component: React.FC = () => {
+interface ReviewCarouselProps {
+  musicalID: number;
+}
+
+const ReviewCarousel: React.FC<ReviewCarouselProps> = ({ musicalID }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMusicalID, setSelectedMusicalID] = useState<string>('');
-  const images = [
-    { id: '1', url: '/musicalposter-1.jpeg' },
-    { id: '2', url: '/musicalposter-2.jpeg' },
-    { id: '3', url: '/musicalposter-3.jpeg' },
-    { id: '4', url: '/musicalposter-4.jpeg' },
-    { id: '5', url: '/musicalposter-5.jpeg' },
-    { id: '6', url: '/musicalposter-6.jpeg' },
-  ];
+  const [actors, setActors] = useState<Array<{ id: string; url: string; name: string }>>([]);
+
+  useEffect(() => {
+    // fetch call to backend to get actors for the musicalID
+    // fetch(`/actors/musical/${musicalID}`)
+    //   .then(response => response.json())
+    //   .then(data => setActors(data));
+
+    // 더미데이터
+    const dummyActors = [
+      { id: '1', url: '/actor-1.jpeg', name: 'Actor 1' },
+      { id: '2', url: '/actor-2.jpeg', name: 'Actor 2' },
+      { id: '3', url: '/actor-3.jpeg', name: 'Actor 3' },
+      { id: '4', url: '/actor-4.jpeg', name: 'Actor 4' },
+      { id: '5', url: '/actor-5.jpeg', name: 'Actor 5' },
+      { id: '6', url: '/actor-6.jpeg', name: 'Actor 6' },
+    ];
+
+    setActors(dummyActors);
+  }, [musicalID]);
 
   const handleLeftButtonClick = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? actors.length - 1 : prevIndex - 1));
   };
 
   const handleRightButtonClick = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
+    setCurrentIndex((prevIndex) => (prevIndex === actors.length - 1 ? 0 : prevIndex + 1));
   };
 
   const handleImageClick = (musicalID: string) => {
@@ -103,12 +157,12 @@ const Component: React.FC = () => {
           <Row>
             <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
             <ImageRow>
-              {images.slice(currentIndex, currentIndex + 4).map((image) => (
-                <Image
-                  key={image.id}
-                  src={image.url}
-                  onClick={() => handleImageClick(image.id)} 
-                />
+              {actors.slice(currentIndex, currentIndex + 4).map((actor) => (
+                <ImageWrapper key={actor.id} onClick={() => handleImageClick(actor.id)}>
+                  <Image src={actor.url} alt={actor.name} />
+                  <GradientOverlay className="gradient" />
+                  <ImageText>{actor.name}</ImageText>
+                </ImageWrapper>
               ))}
             </ImageRow>
             <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
@@ -120,4 +174,4 @@ const Component: React.FC = () => {
   );
 };
 
-export default Component;
+export default ReviewCarousel;
