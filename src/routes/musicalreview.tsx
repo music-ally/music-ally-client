@@ -29,7 +29,7 @@ const LeftAlignedContainer = styled.div`
 // BestReview 제목 스타일
 const BestReviewTitle = styled.h2`
   font-size: 75px;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Bebas', sans-serif;
   color: #BB9D59; /* 글자색 설정 */
   background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
   -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
@@ -38,12 +38,13 @@ const BestReviewTitle = styled.h2`
   margin: 0 74px; /* 좌우 간격 추가 */
   display: flex; /* Flex 설정 추가 */
   align-items: center; /* 수직 가운데 정렬 */
+  font-weight: 300; /* 글꼴 두께를 얇게 조정 */
 `;
 
 // BasicReview 제목 스타일
 const BasicReviewTitle = styled.h2`
   font-size: 75px;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Bebas', sans-serif;
   color: #BB9D59; /* 글자색 설정 */
   background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
   -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
@@ -52,6 +53,7 @@ const BasicReviewTitle = styled.h2`
   margin: 0 74px; /* 좌우 간격 추가 */
   display: flex; /* Flex 설정 추가 */
   align-items: center; /* 수직 가운데 정렬 */
+  font-weight: 300; /* 글꼴 두께를 얇게 조정 */
 `;
 
 // WriteIcon 이미지 스타일
