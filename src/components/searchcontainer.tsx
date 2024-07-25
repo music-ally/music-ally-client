@@ -220,7 +220,7 @@ const SearchComponent: React.FC = () => {
         <FiSearch size={20} color="#251611" />
         <SearchInput
           type="text"
-          placeholder="Search for musicals or actors"
+          placeholder="뮤지컬이 궁금해!"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
         />
