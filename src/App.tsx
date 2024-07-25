@@ -10,6 +10,7 @@ import { createGlobalStyle } from "styled-components";
 import SnsSignup from "./routes/sns-signup";
 import EditProfile from "./routes/editprofile";
 import UserProfile from "./routes/userprofile";
+import ActorPage from "./components/actor";
 
 const router = createBrowserRouter([
   {
@@ -20,7 +21,10 @@ const router = createBrowserRouter([
         path: "home",
         element: <Home />,
       },
-      
+      {
+        path : "actor",
+        element:<ActorPage/>
+      }
     ]
   },
   {
@@ -53,7 +57,6 @@ const router = createBrowserRouter([
     path: "/sns-signup",
     element: <SnsSignup />
   }
-
 ]);
 
 const GlobalStyles = createGlobalStyle`
