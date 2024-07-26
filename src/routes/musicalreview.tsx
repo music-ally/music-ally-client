@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 
 // 전체 페이지 컨테이너 스타일
 const AppContainer = styled.div`
-  background-image: url('/reviewpage.png'); /* 배경 이미지 경로 */
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh; /* 최소 화면 높이 */
