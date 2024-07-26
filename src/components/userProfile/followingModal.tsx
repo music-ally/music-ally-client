@@ -112,13 +112,20 @@ const LoadingContainer = styled.div`
     font-size: 24px;
 `;
 
+interface Following {
+    user_id: string; // 실제 타입에 맞게 수정
+    nickname: string;
+    email: string;
+    is_following: string; // '팔로잉' 또는 '팔로우'와 같은 문자열
+}
+
 interface FollowingModalProps {
     onClose: () => void;
     userId: string;
 }
 
 export default function FollowingModal ({userId, onClose} : FollowingModalProps) {
-    const [followings, setFollowings] = useState<any[]>([]);
+    const [followings, setFollowings] = useState<Following[]>([]);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         // api 호출
@@ -160,9 +167,17 @@ export default function FollowingModal ({userId, onClose} : FollowingModalProps)
                         followings && followings.map((following) => (
                             <ProfileCard
                                 key={following.user_id}
+                                // profileImage=""
                                 nickname={following.nickname}
                                 email={following.email}
                                 is_following={following.is_following}
+                                onFollowStatusChange={(userId, isFollowing) => {
+                                    // 팔로우 상태 변경 로직
+                                    const updatedFollowers = followings.map((f) => 
+                                        f.user_id === userId ? { ...f, is_following: isFollowing } : f // isFollowing을 직접 사용
+                                    );
+                                    setFollowings(updatedFollowers);
+                                }}
                             />
                         ))
                     )}

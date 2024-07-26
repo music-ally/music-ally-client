@@ -133,7 +133,7 @@ interface UserProfile {
     review_num: number;
     bookmark_num: number;
     profile_image: string | null;
-    is_following: boolean
+    is_following: string
     reviews: {
         reviews: Array<{
             review_id: string;
@@ -158,7 +158,7 @@ export default function UserProfile() {
         review_num: 0,
         bookmark_num: 0,
         profile_image: null,
-        is_following: false,
+        is_following: '팔로우',
         reviews: { 
             reviews: [
                 { review_id: 'defaultReview_id', poster_image: '/empty.png' }
@@ -185,10 +185,12 @@ export default function UserProfile() {
     
     const handleFollowClick = async () => {
         try {
-            if(user.is_following) {
+            if (user.is_following === '팔로잉') {
                 await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
-            } else {
+            } else if (user.is_following === '팔로우') {
                 await axios.post(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+            } else {
+                console.log('본인입니다')
             }
 
             // 화면 상태 업데이트
@@ -197,12 +199,6 @@ export default function UserProfile() {
         } catch (error) {
             console.error('follow, unfollow error : ', error);
         }
-        /*
-        if(isFollowing){
-            setIsFollowing(false);
-        } else {
-            setIsFollowing(true);
-        } */
     }
 
     const [followModal, setFollowModal] = useState<string|null>();
@@ -224,9 +220,11 @@ export default function UserProfile() {
                 <ProfileInfoWrapper>
                     <Row>
                         <Nickname> {user.nickname || '닉네임'} </Nickname>
-                        <Button onClick={handleFollowClick}>
-                            <ButtonImage src={user.is_following ? '/following_btn.svg' : '/follow_btn.svg'}/>
-                        </Button>
+                        {user.is_following !== '본인' && (
+                            <Button onClick={handleFollowClick}>
+                                <ButtonImage src={user.is_following === '팔로잉' ? '/following_btn.svg' : '/follow_btn.svg'}/>
+                            </Button>
+                        )}
                     </Row>
                     <Email> {user.email || 'email@email.com'}</Email>
                     <MyInfo>

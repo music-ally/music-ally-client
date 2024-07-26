@@ -63,8 +63,8 @@ interface ProfileCardProps {
     nickname?: string;
     email?: string;
     userId: string;
-    is_following: boolean;
-    onFollowStatusChange: (userId: string, isFollowing: boolean) => void;
+    is_following: string;
+    onFollowStatusChange: (userId: string, isFollowing: string) => void;
 }
 
 export default function ProfileCard(
@@ -79,12 +79,14 @@ export default function ProfileCard(
     const handleFollowClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         try {
-            if(is_following){
+            if(is_following === '팔로잉'){
                 await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
-                onFollowStatusChange(userId, false);
-            } else {
+                onFollowStatusChange(userId, '팔로우');
+            } else if(is_following === '팔로우'){
                 await axios.post(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
-                onFollowStatusChange(userId, true);
+                onFollowStatusChange(userId, '팔로잉');
+            } else {
+                console.log('본인');
             }
         } catch (error) {
             console.error("Error updating follow status:", error);
@@ -97,9 +99,13 @@ export default function ProfileCard(
                     <Nickname>{nickname}</Nickname>
                     <Email>{email}</Email>
                 </Info>
-                <Button onClick={ handleFollowClick }>
-                    <ButtonImage src={is_following ? "/following_btn_full.svg" : "/follow_btn.svg"} />
-                </Button>
+                {is_following !== '본인' && (
+                    <Button onClick={ handleFollowClick }>
+                        <ButtonImage 
+                            src={is_following === '팔로잉' ? "/following_btn_full.svg" : "/follow_btn.svg"} 
+                            alt="Follow Button" />
+                    </Button>
+                )}
         </Card>
     );
 }
@@ -107,11 +113,11 @@ export default function ProfileCard(
 // defaultProps 사용
 ProfileCard.defaultProps = {
     profileImage: '/profileimg.png',
-    nickname: '닉네임',
-    email: '이메일',
-    is_following: true,
+    nickname: '예시닉네임',
+    email: 'example@email.com',
+    is_following: '팔로우',
     userId: 'abc',
-    onFollowStatusChange: (userId: string, isFollowing: boolean) => {
+    onFollowStatusChange: (userId: string, isFollowing: string) => {
         console.log(`User ID: ${userId}, Following: ${isFollowing}`);
     },
 };
