@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import ModalTest from './modalTest';
-import basicimg from "../assets/carousel_basic.png";
-import ReviewModalTest from './reviewModalTest';
 
 // 글로벌 스타일 정의
 const GlobalStyle = createGlobalStyle`
@@ -45,7 +42,6 @@ const Image = styled.img`
   border-radius: 20.5px;
   width: 275.2px;
   height: 389.3px;
-  cursor: pointer; /* 커서 포인터 추가 */
 `;
 
 const Button = styled.img`
@@ -66,25 +62,31 @@ const RightButton = styled(Button)`
   right: -25px;
 `;
 
-interface Props {}
+// Bookmark array 불러오기
 
-const Carousel4: React.FC<Props> = () => {
+/*
+"bookmarks": {
+    "musicals": [
+        musical_id: ,
+        poster_image: ,
+    ]
+}
+*/
+interface Bookmark {
+  musical_id: string;
+  poster_image: string;
+}
+
+interface Props {
+  musicals: Bookmark[];
+}
+
+const MyBookmarkCaro: React.FC<Props> = ({ musicals }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayImages, setDisplayImages] = useState<string[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string>('');
-
-  const images = [
-    basicimg,
-    basicimg,
-    basicimg,
-    basicimg,
-    basicimg,
-    basicimg,
-  ];
 
   useEffect(() => {
-    const newImages = [...images];
+    const newImages = [...musicals.map(musical => musical.poster_image)];
     const remainder = newImages.length % 4;
     if (remainder !== 0) {
       const emptySlots = 4 - remainder;
@@ -93,7 +95,7 @@ const Carousel4: React.FC<Props> = () => {
       }
     }
     setDisplayImages(newImages);
-  }, [images]);
+  }, [musicals]);
 
   const handleLeftButtonClick = () => {
     setCurrentIndex((prevIndex) => {
@@ -109,14 +111,9 @@ const Carousel4: React.FC<Props> = () => {
     });
   };
 
-const handleImageClick = (image: string) => {
-    setSelectedImage(image);
-    setIsModalOpen(true);
-  };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  // 캐로셀 이미지에 hover pointer 설정하고 싶네
+
 
   return (
     <>
@@ -129,7 +126,7 @@ const handleImageClick = (image: string) => {
             )}
             <ImageRow>
               {displayImages.slice(currentIndex, currentIndex + 4).map((image, index) => (
-                <Image key={index} src={image} onClick={() => handleImageClick(image)} />
+                <Image key={index} src={image} />
               ))}
             </ImageRow>
             {displayImages.length > 4 && (
@@ -137,10 +134,9 @@ const handleImageClick = (image: string) => {
             )}
           </Row>
         </ContentWrapper>
-        {isModalOpen && <ReviewModalTest reviewId='' onClose={handleCloseModal} />}
       </Container>
     </>
   );
 };
 
-export default Carousel4;
+export default MyBookmarkCaro;

@@ -6,7 +6,9 @@ import axios from "axios";
 import LeaveModal from "../components/leaveModal";
 import MyFollowingModal from "../components/myFollowingModal";
 import MyFollowerModal from "../components/myFollowerModal";
-import Carousel4 from "../components/mypage-carousel";
+import ReviewCaroTest from "../components/myReviewCaroTest";
+import MyReviewCaro from "../components/myReviewCaro";
+import MyBookmarkCaro from "../components/myBookmarkCaro";
 
 const Wrapper = styled.div`
     display: flex;
@@ -126,6 +128,18 @@ interface User {
     follower_num: number;
     review_num: number;
     bookmark_num: number;
+    reviews: {
+        reviews: Array<{
+            review_id: string;
+            poster_image: string;
+        }>;
+    };
+    bookmarks: {
+        musicals: Array<{
+            musical_id: string;
+            poster_image: string;
+        }>;
+    };
 }
 
 export default function MyPage() {
@@ -137,6 +151,16 @@ export default function MyPage() {
         follower_num: 0,
         review_num: 0,
         bookmark_num: 0,
+        reviews: { 
+            reviews: [
+                { review_id: 'defaultReview_id', poster_image: '/empty.png' }
+            ] 
+        }, // 리뷰 초기값 추가
+        bookmarks: { 
+            musicals: [
+                { musical_id: 'defaultBookmark_id', poster_image: '/empty.png' }
+            ] 
+        },
     });
     const [profile, setProfile] = useState<string>(profileimg);
 
@@ -145,7 +169,7 @@ export default function MyPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/mypage`);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage`);
                 setUser(response.data);
             } catch (error) {
                 console.error("Fetch data error : ", error);
@@ -226,9 +250,11 @@ export default function MyPage() {
                 </BtnWrapper>
             </PropfileWrapper>
             <CaroName> 내가 작성한 리뷰 </CaroName>
-            <Carousel4 />
+            <MyReviewCaro reviews={user.reviews?.reviews || [{review_id: '66a0e7348da2278779d22aba', poster_image: '/poster_basic.png'}]} />
+
             <CaroName> 내가 찜한 뮤지컬 </CaroName>
-            <Carousel4 />
+            {/* <ReviewCaroTest /> */}
+            <MyBookmarkCaro musicals={user.bookmarks?.musicals || [{musical_id: '', poster_image: '/poster_basic.png'}, {},]}/>
             <Row>
                 <DividerText onClick={ handleLogout }>로그아웃</DividerText>
                 <DividerText onClick={() => setIsModalOpen(true)}>뮤지컬리 탈퇴하기</DividerText>
