@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import ProfileCard from "./profileCard";
+import ProfileCard from "../profileCard";
 import axios from "axios";
 
 const Overlay = styled.div`
@@ -102,19 +102,28 @@ const Divider = styled.div`
     align-items: center; /* 가운데 정렬 */
 `
 
+const LoadingContainer = styled.div`
+    /* 로딩 메시지 스타일 추가 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+`;
+
 interface FollowerModalProps {
     onClose: () => void;
-    userId: string;
 }
 
-export default function FollowerModal ({userId, onClose} : FollowerModalProps) {
+export default function MyFollowerModal ({ onClose } : FollowerModalProps) {
     const [followers, setFollowers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         // api 호출
         const fetchFollowers = async() => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follower`);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage/follower`);
                 setFollowers(response.data.follow_list);
             } catch (error) {
                 console.error("Error fetching followers: ", error);
@@ -130,11 +139,11 @@ export default function FollowerModal ({userId, onClose} : FollowerModalProps) {
         return () => {
           document.body.style.overflow = 'auto';
         };
-      }, [userId]);
+      }, []);
       
     return(
         <Overlay onClick={onClose}>
-            <Modal>
+            <Modal onClick={(e) => e.stopPropagation()}>
                 <Header>
                     <Title>팔로워</Title>
                     <CloseButton onClick={onClose}>
@@ -145,7 +154,7 @@ export default function FollowerModal ({userId, onClose} : FollowerModalProps) {
                 <ModalContent>
                     <ProfileCard />
                     {loading ? (
-                        <div>Loading...</div>
+                        <LoadingContainer>Loading...</LoadingContainer>
                     ):(
                         followers && followers.map((follower) => (
                             <ProfileCard 

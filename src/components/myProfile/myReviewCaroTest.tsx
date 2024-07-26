@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import ModalTest from './modalTest';
+import ModalTest from '../modalTest';
 import basicimg from "../assets/carousel_basic.png";
-import ReviewModalTest from './reviewModalTest';
+import ReviewModalTest from '../reviewModalTest';
 
 // 모달 클릭용 리뷰 캐로셀 테스트
 

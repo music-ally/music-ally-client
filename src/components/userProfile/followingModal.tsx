@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import ProfileCard from "./profileCard";
+import ProfileCard from "../profileCard";
 
 const Overlay = styled.div`
   position: fixed;
@@ -102,6 +102,16 @@ const Divider = styled.div`
     align-items: center; /* 가운데 정렬 */
 `
 
+const LoadingContainer = styled.div`
+    /* 로딩 메시지 스타일 추가 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+`;
+
 interface FollowingModalProps {
     onClose: () => void;
     userId: string;
@@ -145,7 +155,7 @@ export default function FollowingModal ({userId, onClose} : FollowingModalProps)
                 <ModalContent>
                     <ProfileCard />
                     {loading ? (
-                        <div>Loading...</div>
+                        <LoadingContainer>Loading...</LoadingContainer>
                     ):(
                         followings && followings.map((following) => (
                             <ProfileCard

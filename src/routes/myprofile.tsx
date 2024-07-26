@@ -4,11 +4,11 @@ import { styled } from "styled-components";
 import profileimg from "/profileimg.png"
 import axios from "axios";
 import LeaveModal from "../components/leaveModal";
-import MyFollowingModal from "../components/myFollowingModal";
-import MyFollowerModal from "../components/myFollowerModal";
-import ReviewCaroTest from "../components/myReviewCaroTest";
-import MyReviewCaro from "../components/myReviewCaro";
-import MyBookmarkCaro from "../components/myBookmarkCaro";
+import MyFollowingModal from "../components/myProfile/myFollowingModal";
+import MyFollowerModal from "../components/myProfile/myFollowerModal";
+import ReviewCaroTest from "../components/myProfile/myReviewCaroTest";
+import MyReviewCaro from "../components/myProfile/myReviewCaro";
+import MyBookmarkCaro from "../components/myProfile/myBookmarkCaro";
 
 const Wrapper = styled.div`
     display: flex;
