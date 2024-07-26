@@ -28,6 +28,12 @@ const LeftAlignedContainer = styled.div`
 
 // search 아이콘 스타일
 const SearchIcon = styled.img`
+  width: 80px; /* 아이콘 너비 */
+  height: 80px; /* 아이콘 높이 */
+`;
+
+// search 아이콘 스타일
+const SearchIcon2 = styled.img`
   width: 50px; /* 아이콘 너비 */
   height: 50px; /* 아이콘 높이 */
 `;
@@ -110,13 +116,14 @@ const App: React.FC = () => {
         <MainTitle>
           MUSICAL
         </MainTitle>
+        <SearchIcon src="/search.png" alt="Search Icon" /> 
       </LeftAlignedContainer>
       <MusicalTicket />
       <LeftAlignedContainer>
         <Title>
           ACTOR
         </Title>
-        <SearchIcon src="/search.png" alt="Search Icon" /> 
+        <SearchIcon2 src="/search.png" alt="Search Icon" /> 
       </LeftAlignedContainer>
       <LeftAlignedActorContainer>
         <Actor />
