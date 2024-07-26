@@ -12,11 +12,12 @@ import EditProfile from "./routes/editprofile";
 import UserProfile from "./routes/userprofile";
 import ActorPage from "./components/actor";
 import Review from "./routes/musicalreview";
+import WriteReview from "./routes/writereview"; 
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <Layout />, // Layout을 사용하여 전체 레이아웃을 설정
     children: [
       {
         path: "home",
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "review",
         element: <Review />,
+      },
+      {
+        path: "write-review",
+        element: <WriteReview /> // WriteReview를 Layout의 자식으로 설정
       }
     ]
   },
@@ -71,7 +76,7 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  body{
+  body {
     background-color: black;
     color: white;
   }

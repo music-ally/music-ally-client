@@ -50,7 +50,7 @@ const MainTitle = styled.h1`
   margin: 6px 0; /* 상하 간격 추가 */
   display: flex; /* Flex 설정 추가 */
   align-items: center; /* 수직 가운데 정렬 */
-  margin-left: 100px; /* 왼쪽 열에 맞게 위치 조정 */
+  margin-left: 20px; /* 왼쪽 열에 맞게 위치 조정 */
   font-weight: 300; /* 글꼴 두께를 얇게 조정 */
 `;
 
@@ -66,7 +66,7 @@ const Title = styled.h2`
   margin: 6px 0; /* 상하 간격 추가 */
   display: flex; /* Flex 설정 추가 */
   align-items: center; /* 수직 가운데 정렬 */
-  margin-left: 100px; /* 왼쪽 열에 맞게 위치 조정 */
+  margin-left: 20px; /* 왼쪽 열에 맞게 위치 조정 */
   font-weight: 300; /* 글꼴 두께를 얇게 조정 */
 `;
 
@@ -83,7 +83,7 @@ const RightAlignedContainer = styled.div`
   justify-content: flex-end; /* 오른쪽 정렬 */
   align-items: center; /* 세로 중앙 정렬 */
   margin-top: 20px; /* 위쪽 간격 추가 */
-  margin-left: -230px; /* 왼쪽으로 50px 이동 */
+  margin-left: -80px; /* 왼쪽으로 50px 이동 */
 `;
 
 // RightAlignedContainer의 내부를 위한 컨테이너
@@ -100,7 +100,6 @@ const LeftAlignedActorContainer = styled.div`
   align-items: center; /* 세로 중앙 정렬 */
   margin-top: 30px; 
   margin-bottom: 50px; /* 타이틀과 다음 컴포넌트 사이 간격 조정 */
-  margin-left: 180px; /* 타이틀과 같은 열에 맞추기 */
   gap: 32px; /* Actor 컴포넌트 사이의 간격 */
 `;
 
