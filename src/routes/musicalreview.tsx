@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import BasicReview from '../components/basicreview';
 import BestReview from '../components/bestreview';
 import Pagination from '../components/pagination';
+import { useNavigate } from 'react-router-dom';
+
 
 // 전체 페이지 컨테이너 스타일
 const AppContainer = styled.div`
@@ -77,6 +79,12 @@ const HorizontalLine = styled.hr`
 `;
 
 const App: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleWriteReviewClick = () => {
+    navigate('/write-review');
+  };
+
   return (
     <AppContainer>
       <LeftAlignedContainer>
@@ -90,7 +98,7 @@ const App: React.FC = () => {
         <BasicReviewTitle>
           ALL Review
         </BasicReviewTitle>
-        <WriteIcon src="/write.png" alt="Write Icon" /> {/* BasicReviewTitle 옆에 WriteIcon 추가 */}
+        <WriteIcon src="/write.png" alt="Write Icon" onClick={handleWriteReviewClick} />
       </LeftAlignedContainer>
       <VerticalSpacing>
         <BasicReview />
