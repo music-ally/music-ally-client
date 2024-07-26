@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/layout";
 import Layout2 from "./components/layout2";
 import Home from "./routes/home";
@@ -11,19 +11,24 @@ import SnsSignup from "./routes/sns-signup";
 import EditProfile from "./routes/editprofile";
 import UserProfile from "./routes/userprofile";
 import ActorPage from "./components/actor";
+import Review from "./routes/musicalreview";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element : <Layout />,
+    element: <Layout />,
     children: [
       {
         path: "home",
         element: <Home />,
       },
       {
-        path : "actor",
-        element:<ActorPage/>
+        path: "actor",
+        element: <ActorPage />,
+      },
+      {
+        path: "review",
+        element: <Review />,
       }
     ]
   },
@@ -72,18 +77,15 @@ const GlobalStyles = createGlobalStyle`
   }
 `;
 
-const Wrapper = styled.div`
-  
-`
+const Wrapper = styled.div``;
 
 function App() {
-
   return (
     <Wrapper>
-      {<GlobalStyles /> }
+      {<GlobalStyles />}
       <RouterProvider router={router} />
     </Wrapper>
-  )
+  );
 }
 
-export default App
+export default App;
