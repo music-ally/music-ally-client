@@ -35,7 +35,7 @@ const BestReviewTitle = styled.h2`
   -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
   background-clip: text; /* 텍스트만 그라데이션 적용 */
   -webkit-text-fill-color: transparent; /* 텍스트 색상 투명으로 */
-  margin: 0 74px; /* 좌우 간격 추가 */
+  margin: 0 0px; /* 좌우 간격 추가 */
   display: flex; /* Flex 설정 추가 */
   align-items: center; /* 수직 가운데 정렬 */
   font-weight: 300; /* 글꼴 두께를 얇게 조정 */
@@ -50,7 +50,7 @@ const BasicReviewTitle = styled.h2`
   -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
   background-clip: text; /* 텍스트만 그라데이션 적용 */
   -webkit-text-fill-color: transparent; /* 텍스트 색상 투명으로 */
-  margin: 0 74px; /* 좌우 간격 추가 */
+  margin: 0 0px; /* 좌우 간격 추가 */
   display: flex; /* Flex 설정 추가 */
   align-items: center; /* 수직 가운데 정렬 */
   font-weight: 300; /* 글꼴 두께를 얇게 조정 */
@@ -61,7 +61,7 @@ const WriteIcon = styled.img`
   width: 50px; /* 아이콘 너비 */
   height: 50px; /* 아이콘 높이 */
   margin-left: auto; /* 왼쪽 여백을 auto로 설정하여 오른쪽으로 이동 */
-  margin-right: 74px; /* 오른쪽 여백 추가 */
+  margin-right: 0px; /* 오른쪽 여백 추가 */
 `;
 
 // BasicReview와 Pagination 사이의 수직 간격 스타일
