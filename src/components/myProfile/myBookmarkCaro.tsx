@@ -42,6 +42,7 @@ const Image = styled.img`
   border-radius: 20.5px;
   width: 275.2px;
   height: 389.3px;
+  cursor: pointer;
 `;
 
 const Button = styled.img`
@@ -111,8 +112,9 @@ const MyBookmarkCaro: React.FC<Props> = ({ musicals }) => {
     });
   };
 
-
-  // 캐로셀 이미지에 hover pointer 설정하고 싶네
+  // const onBookmarkClick = () => {
+  //   // 해당 뮤지컬 아이디를 가진 뮤지컬 상세 모달창 open
+  // }
 
 
   return (
