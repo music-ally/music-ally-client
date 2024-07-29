@@ -69,6 +69,19 @@ const Nickname = styled.h3`
     margin: 5px 0;
 `
 
+const Row1 = styled.div`
+    display: flex;
+    flex-direction: row;
+`
+
+// 로그인 경로 이미지
+const Path = styled.img`
+    height: 20px;
+    background-color: white;
+    margin: 5px;
+    border-radius: 4px;
+`
+
 const Email = styled.h3`
     font-size: 20px;
     color: #BABABA;
@@ -140,6 +153,7 @@ interface User {
             poster_image: string;
         }>;
     };
+    path: string;
 }
 
 export default function MyPage() {
@@ -161,6 +175,7 @@ export default function MyPage() {
                 { musical_id: 'defaultBookmark_id', poster_image: '/empty.png' }
             ] 
         },
+        path: '이메일'
     });
     const [profile, setProfile] = useState<string>(profileimg);
 
@@ -177,13 +192,26 @@ export default function MyPage() {
         };
         fetchData();
     }, []);
-/*
-    // {userData.nickname} 등으로 불러오기~~
- */ 
+
+    let iconPath = '';
+    switch (user.path) {
+        case '이메일':
+            iconPath = '/email-icon.svg';
+            break;
+        case '구글':
+            iconPath = '/google-logo.svg';
+            break;
+        case '카카오':
+            iconPath = '/kakaotalk-logo.svg';
+            break;
+        default:
+            iconPath = ''; // 기본 아이콘 경로 또는 빈 문자열
+            break;
+    }
 
     const onNavClick = () => {
         navigate('/mypage/edit');
-    }
+    };
 
     const handleLogout = async () => {
         try {
@@ -221,7 +249,14 @@ export default function MyPage() {
                 </ProfileImageWrapper>
                 <ProfileInfoWrapper>
                 <Nickname> {user.nickname || '닉네임'} </Nickname>
-                    <Email> {user.email || 'email@email.com'}</Email>
+                    <Row1>
+                        {iconPath ? (
+                            <Path src={iconPath} alt={`${user.path} 아이콘`} />
+                        ) : (
+                            <Path src="/email-icon.svg" /> // path 존재하면 해당 아이콘, 아니면 이메일
+                        )}
+                        <Email> {user.email || 'email@email.com'}</Email>
+                    </Row1>
                     <MyInfo>
                         <ModalWrapper onClick={() => handleModalOpen('following')}>
                             <MyInfoName>팔로잉</MyInfoName>
