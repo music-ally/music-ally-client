@@ -16,6 +16,20 @@ import WriteReview from "./routes/writereview";
 import Search from "./routes/searchpage";
 import DetailSearchAct from "./routes/detailsearch-actor";
 import DetailSearchMus from "./routes/detailsearch-musical";
+import SeeReview from './routes/seereview'; 
+
+const GlobalStyles = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: black;
+    color: white;
+  }
+`;
 
 const router = createBrowserRouter([
   {
@@ -49,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "search/actor",
         element: <DetailSearchAct />
+      },
+      {
+        path: "see-review/:reviewId",
+        element: <SeeReview />
       }
     ]
   },
@@ -84,18 +102,6 @@ const router = createBrowserRouter([
   }
 ]);
 
-const GlobalStyles = createGlobalStyle`
-  * {
-    margin-top: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    background-color: black;
-    color: white;
-  }
-`;
 
 const Wrapper = styled.div``;
 

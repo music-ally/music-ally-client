@@ -59,15 +59,12 @@ const PerformanceDate = styled.div`
   letter-spacing: 5%;
 `;
 
-// Musical 데이터 타입 정의
 interface Musical {
   name: string;
   place: string;
   date: string;
   imageUrl: string;
 }
-
-// Props 인터페이스 정의
 interface Props {
   musicals?: Musical[]; 
 }
