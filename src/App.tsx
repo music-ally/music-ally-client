@@ -14,6 +14,8 @@ import ActorPage from "./components/actor";
 import Review from "./routes/musicalreview";
 import WriteReview from "./routes/writereview"; 
 import Search from "./routes/searchpage";
+import DetailSearchAct from "./routes/detailsearch-actor";
+import DetailSearchMus from "./routes/detailsearch-musical";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +41,14 @@ const router = createBrowserRouter([
       {
         path: "search",
         element: <Search />
+      },
+      {
+        path: "search/musical",
+        element: <DetailSearchMus />
+      },
+      {
+        path: "search/actor",
+        element: <DetailSearchAct />
       }
     ]
   },

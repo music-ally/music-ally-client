@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import MusicalInfo from '../components/musicalInfo';
 import ActorInfo from '../components/actorInfo';
 
-// Styled-components for the layout
 const PageContainer = styled.div`
-  width: 100%;
+  width: 1280px;
   padding: 20px;
-  background-color: #1c1c1c;
+  background-color: transparent;
 `;
 
 const SectionTitle = styled.h2`
@@ -30,11 +30,14 @@ const SeeMore = styled.div`
 `;
 
 const SearchPage: React.FC = () => {
+  const navigate = useNavigate();
+
   const musicals = [
     { name: "Musical Name 1", place: "Concert Hall 1", date: "2024-07-01", imageUrl: "/musicalposter-1.jpeg" },
     { name: "Musical Name 2", place: "Concert Hall 2", date: "2024-07-02", imageUrl: "/musicalposter-2.jpeg" },
     { name: "Musical Name 3", place: "Concert Hall 3", date: "2024-07-03", imageUrl: "/musicalposter-3.jpeg" },
-    { name: "Musical Name 4", place: "Concert Hall 4", date: "2024-07-04", imageUrl: "/musicalposter-4.jpeg" }
+    { name: "Musical Name 4", place: "Concert Hall 4", date: "2024-07-04", imageUrl: "/musicalposter-4.jpeg" },
+    { name: "Musical Name 5", place: "Concert Hall 5", date: "2024-07-04", imageUrl: "/musicalposter-5.jpeg" }
   ];
 
   const actors = [
@@ -44,18 +47,26 @@ const SearchPage: React.FC = () => {
     { name: "Actor Name 4", company: "PL 엔터테인먼트", birthday: "1982.04.06" }
   ];
 
+  const handleSeeMoreMusicals = () => {
+    navigate('/search/musical', { state: { musicals } });
+  };
+
+  const handleSeeMoreActors = () => {
+    navigate('/search/actor', { state: { actors } });
+  };
+
   return (
     <PageContainer>
       <SectionWrapper>
-        <SectionTitle>Musical (12)</SectionTitle>
+        <SectionTitle>Musical ({musicals.length})</SectionTitle>
         <MusicalInfo musicals={musicals} />
-        <SeeMore>More</SeeMore>
+        <SeeMore onClick={handleSeeMoreMusicals}>More</SeeMore>
       </SectionWrapper>
 
       <SectionWrapper>
-        <SectionTitle>Actor (12)</SectionTitle>
+        <SectionTitle>Actor ({actors.length})</SectionTitle>
         <ActorInfo actors={actors} />
-        <SeeMore>More</SeeMore>
+        <SeeMore onClick={handleSeeMoreActors}>More</SeeMore>
       </SectionWrapper>
     </PageContainer>
   );

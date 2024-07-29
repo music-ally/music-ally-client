@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import the useNavigate hook
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FiSearch } from 'react-icons/fi';
 import styled from 'styled-components';
 
@@ -190,11 +190,16 @@ const SearchComponent: React.FC = () => {
   const [actors, setActors] = useState<Actor[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     setMusicals(dummyMusicalData);
     setActors(dummyActorData);
   }, []);
+
+  useEffect(() => {
+    setSearchTerm('');
+  }, [location]);
 
   const filteredMusicals = searchTerm
     ? musicals.filter(musical =>
@@ -220,10 +225,12 @@ const SearchComponent: React.FC = () => {
 
   const handleMusicalItemClick = (id: string) => {
     console.log(`musical ID: ${id}`);
+    handleSearch();
   };
 
   const handleActorItemClick = (id: string) => {
     console.log(`actor ID: ${id}`);
+    handleSearch();
   };
 
   return (
