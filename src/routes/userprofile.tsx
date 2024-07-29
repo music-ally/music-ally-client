@@ -256,7 +256,7 @@ export default function UserProfile() {
                 </BtnWrapper>
             </PropfileWrapper>
             <CaroName> {user.nickname || '닉네임'}님이 작성한 리뷰 </CaroName>
-            <UserReviewCaro reviews={user.reviews?.reviews || [{review_id: '66a0e7348da2278779d22aba', poster_image: '/poster_basic.png'}]} />
+            <UserReviewCaro reviews={user.reviews?.reviews || [{review_id: '66a0e7348da2278779d22aba', poster_image: '/poster_basic.png'}, {}]} />
             
             <CaroName> {user.nickname || '닉네임'}님이 찜한 뮤지컬 </CaroName>
             <UserBookmarkCaro musicals={user.bookmarks?.musicals || [{musical_id: '', poster_image: '/poster_basic.png'}, {}]}/>

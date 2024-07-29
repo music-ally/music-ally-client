@@ -250,7 +250,7 @@ export default function MyPage() {
                 </BtnWrapper>
             </PropfileWrapper>
             <CaroName> 내가 작성한 리뷰 </CaroName>
-            <MyReviewCaro reviews={user.reviews?.reviews || [{review_id: '66a0e7348da2278779d22aba', poster_image: '/poster_basic.png'}]} />
+            <MyReviewCaro reviews={user.reviews?.reviews || [{review_id: '66a0e7348da2278779d22aba', poster_image: '/poster_basic.png'}, {}, {}]} />
 
             <CaroName> 내가 찜한 뮤지컬 </CaroName>
             {/* <ReviewCaroTest /> */}
