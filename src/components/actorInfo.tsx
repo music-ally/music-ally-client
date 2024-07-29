@@ -59,47 +59,40 @@ const Birthday = styled.div`
   letter-spacing: 5%;
 `;
 
+// Props 인터페이스 정의
 interface Actor {
   name: string;
   company: string;
   birthday: string;
 }
 
-interface Props {}
+interface Props {
+  actors?: Actor[]; 
+  images?: string[]; 
+}
 
-const Component: React.FC<Props> = () => {
-  const actors: Actor[] = [
-    { name: "Actor Name 1", company: "Company 1", birthday: "Birthday 1" },
-    { name: "Actor Name 2", company: "Company 2", birthday: "Birthday 2" },
-    { name: "Actor Name 3", company: "Company 3", birthday: "Birthday 3" },
-    { name: "Actor Name 4", company: "Company 4", birthday: "Birthday 4" }
-  ];
-
-  const images: string[] = ["/musicalposter-1.jpeg", "/musicalposter-2.jpeg", "/musicalposter-3.jpeg", "/musicalposter-4.jpeg"];
+const Component: React.FC<Props> = ({ actors = [], images = [] }) => {
+  const minLength = Math.min(images.length, actors.length);
 
   return (
-    <>
-      <Container>
-        <ContentWrapper>
-          <Row>
-            <ImageRow>
-              {images.slice(0, 4).map((image, index) => (
-                <ImageContainer key={index}>
-                  <Image
-                    src={image}
-                  />
-                  <ActorInfoContainer>
-                    <ActorName>{actors[index].name}</ActorName>
-                    <Company>{actors[index].company}</Company>
-                    <Birthday>{actors[index].birthday}</Birthday>
-                  </ActorInfoContainer>
-                </ImageContainer>
-              ))}
-            </ImageRow>
-          </Row>
-        </ContentWrapper>
-      </Container>
-    </>
+    <Container>
+      <ContentWrapper>
+        <Row>
+          <ImageRow>
+            {minLength > 0 && images.slice(0, minLength).map((image, index) => (
+              <ImageContainer key={index}>
+                <Image src={image} alt={`Image ${index + 1}`} />
+                <ActorInfoContainer>
+                  <ActorName>{actors[index]?.name || 'Unknown Actor'}</ActorName>
+                  <Company>{actors[index]?.company || 'Unknown Company'}</Company>
+                  <Birthday>{actors[index]?.birthday || 'Unknown Birthday'}</Birthday>
+                </ActorInfoContainer>
+              </ImageContainer>
+            ))}
+          </ImageRow>
+        </Row>
+      </ContentWrapper>
+    </Container>
   );
 };
 

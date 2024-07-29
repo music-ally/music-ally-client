@@ -1,123 +1,177 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import SeeReview from '../components/seereview';
+import Actorcircle from '../components/actorcircle';
 import MusicalTicket from '../components/musicalticket';
-import Actor from '../components/actorcircle';
+import SeeReview from '../components/seereview';
 
-// 전체 페이지 컨테이너 스타일
+// 스타일 컴포넌트
 const AppContainer = styled.div`
-  background-image: url('/reviewpage.png'); /* 배경 이미지 경로 */
+  background-image: url('/reviewpage.png');
   background-size: cover;
   background-repeat: no-repeat;
-  min-height: 100vh; /* 최소 화면 높이 */
-  padding: 162px 74px 100px; /* 상단 162px, 좌우 74px 여백, 하단 100px 여백 */
-  box-sizing: border-box; /* padding을 포함한 전체 박스 크기 설정 */
+  min-height: 100vh;
+  padding: 162px 74px 100px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: center; /* 모든 컴포넌트들을 수직 방향 중앙 정렬 */
+  align-items: center;
 `;
 
-// 왼쪽 정렬을 위한 스타일
 const LeftAlignedContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: flex-start;
-  align-items: center; /* 세로 중앙 정렬 */
-  margin-bottom: 20px; /* 타이틀과 다음 컴포넌트 사이 간격 조정 */
+  align-items: center;
+  margin-bottom: 20px;
 `;
 
-// search 아이콘 스타일
-const SearchIcon = styled.img`
-  width: 50px; /* 아이콘 너비 */
-  height: 50px; /* 아이콘 높이 */
-`;
-
-// confirm 아이콘 스타일
-const ConfirmIcon = styled.img`
-  width: 30px; /* 아이콘 너비 */
-  height: 29px; /* 아이콘 높이 */
-`;
-
-// 제목 스타일
 const MainTitle = styled.h1`
   font-size: 75px;
   font-family: 'Bebas', sans-serif;
-  color: #BB9D59; /* 글자색 설정 */
-  background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
-  -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
-  background-clip: text; /* 텍스트만 그라데이션 적용 */
-  -webkit-text-fill-color: transparent; /* 텍스트 색상 투명으로 */
-  margin: 6px 0; /* 상하 간격 추가 */
-  display: flex; /* Flex 설정 추가 */
-  align-items: center; /* 수직 가운데 정렬 */
-  margin-left: 100px; /* 왼쪽 열에 맞게 위치 조정 */
-  font-weight: 300; /* 글꼴 두께를 얇게 조정 */
+  color: #BB9D59;
+  background: linear-gradient(to right, #E8E1B1, #BB9D59);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  margin-left: 100px;
+  font-weight: 300;
 `;
 
-// 제목 스타일
 const Title = styled.h2`
   font-size: 52px;
   font-family: 'Bebas', sans-serif;
-  color: #BB9D59; /* 글자색 설정 */
-  background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
-  -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
-  background-clip: text; /* 텍스트만 그라데이션 적용 */
-  -webkit-text-fill-color: transparent; /* 텍스트 색상 투명으로 */
-  margin: 6px 0; /* 상하 간격 추가 */
-  display: flex; /* Flex 설정 추가 */
-  align-items: center; /* 수직 가운데 정렬 */
-  margin-left: 100px; /* 왼쪽 열에 맞게 위치 조정 */
-  font-weight: 300; /* 글꼴 두께를 얇게 조정 */
+  color: #BB9D59;
+  background: linear-gradient(to right, #E8E1B1, #BB9D59);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  font-weight: 300;
 `;
 
-// BasicReview와 Pagination 사이의 수직 간격 스타일
 const VerticalSpacing = styled.div`
-  margin-top: 20px; /* BasicReview 위 간격 설정 */
-  margin-bottom: 30px; /* BasicReview 아래 간격 설정 (줄임) */
+  margin-top: 20px;
+  margin-bottom: 30px;
 `;
 
-
-// Actor를 왼쪽으로 조정하기 위한 컨테이너
 const LeftAlignedActorContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: flex-start;
-  align-items: center; /* 세로 중앙 정렬 */
-  margin-top: 30px; 
-  margin-bottom: 50px; /* 타이틀과 다음 컴포넌트 사이 간격 조정 */
-  margin-left: 180px; /* 타이틀과 같은 열에 맞추기 */
-  gap: 32px; /* Actor 컴포넌트 사이의 간격 */
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 50px;
+  margin-left: 180px;
+  gap: 32px;
 `;
 
-const App: React.FC = () => {
+// 타입 정의
+interface Actor {
+  actor_id: string;
+  profile_image: string;
+  actor_name: string;
+}
+
+interface Musical {
+  musical_id: string;
+  musical_name: string;
+  theater_name: string;
+  watch_at: string;
+  poster_image: string;
+}
+
+interface ReviewData {
+  review_id: string;
+  musical: Musical;
+  actors: Actor[];
+  reviewer_profile_image: string | null;
+  reviewer_nickname: string;
+  reviewer_email: string;
+  like_num: number;
+  is_like: boolean;
+  violence: number;
+  fear: number;
+  sensitivity: number;
+  content: string;
+  create_at: string;
+}
+
+const SeeReviewPage: React.FC = () => {
+  const { reviewId } = useParams<{ reviewId: string }>();
+  const [reviewData, setReviewData] = useState<ReviewData | null>(null);
+
+  useEffect(() => {
+    const fetchReviewData = async () => {
+      try {
+        const response = await fetch(`/review/${reviewId}`);
+        const result = await response.json();
+        if (result.success) {
+          setReviewData(result.data);
+        } else {
+          console.error('리뷰 데이터 조회 실패:', result.message);
+        }
+      } catch (error) {
+        console.error('리뷰 데이터 조회 중 오류 발생:', error);
+      }
+    };
+
+    fetchReviewData();
+  }, [reviewId]);
+
+  if (!reviewData) return <div>Loading...</div>;
+
+  const { musical, actors, reviewer_profile_image, reviewer_nickname, reviewer_email, like_num, is_like, violence, fear, sensitivity, content } = reviewData;
+
   return (
     <AppContainer>
       <LeftAlignedContainer>
-        <MainTitle>
-          MUSICAL
-        </MainTitle>
+        <MainTitle>{musical.musical_name}</MainTitle>
       </LeftAlignedContainer>
-      <MusicalTicket />
+      <MusicalTicket
+        tickets={[{
+          musical_id: musical.musical_id,
+          musical_name: musical.musical_name,
+          theater_name: musical.theater_name,
+          watch_at: musical.watch_at,
+          poster_image: musical.poster_image // 실제 데이터로 대체
+        }]}
+      />
       <LeftAlignedContainer>
-        <Title>
-          ACTOR
-        </Title>
+        <Title>ACTOR</Title>
       </LeftAlignedContainer>
       <LeftAlignedActorContainer>
-        <Actor />
-        <Actor />
-        <Actor />
+        {actors.map(actor => (
+          <Actorcircle
+            key={actor.actor_id}
+            profile_image={actor.profile_image}
+            actor_name={actor.actor_name}
+          />
+        ))}
       </LeftAlignedActorContainer>
       <LeftAlignedContainer>
-        <Title>
-          REVIEW
-        </Title>
+        <Title>REVIEW</Title>
       </LeftAlignedContainer>
       <VerticalSpacing>
-        <SeeReview />
+        <SeeReview
+          reviewerProfileImage={reviewer_profile_image}
+          reviewerNickname={reviewer_nickname}
+          reviewerEmail={reviewer_email}
+          likeNum={like_num}
+          isLike={is_like}
+          violence={violence}
+          fear={fear}
+          sensitivity={sensitivity}
+          content={content}
+        />
       </VerticalSpacing>
     </AppContainer>
   );
 };
 
-export default App;
+export default SeeReviewPage;

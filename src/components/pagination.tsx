@@ -1,17 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const Pagination: React.FC = () => {
+interface PaginationProps {
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+const Pagination: React.FC<PaginationProps> = ({ totalPages, onPageChange }) => {
   const [current, setCurrent] = useState<number>(1);
+  const [pageData, setPageData] = useState<any>(null);
 
   const buttonStyle = {
-    fontFamily: 'inter',
+    fontFamily: 'Inter',
     color: '#A7A7A7',
     fontSize: '20px',
     cursor: 'pointer',
-    marginRight: '10px', // Adjust margin-right for spacing between buttons
-    border: 'none', // Remove default border
-    background: 'none', // Remove default background
-    padding: '5px 10px', // Optional: Add padding for better button appearance
+    marginRight: '10px', // 버튼 간 간격 조정
+    border: 'none', // 기본 테두리 제거
+    background: 'none', // 기본 배경 제거
+    padding: '5px 10px', // 선택 사항: 버튼 모양을 위한 패딩 추가
   };
 
   const selectedButtonStyle = {
@@ -20,17 +27,43 @@ const Pagination: React.FC = () => {
   };
 
   const containerStyle = {
-    display: 'inline-flex', // Use inline-flex to remove white box
-    backgroundColor: 'transparent', // Set background color to transparent
+    display: 'inline-flex', // 흰색 상자 제거를 위해 inline-flex 사용
+    backgroundColor: 'transparent', // 배경 색을 투명으로 설정
   };
+
+  useEffect(() => {
+    // 현재 페이지에 대한 데이터 요청
+    const fetchPageData = async () => {
+      try {
+        // 여기를 실제 API 엔드포인트로 변경!!!
+        const response = await axios.get(`https://api.example.com/data?page=${current}`);
+        setPageData(response.data);
+      } catch (error) {
+        console.error('페이지 데이터 가져오기 오류:', error);
+      }
+    };
+
+    fetchPageData();
+    onPageChange(current);
+  }, [current, onPageChange]);
 
   return (
     <div style={containerStyle}>
-      <button style={{ ...buttonStyle, ...(current === 1 && selectedButtonStyle) }} onClick={() => setCurrent(1)}>1</button>
-      <button style={{ ...buttonStyle, ...(current === 2 && selectedButtonStyle) }} onClick={() => setCurrent(2)}>2</button>
-      <button style={{ ...buttonStyle, ...(current === 3 && selectedButtonStyle) }} onClick={() => setCurrent(3)}>3</button>
-      <button style={{ ...buttonStyle, ...(current === 4 && selectedButtonStyle) }} onClick={() => setCurrent(4)}>4</button>
-      <button style={{ ...buttonStyle, ...(current === 5 && selectedButtonStyle) }} onClick={() => setCurrent(5)}>5</button>
+      {Array.from({ length: totalPages }, (_, index) => (
+        <button
+          key={index + 1}
+          style={{ ...buttonStyle, ...(current === index + 1 && selectedButtonStyle) }}
+          onClick={() => setCurrent(index + 1)}
+        >
+          {index + 1}
+        </button>
+      ))}
+      {pageData && (
+        <div>
+          {/* 페이지 데이터 렌더링 */}
+          {JSON.stringify(pageData)}
+        </div>
+      )}
     </div>
   );
 };

@@ -59,6 +59,7 @@ const PerformanceDate = styled.div`
   letter-spacing: 5%;
 `;
 
+// Musical 데이터 타입 정의
 interface Musical {
   name: string;
   place: string;
@@ -66,26 +67,31 @@ interface Musical {
   imageUrl: string;
 }
 
-interface MusicalInfoProps {
-  musicals: Musical[];
+// Props 인터페이스 정의
+interface Props {
+  musicals?: Musical[]; 
 }
 
-const MusicalInfo: React.FC<MusicalInfoProps> = ({ musicals }) => {
+const MusicalInfo: React.FC<Props> = ({ musicals = [] }) => {
   return (
     <Container>
       <ContentWrapper>
         <Row>
           <ImageRow>
-            {musicals.map((musical, index) => (
-              <ImageContainer key={index}>
-                <Image src={musical.imageUrl} />
-                <MusicalInfoContainer>
-                  <MusicalName>{musical.name}</MusicalName>
-                  <ConcertHall>{musical.place}</ConcertHall>
-                  <PerformanceDate>{musical.date}</PerformanceDate>
-                </MusicalInfoContainer>
-              </ImageContainer>
-            ))}
+            {musicals.length > 0 ? (
+              musicals.map((musical, index) => (
+                <ImageContainer key={index}>
+                  <Image src={musical.imageUrl} alt={`Poster for ${musical.name}`} />
+                  <MusicalInfoContainer>
+                    <MusicalName>{musical.name}</MusicalName>
+                    <ConcertHall>{musical.place}</ConcertHall>
+                    <PerformanceDate>{musical.date}</PerformanceDate>
+                  </MusicalInfoContainer>
+                </ImageContainer>
+              ))
+            ) : (
+              <div>No musicals available</div> // 데이터가 없는 경우 대체
+            )}
           </ImageRow>
         </Row>
       </ContentWrapper>
