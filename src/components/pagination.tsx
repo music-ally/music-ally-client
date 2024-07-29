@@ -3,14 +3,15 @@ import axios from 'axios';
 
 interface PaginationProps {
   totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
+const Pagination: React.FC<PaginationProps> = ({ totalPages, onPageChange }) => {
   const [current, setCurrent] = useState<number>(1);
   const [pageData, setPageData] = useState<any>(null);
 
   const buttonStyle = {
-    fontFamily: 'inter',
+    fontFamily: 'Inter',
     color: '#A7A7A7',
     fontSize: '20px',
     cursor: 'pointer',
@@ -43,7 +44,8 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
     };
 
     fetchPageData();
-  }, [current]);
+    onPageChange(current);
+  }, [current, onPageChange]);
 
   return (
     <div style={containerStyle}>
