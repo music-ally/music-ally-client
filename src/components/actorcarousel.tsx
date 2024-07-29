@@ -1,5 +1,3 @@
-// src/components/Component.tsx
-
 import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
@@ -13,6 +11,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+// 스타일 컴포넌트들 정의
 const Container = styled.div`
   position: relative;
   display: flex;
@@ -37,7 +36,7 @@ const ImageRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 17px; /* 이미지 간격 조절 */
+  gap: 17px; /* 이미지 간 간격 조절 */
 `;
 
 const ImageContainer = styled.div`
@@ -93,16 +92,17 @@ const RightButton = styled(Button)`
   right: -25px;
 `;
 
-const Component: React.FC = () => {
+interface ImageProps {
+  src: string;
+  name: string;
+}
+
+interface ComponentProps {
+  images: ImageProps[];
+}
+
+const Component: React.FC<ComponentProps> = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const images = [
-    { src: "/musicalposter-1.jpeg", name: "이름 1" },
-    { src: "/musicalposter-2.jpeg", name: "이름 2" },
-    { src: "/musicalposter-3.jpeg", name: "이름 3" },
-    { src: "/musicalposter-4.jpeg", name: "이름 4" },
-    { src: "/musicalposter-5.jpeg", name: "이름 5" },
-    { src: "/musicalposter-6.jpeg", name: "이름 6" }
-  ];
 
   const handleLeftButtonClick = () => {
     setCurrentIndex((prevIndex) => {
