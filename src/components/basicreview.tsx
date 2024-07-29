@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
-interface Page34Props {}
-
+// 스타일 정의
 const Container = styled.div`
   border-radius: 15.6px;
   background: linear-gradient(to right, #5c1e19, #3c0d0a);
@@ -11,18 +10,11 @@ const Container = styled.div`
   padding: 16px 20px 15px 20px;
   width: 1131px;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
 `;
 
-const ImageWrapper = styled.div`
-  border-radius: 4.4px;
-  background: url('/musicalposter-1.jpeg') 50% 50% / 172.5px 244px no-repeat;
-  margin-right: 18.5px;
-  width: 172.5px;
-  height: 244px;
-`;
-
-const ContentWrapper = styled.div`
-  margin-top: 1px;
+const Content = styled.div`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -56,10 +48,14 @@ const UserInfo = styled.div`
   box-sizing: border-box;
 `;
 
-const Avatar = styled.div`
+interface AvatarProps {
+  image?: string;
+}
+
+const Avatar = styled.div<AvatarProps>`
   box-shadow: 0px 2px 4.1px rgba(0, 0, 0, 0.25);
   border-radius: 27.3px;
-  background: url('/musicalposter-1.jpeg') 50% 50% / cover no-repeat;
+  background: ${props => (props.image ? `url(${props.image})` : 'url(/profileimg.png)')} 50% 50% / cover no-repeat;
   margin-right: 8.7px;
   width: 54.6px;
   height: 54.6px;
@@ -191,42 +187,45 @@ const CommentText = styled.span<{ isExpanded: boolean }>`
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: ${props => (props.isExpanded ? 'unset' : '4')}; /* 라인 수 제한 */
+  -webkit-line-clamp: ${props => (props.isExpanded ? 'unset' : '4')};
   -webkit-box-orient: vertical;
 `;
 
-const Page34: React.FC<Page34Props> = () => {
-  const [ratings, setRatings] = useState([
-    [false, false, false, false, false],
-    [false, false, false, false, false],
-    [false, false, false, false, false]
-  ]); // 별점 상태 배열
+// ImageWrapper 컴포넌트 정의
+const ImageWrapper = styled.div<{ imageUrl: string }>`
+  border-radius: 4.4px;
+  background: url(${props => props.imageUrl}) 50% 50% / cover no-repeat;
+  margin-right: 18.5px;
+  width: 172.5px;
+  height: 244px;
+`;
 
-  const [liked, setLiked] = useState(false); // 좋아요 상태
-  const [likeCount, setLikeCount] = useState(0); // 좋아요 수
-  const [isExpanded, setIsExpanded] = useState(false); // 텍스트 확장 상태
+interface Review {
+  review_id: string;
+  reviewer_profile_image?: string;
+  reviewer_nickname: string;
+  reviewer_email: string;
+  create_at: string;
+  like_num: number;
+  is_like: boolean;
+  fear: number;
+  sensitivity: number;
+  violence: number;
+  content: string;
+}
+
+interface BasicReviewProps {
+  review: Review;
+}
+
+const BasicReview: React.FC<BasicReviewProps> = ({ review }) => {
+  const [liked, setLiked] = React.useState(review.is_like);
+  const [likeCount, setLikeCount] = React.useState(review.like_num);
+  const [isExpanded, setIsExpanded] = React.useState(false);
 
   const handleLikeClick = () => {
-    setLiked(prevLiked => !prevLiked);
-    setLikeCount(prevCount => (liked ? prevCount - 1 : prevCount + 1));
-  };
-
-  const handleIconClick = (tagIndex: number, iconIndex: number) => {
-    const newRatings = ratings.map((tag, i) =>
-      i === tagIndex
-        ? tag.map((value, j) => (j <= iconIndex ? true : false))
-        : tag
-    );
-    setRatings(newRatings);
-  };
-
-  const handleIconReset = (tagIndex: number, iconIndex: number) => {
-    const newRatings = ratings.map((tag, i) =>
-      i === tagIndex
-        ? tag.map((value, j) => (j < iconIndex ? true : false))
-        : tag
-    );
-    setRatings(newRatings);
+    setLiked(prev => !prev);
+    setLikeCount(prev => (liked ? prev - 1 : prev + 1));
   };
 
   const toggleExpandText = () => {
@@ -235,15 +234,15 @@ const Page34: React.FC<Page34Props> = () => {
 
   return (
     <Container>
-      <ImageWrapper />
-      <ContentWrapper>
-        <DateText>2024-05-08 12:00</DateText>
+      <ImageWrapper imageUrl='/musicalposter-1.jpeg' /> {/* 예시 URL */}
+      <Content>
+        <DateText>{new Date(review.create_at).toLocaleDateString()} {new Date(review.create_at).toLocaleTimeString()}</DateText>
         <Header>
           <UserInfo>
-            <Avatar />
+            <Avatar image={review.reviewer_profile_image} />
             <UserNameHandleWrapper>
-              <UserNameText>현생팔아뮤덕살기</UserNameText>
-              <UserHandle>mu******</UserHandle>
+              <UserNameText>{review.reviewer_nickname}</UserNameText>
+              <UserHandle>{review.reviewer_email}</UserHandle>
             </UserNameHandleWrapper>
           </UserInfo>
           <LikeInfo>
@@ -259,12 +258,12 @@ const Page34: React.FC<Page34Props> = () => {
           <TagGroup>
             <TagLabel>공포</TagLabel>
             <IconWrapper>
-              {ratings[0].map((value, index) => (
+              {Array.from({ length: 5 }, (_, index) => (
                 <Icon
                   key={index}
-                  src={value ? '/fear1.png' : '/fear2.png'}
-                  onClick={() => handleIconClick(0, index)}
-                  onDoubleClick={() => handleIconReset(0, index)}
+                  src={index < review.fear ? '/fear1.png' : '/fear2.png'}
+                  onClick={() => {}}
+                  onDoubleClick={() => {}}
                 />
               ))}
             </IconWrapper>
@@ -272,16 +271,12 @@ const Page34: React.FC<Page34Props> = () => {
           <TagGroup>
             <TagLabel>선정성</TagLabel>
             <IconWrapper>
-              {ratings[1].map((value, index) => (
+              {Array.from({ length: 5 }, (_, index) => (
                 <Icon
                   key={index}
-                  src={
-                    value
-                      ? '/sensationalism1.png'
-                      : '/sensationalism2.png'
-                  }
-                  onClick={() => handleIconClick(1, index)}
-                  onDoubleClick={() => handleIconReset(1, index)}
+                  src={index < review.sensitivity ? '/sensationalism1.png' : '/sensationalism2.png'}
+                  onClick={() => {}}
+                  onDoubleClick={() => {}}
                 />
               ))}
             </IconWrapper>
@@ -289,12 +284,12 @@ const Page34: React.FC<Page34Props> = () => {
           <TagGroup>
             <TagLabel>폭력성</TagLabel>
             <IconWrapper>
-              {ratings[2].map((value, index) => (
+              {Array.from({ length: 5 }, (_, index) => (
                 <Icon
                   key={index}
-                  src={value ? '/violence1.png' : '/violence2.png'}
-                  onClick={() => handleIconClick(2, index)}
-                  onDoubleClick={() => handleIconReset(2, index)}
+                  src={index < review.violence ? '/violence1.png' : '/violence2.png'}
+                  onClick={() => {}}
+                  onDoubleClick={() => {}}
                 />
               ))}
             </IconWrapper>
@@ -302,12 +297,12 @@ const Page34: React.FC<Page34Props> = () => {
         </TagsWrapper>
         <CommentSection>
           <CommentText isExpanded={isExpanded} onClick={toggleExpandText}>
-            승식 세준 배우님 공연을 수차례 봤지만 이 날 신은 왜 넘버는 역대급이라 말할 수 있습니다 입봉작이라고 하시던데 너무 믿기지 않고 테오와 니콜라의 감정선이 잘 느껴져서 좋았어요 OST 앨범도 구매해서 신은 왜 넘버 잘 듣고 있어요 ㅠㅠ 두 분 이런 퀄리티의 공연을 완성하기까지 얼마나 피나는 노력을 했을지 눈에 선하고 원래 그룹 활동을 함께하셔서 그런지 각자 다른 배우님들과 호흡을 맞출 때와는 또 다른 .. 그런 애틋함이 느껴졌던거 같아요 이퀄 만약 또 기회가 된다면 승식 배우님의 니콜라도 궁금하네요 .. 세준 배우님 승식 배우님 고생했어요 ?? 
+            {review.content}
           </CommentText>
         </CommentSection>
-      </ContentWrapper>
+      </Content>
     </Container>
   );
 };
 
-export default Page34;
+export default BasicReview;

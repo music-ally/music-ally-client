@@ -1,58 +1,45 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// 미리 설정된 이미지 경로와 이름
-const IMAGE_PATH = '/testprofile-actor.png';
-const ACTOR_NAME = '홍광호';
+// 기본 값
+const DEFAULT_IMAGE_PATH = '/profileimg.png';
 
-const ProfileContainer = styled.div`
-  position: relative;
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  overflow: hidden;
+// 스타일 컴포넌트
+const ActorContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  margin: 20px; /* 필요에 따라 조정 */
 `;
 
-const ProfileImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-
-const GradientOverlay = styled.div`
-  position: absolute;
-  bottom: 0; /* 그라데이션을 아래쪽에만 적용하도록 설정 */
-  left: 0;
-  width: 100%;
-  height: 50%; /* 그라데이션 범위를 하단 50%로 설정 */
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-  pointer-events: none; /* 그라데이션이 클릭 이벤트를 방지하도록 설정 */
+const Avatar = styled.div<{ image: string }>`
+  box-shadow: 0px 2px 4.1px rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+  background: ${props => (props.image ? `url(${props.image})` : `url(${DEFAULT_IMAGE_PATH})`)} center center / cover no-repeat;
+  width: 54.6px;
+  height: 54.6px;
+  margin-right: 8.7px;
 `;
 
 const Name = styled.div`
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
   font-family: 'Inter', sans-serif;
   font-size: 16px;
-  font-weight: 600; /* 세미볼드 */
-  color: #FFFFFF; /* 텍스트 색상, 필요에 따라 조정 */
-  text-align: center;
-  z-index: 1; /* 이름이 그라데이션과 이미지 위에 표시되도록 설정 */
+  font-weight: 600;
+  color: #000000;
 `;
 
-const ActorProfile: React.FC = () => {
+// Actorcircle 컴포넌트
+interface ActorProps {
+  profile_image: string;
+  actor_name: string;
+}
+
+const Actorcircle: React.FC<ActorProps> = ({ profile_image, actor_name }) => {
   return (
-    <ProfileContainer>
-      <ProfileImage src={IMAGE_PATH} alt={`${ACTOR_NAME}'s profile`} />
-      <GradientOverlay />
-      <Name>{ACTOR_NAME}</Name>
-    </ProfileContainer>
+    <ActorContainer>
+      <Avatar image={profile_image} />
+      <Name>{actor_name}</Name>
+    </ActorContainer>
   );
 };
 
-export default ActorProfile;
+export default Actorcircle;

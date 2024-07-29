@@ -65,27 +65,30 @@ interface Musical {
   date: string;
   imageUrl: string;
 }
-
-interface MusicalInfoProps {
-  musicals: Musical[];
+interface Props {
+  musicals?: Musical[]; 
 }
 
-const MusicalInfo: React.FC<MusicalInfoProps> = ({ musicals }) => {
+const Component: React.FC<Props> = ({ musicals = [] }) => {
   return (
     <Container>
       <ContentWrapper>
         <Row>
           <ImageRow>
-            {musicals.map((musical, index) => (
-              <ImageContainer key={index}>
-                <Image src={musical.imageUrl} />
-                <MusicalInfoContainer>
-                  <MusicalName>{musical.name}</MusicalName>
-                  <ConcertHall>{musical.place}</ConcertHall>
-                  <PerformanceDate>{musical.date}</PerformanceDate>
-                </MusicalInfoContainer>
-              </ImageContainer>
-            ))}
+            {musicals.length > 0 ? (
+              musicals.map((musical, index) => (
+                <ImageContainer key={index}>
+                  <Image src={musical.imageUrl} alt={`Poster for ${musical.name}`} />
+                  <MusicalInfoContainer>
+                    <MusicalName>{musical.name}</MusicalName>
+                    <ConcertHall>{musical.place}</ConcertHall>
+                    <PerformanceDate>{musical.date}</PerformanceDate>
+                  </MusicalInfoContainer>
+                </ImageContainer>
+              ))
+            ) : (
+              <div>No musicals available</div> // 데이터가 없는 경우 대체
+            )}
           </ImageRow>
         </Row>
       </ContentWrapper>
