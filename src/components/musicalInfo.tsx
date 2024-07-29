@@ -59,6 +59,7 @@ const PerformanceDate = styled.div`
   letter-spacing: 5%;
 `;
 
+// Musical 데이터 타입 정의
 interface Musical {
   name: string;
   place: string; 
@@ -66,37 +67,35 @@ interface Musical {
   imageUrl: string; 
 }
 
-interface Props {}
+// Props 인터페이스 정의
+interface Props {
+  musicals?: Musical[]; 
+}
 
-const Component: React.FC<Props> = () => {
-  const musicals: Musical[] = [
-    { name: "Musical Name 1", place: "Concert Hall 1", date: "Performance Date 1", imageUrl: "/musicalposter-1.jpeg" },
-    { name: "Musical Name 2", place: "Concert Hall 2", date: "Performance Date 2", imageUrl: "/musicalposter-2.jpeg" },
-    { name: "Musical Name 3", place: "Concert Hall 3", date: "Performance Date 3", imageUrl: "/musicalposter-3.jpeg" },
-    { name: "Musical Name 4", place: "Concert Hall 4", date: "Performance Date 4", imageUrl: "/musicalposter-4.jpeg" }
-  ];
-
+const Component: React.FC<Props> = ({ musicals = [] }) => {
   return (
-    <>
-      <Container>
-        <ContentWrapper>
-          <Row>
-            <ImageRow>
-              {musicals.map((musical, index) => (
+    <Container>
+      <ContentWrapper>
+        <Row>
+          <ImageRow>
+            {musicals.length > 0 ? (
+              musicals.map((musical, index) => (
                 <ImageContainer key={index}>
-                  <Image src={musical.imageUrl} />
+                  <Image src={musical.imageUrl} alt={`Poster for ${musical.name}`} />
                   <MusicalInfoContainer>
                     <MusicalName>{musical.name}</MusicalName>
                     <ConcertHall>{musical.place}</ConcertHall>
                     <PerformanceDate>{musical.date}</PerformanceDate>
                   </MusicalInfoContainer>
                 </ImageContainer>
-              ))}
-            </ImageRow>
-          </Row>
-        </ContentWrapper>
-      </Container>
-    </>
+              ))
+            ) : (
+              <div>No musicals available</div> // 데이터가 없는 경우 대체
+            )}
+          </ImageRow>
+        </Row>
+      </ContentWrapper>
+    </Container>
   );
 };
 

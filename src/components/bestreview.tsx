@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
-// Define styles
+// 스타일 정의
 const Container = styled.div`
   border-radius: 15.6px;
   background: url('/bestreview.png');
@@ -10,20 +10,20 @@ const Container = styled.div`
   padding: 16px 20px 15px 20px;
   width: 1131px;
   box-sizing: border-box;
-  position: relative; /* Add position relative for buttons */
-  overflow: hidden; /* Hide overflow to manage carousel */
+  position: relative;
+  overflow: hidden;
 `;
 
-const ContentWrapper = styled.div`
+const ContentWrapper = styled.div<{ translate: number; width: number }>`
   display: flex;
   flex-direction: row;
-  transition: transform 0.3s ease-in-out; /* Smooth sliding effect */
-  transform: translateX(${props => props.translate}px); /* Apply translation based on state */
-  width: ${props => props.width}px; /* Set dynamic width based on number of slides */
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(${props => props.translate}px);
+  width: ${props => props.width}px;
 `;
 
-const Slide = styled.div`
-  min-width: ${props => props.minWidth}px; /* Match the width of the container */
+const Slide = styled.div<{ minWidth: number }>`
+  min-width: ${props => props.minWidth}px;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -72,10 +72,14 @@ const UserInfo = styled.div`
   box-sizing: border-box;
 `;
 
-const Avatar = styled.div`
+interface AvatarProps {
+  image?: string;
+}
+
+const Avatar = styled.div<AvatarProps>`
   box-shadow: 0px 2px 4.1px rgba(0, 0, 0, 0.25);
   border-radius: 27.3px;
-  background: url('/musicalposter-1.jpeg') 50% 50% / cover no-repeat;
+  background: ${props => (props.image ? `url(${props.image})` : 'url(/profileimg.png)')} 50% 50% / cover no-repeat;
   margin-right: 8.7px;
   width: 54.6px;
   height: 54.6px;
@@ -207,7 +211,7 @@ const CommentText = styled.span<{ isExpanded: boolean }>`
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: ${props => (props.isExpanded ? 'unset' : '4')}; /* Line clamp */
+  -webkit-line-clamp: ${props => (props.isExpanded ? 'unset' : '4')};
   -webkit-box-orient: vertical;
 `;
 
@@ -215,10 +219,10 @@ const CarouselButton = styled.img`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px; /* Increase button size */
-  height: 40px; /* Increase button size */
+  width: 40px;
+  height: 40px;
   cursor: pointer;
-  z-index: 1; /* Ensure button is above other elements */
+  z-index: 1;
 `;
 
 const LeftButton = styled(CarouselButton)`
@@ -229,60 +233,34 @@ const RightButton = styled(CarouselButton)`
   right: 0px;
 `;
 
-// Main component
-const Page34: React.FC = () => {
-  const [ratings, setRatings] = useState([
-    [false, false, false, false, false],
-    [false, false, false, false, false],
-    [false, false, false, false, false]
-  ]);
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [carouselIndex, setCarouselIndex] = useState(0);
+// Review 타입 정의
+interface Review {
+  review_id: string;
+  reviewer_profile_image?: string;
+  reviewer_nickname: string;
+  reviewer_email: string;
+  create_at: string;
+  like_num: number;
+  is_like: boolean;
+  fear: number;
+  sensitivity: number;
+  violence: number;
+  content: string;
+}
 
-  const reviews = [
-    {
-      date: "2024-05-08 12:00",
-      userName: "현생팔아뮤덕살기",
-      userHandle: "mu******",
-      comment: "승식 세준 배우님 공연을 수차례 봤지만 이 날 신은 왜 넘버는 역대급이라 말할 수 있습니다 입봉작이라고 하시던데 너무 믿기지 않고 테오와 니콜라의 감정선이 잘 느껴져서 좋았어요 OST 앨범도 구매해서 신은 왜 넘버 잘 듣고 있어요 ㅠㅠ 두 분 이런 퀄리티의 공연을 완성하기까지 얼마나 피나는 노력을 했을지 눈에 선하고 원래 그룹 활동을 함께하셔서 그런지 각자 다른 배우님들과 호흡을 맞출 때와는 또 다른 .. 그런 애틋함이 느껴졌던거 같아요 이퀄 만약 또 기회가 된다면 승식 배우님의 니콜라도 궁금하네요 .. 세준 배우님 승식 배우님 고생했어요 ??"
-    },
-    {
-      date: "2024-05-09 14:30",
-      userName: "관객",
-      userHandle: "a******",
-      comment: "마지막 장면에서 눈물을 참을 수 없었어요. 다시 보고 싶어요!",
-    },
-    {
-      date: "2024-05-10 18:00",
-      userName: "뮤덕",
-      userHandle: "md******",
-      comment: "이번 공연 정말 대단했어요. 무대 디자인과 조명도 멋졌고, 배우님들의 케미도 최고였어요. 다음 공연도 기대됩니다!",
-    }
-  ];
+interface BestReviewProps {
+  reviews: Review[];
+}
+
+const BestReview: React.FC<BestReviewProps> = ({ reviews }) => {
+  const [liked, setLiked] = React.useState(false);
+  const [likeCount, setLikeCount] = React.useState(0);
+  const [isExpanded, setIsExpanded] = React.useState(false);
+  const [carouselIndex, setCarouselIndex] = React.useState(0);
 
   const handleLikeClick = () => {
-    setLiked(prevLiked => !prevLiked);
-    setLikeCount(prevCount => (liked ? prevCount - 1 : prevCount + 1));
-  };
-
-  const handleIconClick = (tagIndex: number, iconIndex: number) => {
-    const newRatings = ratings.map((tag, i) =>
-      i === tagIndex
-        ? tag.map((value, j) => (j <= iconIndex ? true : false))
-        : tag
-    );
-    setRatings(newRatings);
-  };
-
-  const handleIconReset = (tagIndex: number, iconIndex: number) => {
-    const newRatings = ratings.map((tag, i) =>
-      i === tagIndex
-        ? tag.map((value, j) => (j < iconIndex ? true : false))
-        : tag
-    );
-    setRatings(newRatings);
+    setLiked(prev => !prev);
+    setLikeCount(prev => (liked ? prev - 1 : prev + 1));
   };
 
   const toggleExpandText = () => {
@@ -290,32 +268,32 @@ const Page34: React.FC = () => {
   };
 
   const handleLeftButtonClick = () => {
-    setCarouselIndex(prevIndex => 
+    setCarouselIndex(prevIndex =>
       prevIndex > 0 ? prevIndex - 1 : reviews.length - 1
     );
   };
 
   const handleRightButtonClick = () => {
-    setCarouselIndex(prevIndex => 
+    setCarouselIndex(prevIndex =>
       prevIndex < reviews.length - 1 ? prevIndex + 1 : 0
     );
   };
 
   return (
     <Container>
-      <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
+      <LeftButton src="/carouselbutton-left.png" alt="왼쪽 버튼" onClick={handleLeftButtonClick} />
       <ContentWrapper translate={-carouselIndex * 1131} width={1131 * reviews.length}>
         {reviews.map((review, index) => (
-          <Slide key={index} minWidth={1131}>
+          <Slide key={review.review_id} minWidth={1131}>
             <ImageWrapper />
             <Content>
-              <DateText>{review.date}</DateText>
+              <DateText>{new Date(review.create_at).toLocaleDateString()} {new Date(review.create_at).toLocaleTimeString()}</DateText>
               <Header>
                 <UserInfo>
-                  <Avatar />
+                  <Avatar image={review.reviewer_profile_image} />
                   <UserNameHandleWrapper>
-                    <UserNameText>{review.userName}</UserNameText>
-                    <UserHandle>{review.userHandle}</UserHandle>
+                    <UserNameText>{review.reviewer_nickname}</UserNameText>
+                    <UserHandle>{review.reviewer_email}</UserHandle>
                   </UserNameHandleWrapper>
                 </UserInfo>
                 <LikeInfo>
@@ -331,12 +309,12 @@ const Page34: React.FC = () => {
                 <TagGroup>
                   <TagLabel>공포</TagLabel>
                   <IconWrapper>
-                    {ratings[0].map((value, index) => (
+                    {Array.from({ length: 5 }, (_, index) => (
                       <Icon
                         key={index}
-                        src={value ? '/fear1.png' : '/fear2.png'}
-                        onClick={() => handleIconClick(0, index)}
-                        onDoubleClick={() => handleIconReset(0, index)}
+                        src={index < review.fear ? '/fear1.png' : '/fear2.png'}
+                        onClick={() => {}}
+                        onDoubleClick={() => {}}
                       />
                     ))}
                   </IconWrapper>
@@ -344,16 +322,12 @@ const Page34: React.FC = () => {
                 <TagGroup>
                   <TagLabel>선정성</TagLabel>
                   <IconWrapper>
-                    {ratings[1].map((value, index) => (
+                    {Array.from({ length: 5 }, (_, index) => (
                       <Icon
                         key={index}
-                        src={
-                          value
-                            ? '/sensationalism1.png'
-                            : '/sensationalism2.png'
-                        }
-                        onClick={() => handleIconClick(1, index)}
-                        onDoubleClick={() => handleIconReset(1, index)}
+                        src={index < review.sensitivity ? '/sensationalism1.png' : '/sensationalism2.png'}
+                        onClick={() => {}}
+                        onDoubleClick={() => {}}
                       />
                     ))}
                   </IconWrapper>
@@ -361,12 +335,12 @@ const Page34: React.FC = () => {
                 <TagGroup>
                   <TagLabel>폭력성</TagLabel>
                   <IconWrapper>
-                    {ratings[2].map((value, index) => (
+                    {Array.from({ length: 5 }, (_, index) => (
                       <Icon
                         key={index}
-                        src={value ? '/violence1.png' : '/violence2.png'}
-                        onClick={() => handleIconClick(2, index)}
-                        onDoubleClick={() => handleIconReset(2, index)}
+                        src={index < review.violence ? '/violence1.png' : '/violence2.png'}
+                        onClick={() => {}}
+                        onDoubleClick={() => {}}
                       />
                     ))}
                   </IconWrapper>
@@ -374,16 +348,16 @@ const Page34: React.FC = () => {
               </TagsWrapper>
               <CommentSection>
                 <CommentText isExpanded={isExpanded} onClick={toggleExpandText}>
-                  {review.comment}
+                  {review.content}
                 </CommentText>
               </CommentSection>
             </Content>
           </Slide>
         ))}
       </ContentWrapper>
-      <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
+      <RightButton src="/carouselbutton-right.png" alt="오른쪽 버튼" onClick={handleRightButtonClick} />
     </Container>
   );
 };
 
-export default Page34;
+export default BestReview;

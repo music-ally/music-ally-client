@@ -1,18 +1,19 @@
-import React from "react";
-import { Link } from 'react-router-dom';
-import { FiSearch, FiBell } from 'react-icons/fi';
+import React, { useState } from "react";
+import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
-import NaverMap from "../api/naver-map";
+import { Link } from 'react-router-dom';
+import { FiBell } from 'react-icons/fi';
+import bgimg from "../assets/bgimage_01.png";
+import SearchContainer from './searchcontainer.tsx';
+import Notifi from "./notifiaction.tsx";
 
 const HeaderContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-image: url('/header-background.png'); // 배경 이미지 경로
     background-size: cover;
     background-position: center;
     padding: 10px 20px;
-
 `;
 
 const Logo = styled.img`
@@ -20,7 +21,7 @@ const Logo = styled.img`
     height: 63px;
 `;
 
-const SearchContainer = styled.div`
+const Search = styled.div`
     display: flex;
     width: 329px;
     height: 32.779px;
@@ -31,24 +32,6 @@ const SearchContainer = styled.div`
     border-radius: 6.617px;
     border: 0.827px solid #E0E0E0;
     background: rgba(255, 255, 255, 0.90);
-`;
-
-const SearchInput = styled.input`
-    overflow: hidden;
-    color: #828282;
-    text-overflow: ellipsis;
-    font-family: Inter;
-    font-size: 14.568px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 19.852px;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    border-radius: 6.617px;
-    border : none;
-    flex: 1 0 0;
-    background-color: transparent;
 `;
 
 const Nav = styled.nav`
@@ -67,32 +50,92 @@ const Nav = styled.nav`
 `;
 
 const NavLink = styled(Link)`
-  font-size: 18px;
-  color: #d4af37;
-  text-decoration: none;
+    font-size: 18px;
+    color: #d4af37;
+    text-decoration: none;
 
-  &:hover {
-    text-decoration: underline;
-  }
+    &:hover {
+        text-decoration: underline;
+    }
+`;
+
+const NotificationContainer = styled.div`
+    position: relative;
+    display: inline-block;
+`;
+
+const Modal = styled.div`
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 1000;
+`;
+
+const Overlay = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
 `;
 
 const Header: React.FC = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const toggleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
+
     return (
-      <HeaderContainer>
-        <Logo src="/header-Logo.png" alt="Logo" />
-        <SearchContainer>
-          <FiSearch size={20} color="#251611"/>
-          <SearchInput type="text" placeholder="<뮤지컬>이 궁금해!" />
-        </SearchContainer>
-        <Nav>
-          <NavLink to="/">Main</NavLink>
-          <NavLink to="/review">Review</NavLink>
-          <NavLink to="/actor">Actor</NavLink>
-          <NavLink to="/mypage">My page</NavLink>
-          <FiBell size={24} color="#EED18F" />
-        </Nav>
-      </HeaderContainer>
+        <>
+            <HeaderContainer>
+                <Logo src="/header-Logo.png" alt="Logo" />
+                <Search>
+                    <SearchContainer/>
+                </Search>
+                <Nav>
+                    <NavLink to="/">Main</NavLink>
+                    <NavLink to="/review">Review</NavLink>
+                    <NavLink to="/actor">Actor</NavLink>
+                    <NavLink to="/mypage">My page</NavLink>
+                    <NotificationContainer>
+                        <FiBell size={24} color="#EED18F" onClick={toggleModal} />
+                        {isModalOpen && (
+                            <>
+                                <Overlay onClick={toggleModal} />
+                                <Modal>
+                                    <Notifi />
+                                </Modal>
+                            </>
+                        )}
+                    </NotificationContainer>
+                </Nav>
+            </HeaderContainer>
+        </>
     );
-  };
-  
-  export default Header;
+};
+
+const FixedWidthWrapper = styled.div`
+    max-width: 1280px;
+    min-width: 1280px;
+    margin: 0 auto;
+    padding: 0;
+    background-image: url(${bgimg});
+`;
+
+const Layout: React.FC = () => {
+    return (
+        <FixedWidthWrapper>
+            <Header />
+            <Outlet />
+        </FixedWidthWrapper>
+    );
+};
+
+export default Layout;
