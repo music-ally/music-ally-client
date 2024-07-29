@@ -8,7 +8,7 @@ const Row = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center; /* 열을 중앙에 정렬 */
+  justify-content: center;
   position: relative;
 `;
 
@@ -16,7 +16,7 @@ const ImageRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 31.7px; /* 이미지 간격 조절 */
+  gap: 31.7px;
 `;
 
 const ImageContainer = styled.div`
@@ -36,7 +36,7 @@ const MusicalInfoContainer = styled.div`
 `;
 
 const MusicalName = styled.div`
-  font-family: 'Inter', sans-serif; /* 글꼴을 Inter로 설정 */
+  font-family: 'Inter', sans-serif;
   font-weight: black;
   font-size: 23.49px;
   line-height: 1.5;
@@ -47,8 +47,8 @@ const MusicalName = styled.div`
 const ConcertHall = styled.div`
   font-family: 'Inter', sans-serif;
   font-size: 18.07px;
-  color: #ECECEC; 
-  margin: 14px 0 0 0; /* MusicalName과 간격 조정 */
+  color: #ECECEC;
+  margin: 14px 0 0 0;
   letter-spacing: 5%;
 `;
 
@@ -59,15 +59,12 @@ const PerformanceDate = styled.div`
   letter-spacing: 5%;
 `;
 
-// Musical 데이터 타입 정의
 interface Musical {
   name: string;
-  place: string; 
-  date: string; 
-  imageUrl: string; 
+  place: string;
+  date: string;
+  imageUrl: string;
 }
-
-// Props 인터페이스 정의
 interface Props {
   musicals?: Musical[]; 
 }
@@ -99,4 +96,4 @@ const Component: React.FC<Props> = ({ musicals = [] }) => {
   );
 };
 
-export default Component;
+export default MusicalInfo;

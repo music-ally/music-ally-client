@@ -1,17 +1,21 @@
-import React from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import Layout from './components/layout';
-import Layout2 from './components/layout2';
-import Home from './routes/home';
-import MyPage from './routes/myprofile';
-import Login from './routes/login';
-import SignUp from './routes/sign-up';
-import SnsSignup from './routes/sns-signup';
-import EditProfile from './routes/editprofile';
-import UserProfile from './routes/userprofile';
-import ActorPage from './components/actor';
-import Review from './routes/musicalreview';
-import WriteReview from './routes/writereview';
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import Layout from "./components/layout";
+import Layout2 from "./components/layout2";
+import Home from "./routes/home";
+import MyPage from "./routes/myprofile";
+import styled from "styled-components";
+import Login from "./routes/login";
+import SignUp from "./routes/sign-up";
+import { createGlobalStyle } from "styled-components";
+import SnsSignup from "./routes/sns-signup";
+import EditProfile from "./routes/editprofile";
+import UserProfile from "./routes/userprofile";
+import ActorPage from "./components/actor";
+import Review from "./routes/musicalreview";
+import WriteReview from "./routes/writereview"; 
+import Search from "./routes/searchpage";
+import DetailSearchAct from "./routes/detailsearch-actor";
+import DetailSearchMus from "./routes/detailsearch-musical";
 import SeeReview from './routes/seereview'; 
 
 import { createGlobalStyle } from 'styled-components';
@@ -48,11 +52,23 @@ const router = createBrowserRouter([
       },
       {
         path: "write-review",
-        element: <WriteReview /> // WriteReview를 Layout의 자식으로 설정
+        element: <WriteReview />
+      },
+      {
+        path: "search",
+        element: <Search />
+      },
+      {
+        path: "search/musical",
+        element: <DetailSearchMus />
+      },
+      {
+        path: "search/actor",
+        element: <DetailSearchAct />
       },
       {
         path: "see-review/:reviewId",
-        element: <SeeReview /> // SeeReviewPage 라우트 추가
+        element: <SeeReview />
       }
     ]
   },

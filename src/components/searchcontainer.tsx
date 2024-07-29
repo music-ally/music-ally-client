@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FiSearch } from 'react-icons/fi';
 import styled from 'styled-components';
 
@@ -188,11 +189,17 @@ const SearchComponent: React.FC = () => {
   const [musicals, setMusicals] = useState<Musical[]>([]);
   const [actors, setActors] = useState<Actor[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     setMusicals(dummyMusicalData);
     setActors(dummyActorData);
   }, []);
+
+  useEffect(() => {
+    setSearchTerm('');
+  }, [location]);
 
   const filteredMusicals = searchTerm
     ? musicals.filter(musical =>
@@ -206,23 +213,36 @@ const SearchComponent: React.FC = () => {
       )
     : [];
 
+  const handleSearch = () => {
+    navigate('/search');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   const handleMusicalItemClick = (id: string) => {
     console.log(`musical ID: ${id}`);
+    handleSearch();
   };
 
   const handleActorItemClick = (id: string) => {
     console.log(`actor ID: ${id}`);
+    handleSearch();
   };
 
   return (
     <Container>
       <SearchBox>
-        <FiSearch size={20} color="#251611" />
+        <FiSearch size={20} color="#251611" onClick={handleSearch} style={{ cursor: 'pointer' }} />
         <SearchInput
           type="text"
           placeholder="뮤지컬이 궁금해!"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
       </SearchBox>
       {searchTerm && (
