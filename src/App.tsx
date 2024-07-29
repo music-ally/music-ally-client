@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/layout";
 import Layout2 from "./components/layout2";
 import Home from "./routes/home";
@@ -11,19 +11,29 @@ import SnsSignup from "./routes/sns-signup";
 import EditProfile from "./routes/editprofile";
 import UserProfile from "./routes/userprofile";
 import ActorPage from "./components/actor";
+import Review from "./routes/musicalreview";
+import WriteReview from "./routes/writereview"; 
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element : <Layout />,
+    element: <Layout />, // Layout을 사용하여 전체 레이아웃을 설정
     children: [
       {
         path: "home",
         element: <Home />,
       },
       {
-        path : "actor",
-        element:<ActorPage/>
+        path: "actor",
+        element: <ActorPage />,
+      },
+      {
+        path: "review",
+        element: <Review />,
+      },
+      {
+        path: "write-review",
+        element: <WriteReview /> // WriteReview를 Layout의 자식으로 설정
       }
     ]
   },
@@ -66,24 +76,21 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  body{
+  body {
     background-color: black;
     color: white;
   }
 `;
 
-const Wrapper = styled.div`
-  
-`
+const Wrapper = styled.div``;
 
 function App() {
-
   return (
     <Wrapper>
-      {<GlobalStyles /> }
+      {<GlobalStyles />}
       <RouterProvider router={router} />
     </Wrapper>
-  )
+  );
 }
 
-export default App
+export default App;

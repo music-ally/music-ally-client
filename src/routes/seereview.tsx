@@ -1,13 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import BasicReview from '../components/basicreview';
-import BestReview from '../components/bestreview';
-import Pagination from '../components/pagination';
-import { useNavigate } from 'react-router-dom';
-
+import SeeReview from '../components/seereview';
+import MusicalTicket from '../components/musicalticket';
+import Actor from '../components/actorcircle';
 
 // 전체 페이지 컨테이너 스타일
 const AppContainer = styled.div`
+  background-image: url('/reviewpage.png'); /* 배경 이미지 경로 */
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh; /* 최소 화면 높이 */
@@ -27,91 +26,96 @@ const LeftAlignedContainer = styled.div`
   margin-bottom: 20px; /* 타이틀과 다음 컴포넌트 사이 간격 조정 */
 `;
 
-// BestReview 제목 스타일
-const BestReviewTitle = styled.h2`
-  font-size: 75px;
-  font-family: 'Bebas', sans-serif;
-  color: #BB9D59; /* 글자색 설정 */
-  background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
-  -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
-  background-clip: text; /* 텍스트만 그라데이션 적용 */
-  -webkit-text-fill-color: transparent; /* 텍스트 색상 투명으로 */
-  margin: 0 0px; /* 좌우 간격 추가 */
-  display: flex; /* Flex 설정 추가 */
-  align-items: center; /* 수직 가운데 정렬 */
-  font-weight: 300; /* 글꼴 두께를 얇게 조정 */
-`;
-
-// BasicReview 제목 스타일
-const BasicReviewTitle = styled.h2`
-  font-size: 75px;
-  font-family: 'Bebas', sans-serif;
-  color: #BB9D59; /* 글자색 설정 */
-  background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
-  -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
-  background-clip: text; /* 텍스트만 그라데이션 적용 */
-  -webkit-text-fill-color: transparent; /* 텍스트 색상 투명으로 */
-  margin: 0 0px; /* 좌우 간격 추가 */
-  display: flex; /* Flex 설정 추가 */
-  align-items: center; /* 수직 가운데 정렬 */
-  font-weight: 300; /* 글꼴 두께를 얇게 조정 */
-`;
-
-// WriteIcon 이미지 스타일
-const WriteIcon = styled.img`
+// search 아이콘 스타일
+const SearchIcon = styled.img`
   width: 50px; /* 아이콘 너비 */
   height: 50px; /* 아이콘 높이 */
-  margin-left: auto; /* 왼쪽 여백을 auto로 설정하여 오른쪽으로 이동 */
-  margin-right: 0px; /* 오른쪽 여백 추가 */
+`;
+
+// confirm 아이콘 스타일
+const ConfirmIcon = styled.img`
+  width: 30px; /* 아이콘 너비 */
+  height: 29px; /* 아이콘 높이 */
+`;
+
+// 제목 스타일
+const MainTitle = styled.h1`
+  font-size: 75px;
+  font-family: 'Bebas', sans-serif;
+  color: #BB9D59; /* 글자색 설정 */
+  background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
+  -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
+  background-clip: text; /* 텍스트만 그라데이션 적용 */
+  -webkit-text-fill-color: transparent; /* 텍스트 색상 투명으로 */
+  margin: 6px 0; /* 상하 간격 추가 */
+  display: flex; /* Flex 설정 추가 */
+  align-items: center; /* 수직 가운데 정렬 */
+  margin-left: 100px; /* 왼쪽 열에 맞게 위치 조정 */
+  font-weight: 300; /* 글꼴 두께를 얇게 조정 */
+`;
+
+// 제목 스타일
+const Title = styled.h2`
+  font-size: 52px;
+  font-family: 'Bebas', sans-serif;
+  color: #BB9D59; /* 글자색 설정 */
+  background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
+  -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
+  background-clip: text; /* 텍스트만 그라데이션 적용 */
+  -webkit-text-fill-color: transparent; /* 텍스트 색상 투명으로 */
+  margin: 6px 0; /* 상하 간격 추가 */
+  display: flex; /* Flex 설정 추가 */
+  align-items: center; /* 수직 가운데 정렬 */
+  margin-left: 100px; /* 왼쪽 열에 맞게 위치 조정 */
+  font-weight: 300; /* 글꼴 두께를 얇게 조정 */
 `;
 
 // BasicReview와 Pagination 사이의 수직 간격 스타일
 const VerticalSpacing = styled.div`
-  margin-top: 45px; /* BasicReview 위 간격 설정 */
-  margin-bottom: 55px; /* BasicReview 아래 간격 설정 */
+  margin-top: 20px; /* BasicReview 위 간격 설정 */
+  margin-bottom: 30px; /* BasicReview 아래 간격 설정 (줄임) */
 `;
 
-const HorizontalLine = styled.hr`
-  width: 1131px; /* 가로줄 길이 */
-  border-top: 1px solid #D1D1D1; /* 두께는 1px */
-  margin: 75px 0; /* 가로줄 위아래 간격을 75px로 조정 */
+
+// Actor를 왼쪽으로 조정하기 위한 컨테이너
+const LeftAlignedActorContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center; /* 세로 중앙 정렬 */
+  margin-top: 30px; 
+  margin-bottom: 50px; /* 타이틀과 다음 컴포넌트 사이 간격 조정 */
+  margin-left: 180px; /* 타이틀과 같은 열에 맞추기 */
+  gap: 32px; /* Actor 컴포넌트 사이의 간격 */
 `;
 
 const App: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handleWriteReviewClick = () => {
-    navigate('/write-review');
-  };
-
   return (
     <AppContainer>
       <LeftAlignedContainer>
-        <BestReviewTitle>
-          Best Review
-        </BestReviewTitle>
+        <MainTitle>
+          MUSICAL
+        </MainTitle>
       </LeftAlignedContainer>
-      <BestReview />
-      <HorizontalLine />
+      <MusicalTicket />
       <LeftAlignedContainer>
-        <BasicReviewTitle>
-          ALL Review
-        </BasicReviewTitle>
-        <WriteIcon src="/write.png" alt="Write Icon" onClick={handleWriteReviewClick} />
+        <Title>
+          ACTOR
+        </Title>
+      </LeftAlignedContainer>
+      <LeftAlignedActorContainer>
+        <Actor />
+        <Actor />
+        <Actor />
+      </LeftAlignedActorContainer>
+      <LeftAlignedContainer>
+        <Title>
+          REVIEW
+        </Title>
       </LeftAlignedContainer>
       <VerticalSpacing>
-        <BasicReview />
+        <SeeReview />
       </VerticalSpacing>
-      <VerticalSpacing>
-        <BasicReview />
-      </VerticalSpacing>
-      <VerticalSpacing>
-        <BasicReview />
-      </VerticalSpacing>
-      <VerticalSpacing>
-        <BasicReview />
-      </VerticalSpacing>
-      <Pagination />
     </AppContainer>
   );
 };

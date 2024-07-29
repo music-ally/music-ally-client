@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
 interface Page34Props {}
@@ -7,18 +7,10 @@ const Container = styled.div`
   border-radius: 15.6px;
   background: linear-gradient(to right, #5c1e19, #3c0d0a);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   padding: 16px 20px 15px 20px;
-  width: 1131px;
+  width: 1092px;
   box-sizing: border-box;
-`;
-
-const ImageWrapper = styled.div`
-  border-radius: 4.4px;
-  background: url('/musicalposter-1.jpeg') 50% 50% / 172.5px 244px no-repeat;
-  margin-right: 18.5px;
-  width: 172.5px;
-  height: 244px;
 `;
 
 const ContentWrapper = styled.div`
@@ -28,31 +20,22 @@ const ContentWrapper = styled.div`
   box-sizing: border-box;
 `;
 
-const DateText = styled.div`
-  margin: 0 4px 2px 4px;
-  align-self: flex-end;
-  word-break: break-word;
-  font-family: 'Inter', sans-serif;
-  font-weight: bold;
-  font-size: 12px;
-  letter-spacing: 0.4px;
-  line-height: 1.347;
-  color: #6e6e6e;
-`;
-
 const Header = styled.div`
   margin: 0 4.1px 16px 4px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 891.9px;
+  align-items: center;
+  width: 100%;
   box-sizing: border-box;
+  position: relative;
 `;
 
 const UserInfo = styled.div`
   margin-bottom: 3.4px;
   display: flex;
   flex-direction: row;
+  align-items: center;
   box-sizing: border-box;
 `;
 
@@ -67,9 +50,8 @@ const Avatar = styled.div`
 
 const UserNameHandleWrapper = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin: 9.8px 12.1px 10.8px 0;
+  flex-direction: column;
+  justify-content: center;
   word-break: break-word;
 `;
 
@@ -77,11 +59,10 @@ const UserNameText = styled.div`
   word-break: break-word;
   font-family: 'Inter', sans-serif;
   font-weight: bold;
-  font-size: 25.2px;
+  font-size: 28px;
   letter-spacing: 0.8px;
   line-height: 1.347;
-  color: #d5d3c1;
-  margin-right: 8px;
+  color: #F2F2F2;
 `;
 
 const UserHandle = styled.div`
@@ -94,36 +75,12 @@ const UserHandle = styled.div`
   color: #c0c0c0;
 `;
 
-const LikeInfo = styled.div`
-  margin-top: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-sizing: border-box;
-`;
-
-const LikeIcon = styled.img<{ liked: boolean }>`
-  width: 27.9px;
-  height: 24.3px;
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out;
-
-  ${props =>
-    props.liked &&
-    `
-    transform: scale(1.1);
-  `}
-`;
-
-const LikeCount = styled.span`
-  margin: 0 3px;
-  word-break: break-word;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.5px;
-  line-height: 1.347;
-  color: #fffce5;
+const Warning = styled.div`
+  font-family: 'Bebas', sans-serif;
+  font-size: 32px;
+  color: #D3C187; /* 글자색 설정 */
+  margin-top: 0px; /* 태그와의 간격 설정 */
+  margin-bottom: 10px; /* 태그와의 간격 설정 */
 `;
 
 const TagsWrapper = styled.div`
@@ -170,29 +127,28 @@ const Icon = styled.img`
 const CommentSection = styled.div`
   border-radius: 5px;
   background-color: #e8e5d2;
-  display: flex;
-  padding: 13.5px 21.6px 15.5px 17px;
-  width: 900px;
-  height: 105px;
+  width: 100%;
   overflow: hidden;
-  position: relative;
   box-sizing: border-box;
+  padding: 13.5px 21.6px 15.5px 17px;
 `;
 
-const CommentText = styled.span<{ isExpanded: boolean }>`
-  word-break: break-word;
+const CommentTextArea = styled.textarea`
+  width: 100%;
+  resize: none;
+  border: none;
+  background: none;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 14px;
   letter-spacing: 0.4px;
   line-height: 1.347;
   color: #444444;
-  white-space: pre-wrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: ${props => (props.isExpanded ? 'unset' : '4')}; /* 라인 수 제한 */
-  -webkit-box-orient: vertical;
+  outline: none;
+  overflow-y: hidden;
+  min-height: 105px;
+  max-height: 400px;
+  box-sizing: border-box;
 `;
 
 const Page34: React.FC<Page34Props> = () => {
@@ -202,14 +158,9 @@ const Page34: React.FC<Page34Props> = () => {
     [false, false, false, false, false]
   ]); // 별점 상태 배열
 
-  const [liked, setLiked] = useState(false); // 좋아요 상태
-  const [likeCount, setLikeCount] = useState(0); // 좋아요 수
-  const [isExpanded, setIsExpanded] = useState(false); // 텍스트 확장 상태
+  const [comment, setComment] = useState(''); // 댓글 상태
 
-  const handleLikeClick = () => {
-    setLiked(prevLiked => !prevLiked);
-    setLikeCount(prevCount => (liked ? prevCount - 1 : prevCount + 1));
-  };
+  const commentRef = useRef<HTMLTextAreaElement>(null);
 
   const handleIconClick = (tagIndex: number, iconIndex: number) => {
     const newRatings = ratings.map((tag, i) =>
@@ -229,15 +180,24 @@ const Page34: React.FC<Page34Props> = () => {
     setRatings(newRatings);
   };
 
-  const toggleExpandText = () => {
-    setIsExpanded(prev => !prev);
+  const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(event.target.value);
+    if (commentRef.current) {
+      commentRef.current.style.height = 'auto';
+      commentRef.current.style.height = `${commentRef.current.scrollHeight}px`;
+    }
   };
+
+  useEffect(() => {
+    if (commentRef.current) {
+      commentRef.current.style.height = 'auto';
+      commentRef.current.style.height = `${commentRef.current.scrollHeight}px`;
+    }
+  }, [comment]);
 
   return (
     <Container>
-      <ImageWrapper />
       <ContentWrapper>
-        <DateText>2024-05-08 12:00</DateText>
         <Header>
           <UserInfo>
             <Avatar />
@@ -246,15 +206,8 @@ const Page34: React.FC<Page34Props> = () => {
               <UserHandle>mu******</UserHandle>
             </UserNameHandleWrapper>
           </UserInfo>
-          <LikeInfo>
-            <LikeIcon
-              src={liked ? '/heart1.png' : '/heart.png'}
-              liked={liked}
-              onClick={handleLikeClick}
-            />
-            <LikeCount>{likeCount}</LikeCount>
-          </LikeInfo>
         </Header>
+        <Warning>TRIGGER WARNING</Warning>
         <TagsWrapper>
           <TagGroup>
             <TagLabel>공포</TagLabel>
@@ -301,9 +254,12 @@ const Page34: React.FC<Page34Props> = () => {
           </TagGroup>
         </TagsWrapper>
         <CommentSection>
-          <CommentText isExpanded={isExpanded} onClick={toggleExpandText}>
-            승식 세준 배우님 공연을 수차례 봤지만 이 날 신은 왜 넘버는 역대급이라 말할 수 있습니다 입봉작이라고 하시던데 너무 믿기지 않고 테오와 니콜라의 감정선이 잘 느껴져서 좋았어요 OST 앨범도 구매해서 신은 왜 넘버 잘 듣고 있어요 ㅠㅠ 두 분 이런 퀄리티의 공연을 완성하기까지 얼마나 피나는 노력을 했을지 눈에 선하고 원래 그룹 활동을 함께하셔서 그런지 각자 다른 배우님들과 호흡을 맞출 때와는 또 다른 .. 그런 애틋함이 느껴졌던거 같아요 이퀄 만약 또 기회가 된다면 승식 배우님의 니콜라도 궁금하네요 .. 세준 배우님 승식 배우님 고생했어요 ?? 
-          </CommentText>
+          <CommentTextArea
+            ref={commentRef}
+            value={comment}
+            onChange={handleCommentChange}
+            placeholder='배우에 대한 직접적인 비방 및 욕설은 지양해주세요.'
+          />
         </CommentSection>
       </ContentWrapper>
     </Container>
