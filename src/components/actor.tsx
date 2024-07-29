@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ReviewCarousel from './reviewcarousel';
+import ActorCarousel from './actorcarousel';
 import styled from 'styled-components';
 
 const Title = styled.h1`
@@ -32,7 +32,7 @@ const Actor: React.FC = () => {
         //         setMusicalId(data.id);
         //     });
 
-        // 더미데이터
+        // Dummy data
         const musicals = [
             { musicalId: 1, title: '레미제라블' },
             { musicalId: 2, title: '오페라의 유령' },
@@ -44,19 +44,18 @@ const Actor: React.FC = () => {
         const randomMusical = musicals[Math.floor(Math.random() * musicals.length)];
         setTitle(randomMusical.title);
         setMusicalId(randomMusical.musicalId);
-        console.log(`musicalID잘 넘어가고 있는지 ${randomMusical.musicalId}`);
     }, []);
 
     return (
         <Container>
             <Title>{title} 출연진을 한눈에 보기!</Title>
-            <ReviewCarousel />
+            <ActorCarousel musicalId={musicalId} />
 
             <Title>가수 출신 뮤지컬 배우 모아보기</Title>
-            <ReviewCarousel />
+            <ActorCarousel musicalId={musicalId}/>
 
             <Title>최근 핫한 배우 모아보기</Title>
-            <ReviewCarousel />
+            <ActorCarousel musicalId={musicalId}/>
         </Container>
     );
 };
