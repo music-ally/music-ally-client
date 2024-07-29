@@ -33,18 +33,20 @@ const SearchPage: React.FC = () => {
   const navigate = useNavigate();
 
   const musicals = [
-    { name: "Musical Name 1", place: "Concert Hall 1", date: "2024-07-01", imageUrl: "/musicalposter-1.jpeg" },
-    { name: "Musical Name 2", place: "Concert Hall 2", date: "2024-07-02", imageUrl: "/musicalposter-2.jpeg" },
-    { name: "Musical Name 3", place: "Concert Hall 3", date: "2024-07-03", imageUrl: "/musicalposter-3.jpeg" },
-    { name: "Musical Name 4", place: "Concert Hall 4", date: "2024-07-04", imageUrl: "/musicalposter-4.jpeg" },
-    { name: "Musical Name 5", place: "Concert Hall 5", date: "2024-07-04", imageUrl: "/musicalposter-5.jpeg" }
+    { musical_id : "1",musical_name: "Musical Name 1", theater_name: "Concert Hall 1", start_at: "2024-07-01",end_at: "2024-07-03", poster_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s" },
+    { musical_id : "2",musical_name: "Musical Name 2", theater_name: "Concert Hall 2", start_at: "2024-07-02",end_at: "2024-07-03", poster_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s" },
+    { musical_id : "3",musical_name: "Musical Name 3", theater_name: "Concert Hall 3", start_at: "2024-07-03",end_at: "2024-07-03", poster_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s" },
+    { musical_id : "4",musical_name: "Musical Name 4", theater_name: "Concert Hall 4", start_at: "2024-07-04",end_at: "2024-07-05", poster_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s" },
+    { musical_id : "5",musical_name: "Musical Name 5", theater_name: "Concert Hall 5", start_at: "2024-07-04",end_at: "2024-07-05", poster_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s" }
   ];
 
   const actors = [
-    { name: "Actor Name 1", company: "PL 엔터테인먼트", birthday: "1982.04.06" },
-    { name: "Actor Name 2", company: "PL 엔터테인먼트", birthday: "1982.04.06" },
-    { name: "Actor Name 3", company: "PL 엔터테인먼트", birthday: "1982.04.06" },
-    { name: "Actor Name 4", company: "PL 엔터테인먼트", birthday: "1982.04.06" }
+    {actor_id: "1", name: "Actor Name 1", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"},
+    {actor_id: "2", name: "Actor Name 2", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"},
+    {actor_id: "3", name: "Actor Name 3", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"},
+    {actor_id: "4", name: "Actor Name 4", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"},
+    {actor_id: "5", name: "Actor Name 5", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"},
+    {actor_id: "6", name: "Actor Name 6", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"}
   ];
 
   const handleSeeMoreMusicals = () => {
@@ -59,13 +61,13 @@ const SearchPage: React.FC = () => {
     <PageContainer>
       <SectionWrapper>
         <SectionTitle>Musical ({musicals.length})</SectionTitle>
-        <MusicalInfo musicals={musicals} />
+        <MusicalInfo musicals={musicals.slice(0, 4)} />
         <SeeMore onClick={handleSeeMoreMusicals}>More</SeeMore>
       </SectionWrapper>
 
       <SectionWrapper>
         <SectionTitle>Actor ({actors.length})</SectionTitle>
-        <ActorInfo actors={actors} />
+        <ActorInfo actors={actors.slice(0, 4)} />
         <SeeMore onClick={handleSeeMoreActors}>More</SeeMore>
       </SectionWrapper>
     </PageContainer>

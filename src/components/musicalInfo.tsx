@@ -1,26 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Container = styled.div``;
-const ContentWrapper = styled.div``;
-
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-`;
-
-const ImageRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 31.7px;
+const Container = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 `;
 
 const ImageContainer = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom : 80px;
 `;
 
 const Image = styled.img`
@@ -33,6 +25,7 @@ const MusicalInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin-top: 10px;
 `;
 
 const MusicalName = styled.div`
@@ -41,7 +34,6 @@ const MusicalName = styled.div`
   font-size: 23.49px;
   line-height: 1.5;
   color: #FAFAFA;
-  background-clip: text;
 `;
 
 const ConcertHall = styled.div`
@@ -60,38 +52,35 @@ const PerformanceDate = styled.div`
 `;
 
 interface Musical {
-  name: string;
-  place: string;
-  date: string;
-  imageUrl: string;
+  musical_id: string;
+  poster_image: string;
+  musical_name: string;
+  start_at: string;
+  end_at: string;
+  theater_name: string;
 }
+
 interface Props {
-  musicals?: Musical[]; 
+  musicals?: Musical[];
 }
 
 const MusicalInfo: React.FC<Props> = ({ musicals = [] }) => {
   return (
     <Container>
-      <ContentWrapper>
-        <Row>
-          <ImageRow>
-            {musicals.length > 0 ? (
-              musicals.map((musical, index) => (
-                <ImageContainer key={index}>
-                  <Image src={musical.imageUrl} alt={`Poster for ${musical.name}`} />
-                  <MusicalInfoContainer>
-                    <MusicalName>{musical.name}</MusicalName>
-                    <ConcertHall>{musical.place}</ConcertHall>
-                    <PerformanceDate>{musical.date}</PerformanceDate>
-                  </MusicalInfoContainer>
-                </ImageContainer>
-              ))
-            ) : (
-              <div>No musicals available</div> // 데이터가 없는 경우 대체
-            )}
-          </ImageRow>
-        </Row>
-      </ContentWrapper>
+      {musicals.length > 0 ? (
+        musicals.map((musical, index) => (
+          <ImageContainer key={index}>
+            <Image src={musical.poster_image} alt={musical.musical_name} />
+            <MusicalInfoContainer>
+              <MusicalName>{musical.musical_name}</MusicalName>
+              <ConcertHall>{musical.theater_name}</ConcertHall>
+              <PerformanceDate>{musical.start_at}-{musical.end_at}</PerformanceDate>
+            </MusicalInfoContainer>
+          </ImageContainer>
+        )) 
+      ) : (
+        <div>No musicals available</div>
+      )}
     </Container>
   );
 };
