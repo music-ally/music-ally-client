@@ -98,10 +98,10 @@ interface ImageProps {
 }
 
 interface ComponentProps {
-  images: ImageProps[];
+  images?: ImageProps[]; // images는 선택적인 프로퍼티로 변경
 }
 
-const Component: React.FC<ComponentProps> = ({ images }) => {
+const Component: React.FC<ComponentProps> = ({ images = [] }) => { // 기본값을 빈 배열로 설정
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleLeftButtonClick = () => {
@@ -117,6 +117,11 @@ const Component: React.FC<ComponentProps> = ({ images }) => {
       return newIndex;
     });
   };
+
+  // images가 없을 때 렌더링을 건너뜁니다.
+  if (!images.length) {
+    return <Container>No images available</Container>;
+  }
 
   return (
     <>
