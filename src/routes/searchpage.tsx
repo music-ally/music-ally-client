@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import MusicalInfo from '../components/musicalInfo';
@@ -31,23 +31,21 @@ const SeeMore = styled.div`
 
 const SearchPage: React.FC = () => {
   const navigate = useNavigate();
+  const [musicals, setMusicals] = useState([]);
+  const [actors, setActors] = useState([]);
 
-  const musicals = [
-    { musical_id : "1",musical_name: "Musical Name 1", theater_name: "Concert Hall 1", start_at: "2024-07-01",end_at: "2024-07-03", poster_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s" },
-    { musical_id : "2",musical_name: "Musical Name 2", theater_name: "Concert Hall 2", start_at: "2024-07-02",end_at: "2024-07-03", poster_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s" },
-    { musical_id : "3",musical_name: "Musical Name 3", theater_name: "Concert Hall 3", start_at: "2024-07-03",end_at: "2024-07-03", poster_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s" },
-    { musical_id : "4",musical_name: "Musical Name 4", theater_name: "Concert Hall 4", start_at: "2024-07-04",end_at: "2024-07-05", poster_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s" },
-    { musical_id : "5",musical_name: "Musical Name 5", theater_name: "Concert Hall 5", start_at: "2024-07-04",end_at: "2024-07-05", poster_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s" }
-  ];
+//   useEffect(() => {
+//     // Fetch musicals from the API
+//     // fetch('/api/musical')
+//     //   .then(response => response.json())
+//     //   .then(data => setMusicals(data))
+//     //   .catch(error => console.error('Error fetching musicals:', error));
 
-  const actors = [
-    {actor_id: "1", name: "Actor Name 1", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"},
-    {actor_id: "2", name: "Actor Name 2", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"},
-    {actor_id: "3", name: "Actor Name 3", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"},
-    {actor_id: "4", name: "Actor Name 4", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"},
-    {actor_id: "5", name: "Actor Name 5", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"},
-    {actor_id: "6", name: "Actor Name 6", agency: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIL4Fb4_oFM_wkKdMCXzVDqzM3nepn3JKvOw&s"}
-  ];
+//     // Fetch actors from the API
+//     // fetch('/api/actor')
+//     //   .then(response => response.json())
+//     //   .then(data => setActors(data))
+//     //   .catch(error => console.error('Error fetching actors:', error));
 
   const handleSeeMoreMusicals = () => {
     navigate('/search/musical', { state: { musicals } });
