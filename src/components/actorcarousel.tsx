@@ -68,7 +68,7 @@ const ImageText = styled.div`
   bottom: 10px;
   width: 100%;
   text-align: center;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter-SemiBold', sans-serif; /* 'Inter-SemiBold' 폰트 사용 */
   font-size: 18pt;
   color: #FAFAFA;
   z-index: 2;
