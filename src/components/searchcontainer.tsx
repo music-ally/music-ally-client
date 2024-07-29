@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import the useNavigate hook
 import { FiSearch } from 'react-icons/fi';
 import styled from 'styled-components';
 
@@ -188,6 +189,7 @@ const SearchComponent: React.FC = () => {
   const [musicals, setMusicals] = useState<Musical[]>([]);
   const [actors, setActors] = useState<Actor[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     setMusicals(dummyMusicalData);
@@ -206,6 +208,16 @@ const SearchComponent: React.FC = () => {
       )
     : [];
 
+  const handleSearch = () => {
+    navigate('/search');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   const handleMusicalItemClick = (id: string) => {
     console.log(`musical ID: ${id}`);
   };
@@ -217,12 +229,13 @@ const SearchComponent: React.FC = () => {
   return (
     <Container>
       <SearchBox>
-        <FiSearch size={20} color="#251611" />
+        <FiSearch size={20} color="#251611" onClick={handleSearch} style={{ cursor: 'pointer' }} />
         <SearchInput
           type="text"
           placeholder="뮤지컬이 궁금해!"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
       </SearchBox>
       {searchTerm && (
