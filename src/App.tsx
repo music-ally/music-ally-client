@@ -18,8 +18,6 @@ import DetailSearchAct from "./routes/detailsearch-actor";
 import DetailSearchMus from "./routes/detailsearch-musical";
 import SeeReview from './routes/seereview'; 
 
-import { createGlobalStyle } from 'styled-components';
-
 const GlobalStyles = createGlobalStyle`
   * {
     margin: 0;
@@ -104,13 +102,16 @@ const router = createBrowserRouter([
   }
 ]);
 
-const App: React.FC = () => {
+
+const Wrapper = styled.div``;
+
+function App() {
   return (
-    <>
-      <GlobalStyles />
+    <Wrapper>
+      {<GlobalStyles />}
       <RouterProvider router={router} />
-    </>
+    </Wrapper>
   );
-};
+}
 
 export default App;

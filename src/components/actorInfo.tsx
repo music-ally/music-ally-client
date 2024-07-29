@@ -1,54 +1,46 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Container = styled.div``;
-const ContentWrapper = styled.div``;
-
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center; /* 열을 중앙에 정렬 */
-  position: relative;
-`;
-
-const ImageRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 31.7px; /* 이미지 간격 조절 */
+const Container = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 `;
 
 const ImageContainer = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
 `;
 
 const Image = styled.img`
   border-radius: 13.68px;
   width: 250.9px;
-  height: 354.98px;
+  height: 250.9px;
 `;
 
 const ActorInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin-top: 10px;
 `;
 
 const ActorName = styled.div`
-  font-family: 'Inter', sans-serif; /* 글꼴을 Inter로 설정 */
+  font-family: 'Inter', sans-serif;
   font-weight: black;
   font-size: 23.49px;
   line-height: 1.5;
   color: #FAFAFA;
-  background-clip: text;
 `;
 
 const Company = styled.div`
   font-family: 'Inter', sans-serif;
   font-size: 18.07px;
-  color: #ECECEC; 
-  margin: 14px 0 0 0; /* ActorName과 간격 조정 */
+  color: #ECECEC;
+  margin: 14px 0 0 0;
   letter-spacing: 5%;
 `;
 
@@ -59,41 +51,37 @@ const Birthday = styled.div`
   letter-spacing: 5%;
 `;
 
-// Props 인터페이스 정의
 interface Actor {
+  actor_id: string;
   name: string;
-  company: string;
+  agency: string;
   birthday: string;
+  imageUrl: string;
 }
 
 interface Props {
-  actors?: Actor[]; 
-  images?: string[]; 
+  actors?: Actor[];
 }
 
-const Component: React.FC<Props> = ({ actors = [], images = [] }) => {
-  const minLength = Math.min(images.length, actors.length);
-
+const ActorInfo: React.FC<Props> = ({ actors = [] }) => {
   return (
     <Container>
-      <ContentWrapper>
-        <Row>
-          <ImageRow>
-            {minLength > 0 && images.slice(0, minLength).map((image, index) => (
-              <ImageContainer key={index}>
-                <Image src={image} alt={`Image ${index + 1}`} />
-                <ActorInfoContainer>
-                  <ActorName>{actors[index]?.name || 'Unknown Actor'}</ActorName>
-                  <Company>{actors[index]?.company || 'Unknown Company'}</Company>
-                  <Birthday>{actors[index]?.birthday || 'Unknown Birthday'}</Birthday>
-                </ActorInfoContainer>
-              </ImageContainer>
-            ))}
-          </ImageRow>
-        </Row>
-      </ContentWrapper>
+      {actors.length > 0 ? (
+        actors.map((actor, index) => (
+          <ImageContainer key={index}>
+            <Image src={actor.imageUrl} alt={actor.name} />
+            <ActorInfoContainer>
+              <ActorName>{actor.name}</ActorName>
+              <Company>{actor.agency}</Company>
+              <Birthday>{actor.birthday}</Birthday>
+            </ActorInfoContainer>
+          </ImageContainer>
+        ))
+      ) : (
+        <div>No actors available</div>
+      )}
     </Container>
   );
 };
 
-export default Component;
+export default ActorInfo;

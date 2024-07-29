@@ -6,7 +6,7 @@ import WriteReview from '../components/wirtereview';
 import MusicalTicket from '../components/musicalticket';
 import Actorcircle from '../components/actorcircle';
 import MusicalSearchModal from '../components/musicalsearch'; // 뮤지컬 검색 모달 컴포넌트 임포트
-import ActorSearchModal from '../components/actorsearch'; // 배우 검색 모달 컴포넌트 임포트
+import ActorSearchModal from '../components/actorcarousel'; // 배우 검색 모달 컴포넌트 임포트
 
 const AppContainer = styled.div`
   background-image: url('/reviewpage.png');

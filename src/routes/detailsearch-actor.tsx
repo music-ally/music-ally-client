@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
 
 const Container = styled.div`
   width: 1280px;
@@ -62,34 +63,30 @@ const Birthday = styled.div`
 
 interface Actor {
   name: string;
-  company: string; 
-  birthday: string; 
-  imageUrl: string; 
+  company: string;
+  birthday: string;
+  imageUrl: string;
 }
 
 const DetailSearchAct: React.FC = () => {
-  const actors: Actor[] = [
-    { name: "Actor Name 1", company: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "/actor-1.jpeg" },
-    { name: "Actor Name 2", company: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "/actor-2.jpeg" },
-    { name: "Actor Name 3", company: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "/actor-3.jpeg" },
-    { name: "Actor Name 4", company: "PL 엔터테인먼트", birthday: "1982.04.06", imageUrl: "/actor-4.jpeg" }
-  ];
+  const location = useLocation();
+  const actors = location.state?.actors as Actor[] || [];
 
   return (
     <Container>
-        <GridContainer>
-        <SectionTitle>Actor ({actors.length})</SectionTitle>
-          {actors.map((actor, index) => (
-            <ImageContainer key={index}>
-              <Image src={actor.imageUrl} alt={actor.name} />
-              <ActorInfoContainer>
-                <ActorName>{actor.name}</ActorName>
-                <Company>{actor.company}</Company>
-                <Birthday>{actor.birthday}</Birthday>
-              </ActorInfoContainer>
-            </ImageContainer>
-          ))}
-        </GridContainer>
+      <SectionTitle>Actor ({actors.length})</SectionTitle>
+      <GridContainer>
+        {actors.map((actor, index) => (
+          <ImageContainer key={index}>
+            <Image src={actor.imageUrl} alt={actor.name} />
+            <ActorInfoContainer>
+              <ActorName>{actor.name}</ActorName>
+              <Company>{actor.company}</Company>
+              <Birthday>{actor.birthday}</Birthday>
+            </ActorInfoContainer>
+          </ImageContainer>
+        ))}
+      </GridContainer>
     </Container>
   );
 };

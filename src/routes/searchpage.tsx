@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import MusicalInfo from '../components/musicalInfo';
@@ -31,21 +31,21 @@ const SeeMore = styled.div`
 
 const SearchPage: React.FC = () => {
   const navigate = useNavigate();
+  const [musicals, setMusicals] = useState([]);
+  const [actors, setActors] = useState([]);
 
-  const musicals = [
-    { name: "Musical Name 1", place: "Concert Hall 1", date: "2024-07-01", imageUrl: "/musicalposter-1.jpeg" },
-    { name: "Musical Name 2", place: "Concert Hall 2", date: "2024-07-02", imageUrl: "/musicalposter-2.jpeg" },
-    { name: "Musical Name 3", place: "Concert Hall 3", date: "2024-07-03", imageUrl: "/musicalposter-3.jpeg" },
-    { name: "Musical Name 4", place: "Concert Hall 4", date: "2024-07-04", imageUrl: "/musicalposter-4.jpeg" },
-    { name: "Musical Name 5", place: "Concert Hall 5", date: "2024-07-04", imageUrl: "/musicalposter-5.jpeg" }
-  ];
+//   useEffect(() => {
+//     // Fetch musicals from the API
+//     // fetch('/api/musical')
+//     //   .then(response => response.json())
+//     //   .then(data => setMusicals(data))
+//     //   .catch(error => console.error('Error fetching musicals:', error));
 
-  const actors = [
-    { name: "Actor Name 1", company: "PL 엔터테인먼트", birthday: "1982.04.06" },
-    { name: "Actor Name 2", company: "PL 엔터테인먼트", birthday: "1982.04.06" },
-    { name: "Actor Name 3", company: "PL 엔터테인먼트", birthday: "1982.04.06" },
-    { name: "Actor Name 4", company: "PL 엔터테인먼트", birthday: "1982.04.06" }
-  ];
+//     // Fetch actors from the API
+//     // fetch('/api/actor')
+//     //   .then(response => response.json())
+//     //   .then(data => setActors(data))
+//     //   .catch(error => console.error('Error fetching actors:', error));
 
   const handleSeeMoreMusicals = () => {
     navigate('/search/musical', { state: { musicals } });
@@ -59,13 +59,13 @@ const SearchPage: React.FC = () => {
     <PageContainer>
       <SectionWrapper>
         <SectionTitle>Musical ({musicals.length})</SectionTitle>
-        <MusicalInfo musicals={musicals} />
+        <MusicalInfo musicals={musicals.slice(0, 4)} />
         <SeeMore onClick={handleSeeMoreMusicals}>More</SeeMore>
       </SectionWrapper>
 
       <SectionWrapper>
         <SectionTitle>Actor ({actors.length})</SectionTitle>
-        <ActorInfo actors={actors} />
+        <ActorInfo actors={actors.slice(0, 4)} />
         <SeeMore onClick={handleSeeMoreActors}>More</SeeMore>
       </SectionWrapper>
     </PageContainer>
