@@ -1,150 +1,289 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
+import { useNavigate, useParams } from 'react-router-dom'; // useHistory를 useNavigate로 변경
 import WriteReview from '../components/wirtereview';
 import MusicalTicket from '../components/musicalticket';
-import Actor from '../components/actorcircle';
+import Actorcircle from '../components/actorcircle';
+import MusicalSearchModal from '../components/musicalsearch'; // 뮤지컬 검색 모달 컴포넌트 임포트
+import ActorSearchModal from '../components/actorsearch'; // 배우 검색 모달 컴포넌트 임포트
 
-// 전체 페이지 컨테이너 스타일
 const AppContainer = styled.div`
-  background-image: url('/reviewpage.png'); /* 배경 이미지 경로 */
+  background-image: url('/reviewpage.png');
   background-size: cover;
   background-repeat: no-repeat;
-  min-height: 100vh; /* 최소 화면 높이 */
-  padding: 162px 74px 100px; /* 상단 162px, 좌우 74px 여백, 하단 100px 여백 */
-  box-sizing: border-box; /* padding을 포함한 전체 박스 크기 설정 */
+  min-height: 100vh;
+  padding: 162px 74px 100px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: center; /* 모든 컴포넌트들을 수직 방향 중앙 정렬 */
+  align-items: center;
 `;
 
-// 왼쪽 정렬을 위한 스타일
 const LeftAlignedContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: flex-start;
-  align-items: center; /* 세로 중앙 정렬 */
-  margin-bottom: 20px; /* 타이틀과 다음 컴포넌트 사이 간격 조정 */
+  align-items: center;
+  margin-bottom: 20px;
 `;
 
-// search 아이콘 스타일
-const SearchIcon = styled.img`
-  width: 80px; /* 아이콘 너비 */
-  height: 80px; /* 아이콘 높이 */
-`;
-
-// search 아이콘 스타일
-const SearchIcon2 = styled.img`
-  width: 50px; /* 아이콘 너비 */
-  height: 50px; /* 아이콘 높이 */
-`;
-
-// confirm 아이콘 스타일
-const ConfirmIcon = styled.img`
-  width: 30px; /* 아이콘 너비 */
-  height: 29px; /* 아이콘 높이 */
-`;
-
-// 제목 스타일
 const MainTitle = styled.h1`
   font-size: 75px;
   font-family: 'Bebas', sans-serif;
-  color: #BB9D59; /* 글자색 설정 */
-  background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
-  -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
-  background-clip: text; /* 텍스트만 그라데이션 적용 */
-  -webkit-text-fill-color: transparent; /* 텍스트 색상 투명으로 */
-  margin: 6px 0; /* 상하 간격 추가 */
-  display: flex; /* Flex 설정 추가 */
-  align-items: center; /* 수직 가운데 정렬 */
-  margin-left: 20px; /* 왼쪽 열에 맞게 위치 조정 */
-  font-weight: 300; /* 글꼴 두께를 얇게 조정 */
+  color: #BB9D59;
+  background: linear-gradient(to right, #E8E1B1, #BB9D59);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  font-weight: 300;
 `;
 
-// 제목 스타일
 const Title = styled.h2`
   font-size: 52px;
   font-family: 'Bebas', sans-serif;
-  color: #BB9D59; /* 글자색 설정 */
-  background: linear-gradient(to right, #E8E1B1, #BB9D59); /* 그라데이션 배경 */
-  -webkit-background-clip: text; /* 텍스트만 그라데이션 적용 */
-  background-clip: text; /* 텍스트만 그라데이션 적용 */
-  -webkit-text-fill-color: transparent; /* 텍스트 색상 투명으로 */
-  margin: 6px 0; /* 상하 간격 추가 */
-  display: flex; /* Flex 설정 추가 */
-  align-items: center; /* 수직 가운데 정렬 */
-  margin-left: 20px; /* 왼쪽 열에 맞게 위치 조정 */
-  font-weight: 300; /* 글꼴 두께를 얇게 조정 */
+  color: #BB9D59;
+  background: linear-gradient(to right, #E8E1B1, #BB9D59);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  font-weight: 300;
 `;
 
-// BasicReview와 Pagination 사이의 수직 간격 스타일
 const VerticalSpacing = styled.div`
-  margin-top: 20px; /* BasicReview 위 간격 설정 */
-  margin-bottom: 30px; /* BasicReview 아래 간격 설정 (줄임) */
+  margin-top: 20px;
+  margin-bottom: 30px;
 `;
 
-// ConfirmIcon을 오른쪽으로 이동시키기 위한 컨테이너
+const SearchIcon1 = styled.img`
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+`;
+
+const SearchIcon2 = styled.img`
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+`;
+
+const ConfirmIcon = styled.img`
+  width: 30px;
+  height: 29px;
+  cursor: pointer; /* 클릭 가능 표시 */
+`;
+
 const RightAlignedContainer = styled.div`
   width: 100%;
   display: flex;
-  justify-content: flex-end; /* 오른쪽 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
-  margin-top: 20px; /* 위쪽 간격 추가 */
-  margin-left: -80px; /* 왼쪽으로 50px 이동 */
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+  margin-left: -80px;
 `;
 
-// RightAlignedContainer의 내부를 위한 컨테이너
 const RightAlignedContent = styled.div`
   display: flex;
   align-items: center;
 `;
 
-// Actor를 왼쪽으로 조정하기 위한 컨테이너
-const LeftAlignedActorContainer = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center; /* 세로 중앙 정렬 */
-  margin-top: 30px; 
-  margin-bottom: 50px; /* 타이틀과 다음 컴포넌트 사이 간격 조정 */
-  gap: 32px; /* Actor 컴포넌트 사이의 간격 */
-`;
+interface MusicalData {
+  musical_id: string;
+  musical_name: string;
+  theater_name: string;
+  watch_at: string;
+  poster_image: string;
+}
 
-const App: React.FC = () => {
+interface Actor {
+  actor_id: string;
+  profile_image: string;
+  actor_name: string;
+}
+
+const WriteReviewPage: React.FC = () => {
+  const navigate = useNavigate(); // useNavigate 훅 사용
+  const { review_id } = useParams<{ review_id: string }>(); // URL 파라미터에서 review_id 가져오기
+  const [tickets, setTickets] = useState<MusicalData[]>([]);
+  const [actors, setActors] = useState<Actor[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
+  const [isActorSearchModalOpen, setIsActorSearchModalOpen] = useState<boolean>(false);
+  const [selectedTicket, setSelectedTicket] = useState<MusicalData | null>(null);
+  const [selectedActor, setSelectedActor] = useState<Actor | null>(null);
+  const [fear, setFear] = useState<number>(0);
+  const [sensitivity, setSensitivity] = useState<number>(0);
+  const [violence, setViolence] = useState<number>(0);
+  const [comment, setComment] = useState<string>('');
+  const [reviewerName, setReviewerName] = useState<string>('');
+  const [reviewerHandle, setReviewerHandle] = useState<string>('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const ticketResponse = await axios.get('/api/musical');
+        const ticketsData: MusicalData[] = ticketResponse.data?.data || [];
+        setTickets(ticketsData);
+
+        const actorResponse = await axios.get('/api/actor');
+        const actorsData: Actor[] = actorResponse.data?.data?.actors || [];
+        setActors(actorsData);
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error('데이터 가져오기 오류:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (review_id) {
+      const fetchReviewData = async () => {
+        try {
+          const response = await axios.get(`/api/review/${review_id}`);
+          const reviewData = response.data;
+
+          setFear(reviewData.fear);
+          setSensitivity(reviewData.sensitivity);
+          setViolence(reviewData.violence);
+          setComment(reviewData.content);
+          setReviewerName(reviewData.reviewer_nickname);
+          setReviewerHandle(reviewData.reviewer_email); // Assuming email as handle for this example
+
+          // Set selected musical and actor if applicable
+          const ticketResponse = await axios.get(`/api/musical/${reviewData.musical_id}`);
+          setSelectedTicket(ticketResponse.data);
+
+          const actorResponse = await axios.get(`/api/actor/${reviewData.actor_id}`);
+          setSelectedActor(actorResponse.data);
+        } catch (error) {
+          console.error('리뷰 데이터 가져오기 오류:', error);
+        }
+      };
+
+      fetchReviewData();
+    }
+  }, [review_id]);
+
+  const handleReviewChange = (fear: number, sensitivity: number, violence: number, content: string) => {
+    setFear(fear);
+    setSensitivity(sensitivity);
+    setViolence(violence);
+    setComment(content);
+  };
+
+  const handleSaveReview = async () => {
+    try {
+      const response = await axios.post('/api/review', {
+        fear,
+        sensitivity,
+        violence,
+        content: comment,
+        musical_id: selectedTicket?.musical_id,
+        actor_id: selectedActor?.actor_id,
+      });
+
+      if (response.data.success) {
+        alert('리뷰 저장 성공');
+        navigate('/seereview'); // 리뷰 저장 후 페이지 이동
+      } else {
+        alert('리뷰 저장 실패');
+      }
+    } catch (error) {
+      console.error('리뷰 저장 중 오류 발생:', error);
+      alert('리뷰 저장 실패');
+    }
+  };
+
   return (
     <AppContainer>
       <LeftAlignedContainer>
         <MainTitle>
           MUSICAL
+          <SearchIcon1 
+            src="/search.png" 
+            alt="Search Icon" 
+            onClick={() => setIsSearchModalOpen(true)}
+          />
         </MainTitle>
-        <SearchIcon src="/search.png" alt="Search Icon" /> 
       </LeftAlignedContainer>
-      <MusicalTicket />
+      <MusicalTicket tickets={selectedTicket ? [selectedTicket] : tickets} />
       <LeftAlignedContainer>
         <Title>
           ACTOR
+          <SearchIcon2 
+            src="/search.png" 
+            alt="Search Icon" 
+            onClick={() => setIsActorSearchModalOpen(true)}
+          />
         </Title>
-        <SearchIcon2 src="/search.png" alt="Search Icon" /> 
       </LeftAlignedContainer>
-      <LeftAlignedActorContainer>
-        <Actor />
-        <Actor />
-        <Actor />
-      </LeftAlignedActorContainer>
+      <LeftAlignedContainer>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          actors.map((actor) => (
+            <Actorcircle
+              key={actor.actor_id}
+              profile_image={actor.profile_image}
+              actor_name={actor.actor_name}
+            />
+          ))
+        )}
+      </LeftAlignedContainer>
       <LeftAlignedContainer>
         <Title>
           REVIEW
         </Title>
       </LeftAlignedContainer>
       <VerticalSpacing>
-        <WriteReview />
+        <WriteReview 
+          onChange={handleReviewChange} 
+          userName={reviewerName} 
+          userHandle={reviewerHandle} 
+        />
       </VerticalSpacing>
       <RightAlignedContainer>
         <RightAlignedContent>
-          <ConfirmIcon src="/confirm.png" alt="Confirm Icon" /> 
+          <ConfirmIcon 
+            src="/confirm.png" 
+            alt="Confirm Icon" 
+            onClick={handleSaveReview} // ConfirmIcon 클릭 시 리뷰 저장
+          />
         </RightAlignedContent>
       </RightAlignedContainer>
+
+      {isSearchModalOpen && (
+        <MusicalSearchModal 
+          onSelect={(ticket) => {
+            setSelectedTicket(ticket);
+            setIsSearchModalOpen(false);
+          }}
+          onClose={() => setIsSearchModalOpen(false)}
+        />
+      )}
+
+      {isActorSearchModalOpen && (
+        <ActorSearchModal 
+          onSelect={(actor) => {
+            setSelectedActor(actor);
+            setIsActorSearchModalOpen(false);
+          }}
+          onClose={() => setIsActorSearchModalOpen(false)}
+        />
+      )}
     </AppContainer>
   );
 };
 
-export default App;
+export default WriteReviewPage;
