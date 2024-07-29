@@ -24,7 +24,6 @@ const Actor: React.FC = () => {
     const [musicalId, setMusicalId] = useState(0);
 
     useEffect(() => {
-        // Commented out fetch call for backend connection
         // fetch('/actor/musical/:num')
         //     .then(response => response.json())
         //     .then(data => {
@@ -32,7 +31,7 @@ const Actor: React.FC = () => {
         //         setMusicalId(data.id);
         //     });
 
-        // Dummy data
+        // 더미데이터
         const musicals = [
             { musicalId: 1, title: '레미제라블' },
             { musicalId: 2, title: '오페라의 유령' },

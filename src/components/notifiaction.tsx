@@ -1,8 +1,43 @@
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import Notifion from '../assets/Notifi_on.svg';
+import Notifioff from '../assets/Notifi_off.svg';
+
+const NotificationContainer = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+`;
+
+const NotificationImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  margin-right: 10px;
+`;
+
+const ProfileImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+`;
+
+const ToggleButton = styled.button<{ isEnabled: boolean }>`
+  background: url(${props => props.isEnabled ? Notifion : Notifioff}) no-repeat center/contain;
+  border: none;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  margin: 10px 0;
+`;
 
 interface NotificationData {
   user: string;
   count?: number;
+  image_url?: string; 
+  profileimage?: string; 
 }
 
 interface NotificationProps {
@@ -10,36 +45,27 @@ interface NotificationProps {
   data: NotificationData;
 }
 
-// 알림 종류
 const Notification: React.FC<NotificationProps> = ({ type, data }) => {
-  switch (type) {
-    case 'review_like':
-      return <div>{data.user} 외 {data.count}명이 내 리뷰를 좋아합니다.</div>;
-    case 'new_follower':
-      return <div>{data.user}님이 회원님을 팔로우하기 시작했습니다.</div>;
-    default:
-      return null;
-  }
+  return (
+    <NotificationContainer>
+      {type === 'review_like' && <NotificationImage src={data.image_url} alt="content" />}
+      {type === 'new_follower' && <ProfileImage src={data.profileimage} alt="profile" />}
+      <div>{type === 'review_like' ? `${data.user} 외 ${data.count}명이 내 리뷰를 좋아합니다.` : `${data.user}님이 회원님을 팔로우하기 시작했습니다.`}</div>
+    </NotificationContainer>
+  );
 };
 
 const NotificationList: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationProps[]>([]);
 
   useEffect(() => {
-    // const socket = new WebSocket('ws://your-api-endpoint');
-    // socket.onmessage = (event) => {
-    //   const newNotification = JSON.parse(event.data);
-    //   setNotifications((prev) => [...prev, newNotification]);
-    // };
-    // return () => socket.close();
-
-    // 더미 데이터를 위한 타이머 설정
     const interval = setInterval(() => {
       const dummyNotification: NotificationProps = {
         type: 'review_like',
         data: {
           user: '사용자1',
           count: Math.floor(Math.random() * 10) + 1,
+          image_url: 'https://news.samsungdisplay.com/wp-content/uploads/2018/08/8.jpg', 
         },
       };
       setNotifications((prev) => [...prev, dummyNotification]);
@@ -62,19 +88,10 @@ const NotificationToggle: React.FC = () => {
 
   const toggleNotifications = () => {
     setIsEnabled(!isEnabled);
-    // fetch('http://your-api-endpoint/notifications/toggle', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ enabled: !isEnabled }),
-    // });
   };
 
   return (
-    <button onClick={toggleNotifications}>
-      {isEnabled ? '알림 끄기' : '알림 켜기'}
-    </button>
+    <ToggleButton onClick={toggleNotifications} isEnabled={isEnabled} />
   );
 };
 
