@@ -68,6 +68,7 @@ export default function SnsSignup(){
     const location = useLocation();
     const email = location.state?.email || ''; // 이메일 정보 있으면 이메일, 없으면 공백
     // 위 같은 이메일 값 구글, 카카오에서 모두 불러오기
+    const sub = location.state?.sub ;
 
     const [nickname, setNickname] = useState("");
     const [nicknameMsg, setNicknameMsg] = useState("");
@@ -86,11 +87,12 @@ export default function SnsSignup(){
         try{
             // 입력 값 추출
             const value = e.target.value;
-            // .env 파일에 백엔드 주소 추가
-            /* */
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/check-nickname`, { nickname: value });
-            
-            if(response.data.exists){
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/check-nickname`, {
+                params: { nickname: value }, // 쿼리 파라미터로 닉네임 전달
+                withCredentials: true // 쿠키 포함 요청
+            });
+                        
+            if(response.data){
                 setNicknameMsg("이미 존재하는 닉네임입니다. ");
                 setIsNameError(true);
             } else{
@@ -132,9 +134,9 @@ export default function SnsSignup(){
             console.log({
                 email,
                 nickname,
-                gender,
-                birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-                address,
+                sex: gender,
+                birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
+                home_area: address,
             });
             */
 
@@ -144,12 +146,15 @@ export default function SnsSignup(){
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/register`, {
                 email,
                 nickname,
-                gender,
-                birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-                address,
+                sex: gender,
+                birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
+                home_area: address,
+                sub,
+                path: '구글',
             });
 
-            // 성공적으로 회원가입 정보가 전달되었다면, 로그인 페이지로 이동
+            // 성공 알람 문구
+            alert(`${nickname}님 회원가입이 완료되었습니다!!`)
             navigate("/login");
 
             // 백엔드에서 반환된 데이터를 콘솔에 출력 (개발 목적)

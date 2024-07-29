@@ -30,6 +30,7 @@ const Logo = styled.img`
 
 interface UserInfo {
     email: string;
+    sub: number
 }
 
 export default function GoogleButton(){
@@ -38,29 +39,27 @@ export default function GoogleButton(){
 
     const checkEmailExistence = async (email: string): Promise<boolean> => {
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/check-email`, {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/check/email`, {
                 email: email,
             }, {
                 withCredentials: true // 쿠키 포함 요청
             });
-            return response.data.exists;
+            return response.data; // true 중복, false 가능
         } catch(error) {
             console.error('Email 존재 여부 확인 오류: ', error);
             throw error;
         }
     };
 
-    const fetchData = () => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/protected`, {
+    const fetchData = async () => {
+    try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/protected`, {
             withCredentials: true // 쿠키 포함 요청
-        })
-        .then(response => {
-            console.log('Protected data: ', response.data);
-            navigate("/"); //요청 성공 후 홈으로 redirection
-        })
-        .catch(error => {
-            console.error('Error fetching protected data: ', error);
-        })
+        });
+        console.log('Protected data: ', response.data);
+        navigate("/"); // 요청 성공 후 홈으로 리디렉션
+    } catch (error) {
+        console.error('Error fetching protected data: ', error);
     }
 
     const login = useGoogleLogin({
@@ -79,14 +78,18 @@ export default function GoogleButton(){
                 });
 
                 // 일단 지금은 백엔드 소통 않고 받은 이메일 정보 직접 이동 처리
-                navigate("/sns-signup", {state: {email: data.email}});
-                
+                navigate("/sns-signup", {state: {email: data.email, sub: data.sub}});
+                console.log(data.sub);
                 ////
                 /*
                 if else 문 이용해서 email 백엔드에 존재하면 바로 로그인
                 존재하지 않으면 sns-signup으로 이동
                 */
-               const emailExists = await checkEmailExistence(data.email);
+                const emailExists = await checkEmailExistence(data.email);
+
+                if(emailExists) {
+                    // 이메일이 존재하는 경우, 경로를 확인합니다.
+                    const user = await getUserByEmail(data.email); // 이메일로 사용자 정보 조회
 
                if(emailExists) {
                     fetchData(); // 이메일 존재하면 보호된 데이터 요청
