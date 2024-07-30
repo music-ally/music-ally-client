@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { FiSearch } from 'react-icons/fi';
 import styled from 'styled-components';
 
@@ -18,7 +17,7 @@ interface Props {
 
 const Container = styled.div`
   position: relative;
-  width: 400px;
+  width: 100%;
 `;
 
 const SearchBox = styled.div`
@@ -65,12 +64,6 @@ const ResultItem = styled.li`
 
 const SearchContainerActor: React.FC<Props> = ({ actors, setFilteredActors }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    setSearchTerm('');
-  }, [location]);
 
   useEffect(() => {
     const filtered = searchTerm
@@ -81,37 +74,21 @@ const SearchContainerActor: React.FC<Props> = ({ actors, setFilteredActors }) =>
     setFilteredActors(filtered);
   }, [searchTerm, actors, setFilteredActors]);
 
-  const handleSearch = () => {
-    navigate('/search');
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
-  const handleActorItemClick = (id: string) => {
-    console.log(`actor ID: ${id}`);
-    handleSearch();
-  };
-
   return (
     <Container>
       <SearchBox>
-        <FiSearch size={20} color="#251611" onClick={handleSearch} style={{ cursor: 'pointer' }} />
+        <FiSearch size={20} color="#251611" style={{ cursor: 'pointer' }} />
         <SearchInput
           type="text"
           placeholder="배우가 궁금해!"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          onKeyDown={handleKeyDown}
         />
       </SearchBox>
       {searchTerm && (
         <ResultsList>
           {actors.map(actor => (
-            <ResultItem key={actor.actor_id} onClick={() => handleActorItemClick(actor.actor_id)}>
+            <ResultItem key={actor.actor_id}>
               {actor.name}
             </ResultItem>
           ))}
