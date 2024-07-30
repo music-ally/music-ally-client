@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MusicalInfo from '../components/musicalInfo';
 import ActorInfo from '../components/actorInfo';
 
@@ -31,21 +31,8 @@ const SeeMore = styled.div`
 
 const SearchPage: React.FC = () => {
   const navigate = useNavigate();
-  const [musicals, setMusicals] = useState([]);
-  const [actors, setActors] = useState([]);
-
-//   useEffect(() => {
-//     // Fetch musicals from the API
-//     // fetch('/api/musical')
-//     //   .then(response => response.json())
-//     //   .then(data => setMusicals(data))
-//     //   .catch(error => console.error('Error fetching musicals:', error));
-
-//     // Fetch actors from the API
-//     // fetch('/api/actor')
-//     //   .then(response => response.json())
-//     //   .then(data => setActors(data))
-//     //   .catch(error => console.error('Error fetching actors:', error));
+  const location = useLocation();
+  const { musicals, actors } = location.state || { musicals: [], actors: [] };
 
   const handleSeeMoreMusicals = () => {
     navigate('/search/musical', { state: { musicals } });
@@ -54,6 +41,11 @@ const SearchPage: React.FC = () => {
   const handleSeeMoreActors = () => {
     navigate('/search/actor', { state: { actors } });
   };
+
+  useEffect(() => {
+    if (!musicals.length || !actors.length) {
+    }
+  }, [musicals, actors]);
 
   return (
     <PageContainer>
