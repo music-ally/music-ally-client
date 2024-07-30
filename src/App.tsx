@@ -3,10 +3,9 @@ import Layout from "./components/layout";
 import Layout2 from "./components/layout2";
 import Home from "./routes/home";
 import MyPage from "./routes/myprofile";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import Login from "./routes/login";
 import SignUp from "./routes/sign-up";
-import { createGlobalStyle } from "styled-components";
 import SnsSignup from "./routes/sns-signup";
 import EditProfile from "./routes/editprofile";
 import UserProfile from "./routes/userprofile";
@@ -101,7 +100,6 @@ const router = createBrowserRouter([
     element: <SnsSignup />
   }
 ]);
-
 
 const Wrapper = styled.div``;
 
