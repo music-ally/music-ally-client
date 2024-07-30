@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import axios from 'axios';
 import DetailModal from './detail-modal';
 
 const GlobalStyle = createGlobalStyle`
@@ -35,14 +36,14 @@ const ImageRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 17px; /* 이미지 간격 조절 */
+  gap: 17px;
 `;
 
 const Image = styled.img`
   border-radius: 20.5px;
   width: 275.2px;
   height: 389.3px;
-  cursor: pointer; /* 커서 포인터 추가 */
+  cursor: pointer;
 `;
 
 const Button = styled.img`
@@ -80,27 +81,43 @@ interface Actor {
 }
 
 interface CarouselProps {
-  actor: Actor;
+  actorId: number;
 }
 
-const Carousel: React.FC<CarouselProps> = ({ actor }) => {
+const Carousel: React.FC<CarouselProps> = ({ actorId }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayImages, setDisplayImages] = useState<Musical[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
+  const [actor, setActor] = useState<Actor | null>(null);
 
   useEffect(() => {
-    const musicals = actor.musicals;
-    const newImages = [...musicals];
-    const remainder = newImages.length % 4;
-    if (remainder !== 0) {
-      const emptySlots = 4 - remainder;
-      for (let i = 0; i < emptySlots; i++) {
-        newImages.push({ id: -1, title: 'empty', posterUrl: '/empty.png' }); // 빈 이미지 추가
+    const fetchActorData = async () => {
+      try {
+        const response = await axios.get(`/api/actor/${actorId}`);
+        setActor(response.data);
+      } catch (error) {
+        console.error('Error fetching actor data:', error);
       }
+    };
+
+    fetchActorData();
+  }, [actorId]);
+
+  useEffect(() => {
+    if (actor) {
+      const musicals = actor.musicals;
+      const newImages = [...musicals];
+      const remainder = newImages.length % 4;
+      if (remainder !== 0) {
+        const emptySlots = 4 - remainder;
+        for (let i = 0; i < emptySlots; i++) {
+          newImages.push({ id: -1, title: 'empty', posterUrl: '/empty.png' });
+        }
+      }
+      setDisplayImages(newImages);
     }
-    setDisplayImages(newImages);
-  }, [actor.musicals]);
+  }, [actor]);
 
   const handleLeftButtonClick = () => {
     setCurrentIndex((prevIndex) => {
@@ -127,7 +144,7 @@ const Carousel: React.FC<CarouselProps> = ({ actor }) => {
 
   return (
     <>
-      <GlobalStyle /> {/* 글로벌 스타일 적용 */}
+      <GlobalStyle />
       <Container>
         <ContentWrapper>
           <Row>
