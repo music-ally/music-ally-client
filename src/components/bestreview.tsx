@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 // 스타일 정의
 const Container = styled.div`
@@ -248,35 +249,80 @@ interface Review {
   content: string;
 }
 
+interface ReviewState {
+  liked: boolean;
+  likeCount: number;
+  isExpanded: boolean;
+}
+
 interface BestReviewProps {
   reviews: Review[];
 }
 
 const BestReview: React.FC<BestReviewProps> = ({ reviews }) => {
-  const [liked, setLiked] = React.useState(false);
-  const [likeCount, setLikeCount] = React.useState(0);
-  const [isExpanded, setIsExpanded] = React.useState(false);
   const [carouselIndex, setCarouselIndex] = React.useState(0);
+  const [likeStates, setLikeStates] = React.useState<ReviewState[]>(
+    reviews.map(review => ({
+      liked: review.is_like,
+      likeCount: review.like_num,
+      isExpanded: false,
+    }))
+  );
 
-  const handleLikeClick = () => {
-    setLiked(prev => !prev);
-    setLikeCount(prev => (liked ? prev - 1 : prev + 1));
+  const addLike = async (reviewId: string, index: number) => {
+    try {
+      const response = await axios.post(`/api/review/${reviewId}/like`);
+      if (response.status !== 200) {
+        throw new Error('Failed to add like');
+      }
+      setLikeStates(prevState => {
+        const newState = [...prevState];
+        newState[index] = { ...newState[index], liked: true, likeCount: newState[index].likeCount + 1 };
+        return newState;
+      });
+    } catch (error) {
+      console.error('Error adding like:', error);
+    }
   };
 
-  const toggleExpandText = () => {
-    setIsExpanded(prev => !prev);
+  const removeLike = async (reviewId: string, index: number) => {
+    try {
+      const response = await axios.delete(`/api/review/${reviewId}/like`);
+      if (response.status !== 200) {
+        throw new Error('Failed to remove like');
+      }
+      setLikeStates(prevState => {
+        const newState = [...prevState];
+        newState[index] = { ...newState[index], liked: false, likeCount: newState[index].likeCount - 1 };
+        return newState;
+      });
+    } catch (error) {
+      console.error('Error removing like:', error);
+    }
+  };
+
+  const handleLikeClick = (reviewId: string, index: number) => {
+    if (likeStates[index].liked) {
+      removeLike(reviewId, index);
+    } else {
+      addLike(reviewId, index);
+    }
+  };
+
+  const toggleExpandText = (index: number) => {
+    setLikeStates(prevState => {
+      const newState = [...prevState];
+      newState[index] = { ...newState[index], isExpanded: !newState[index].isExpanded };
+      return newState;
+    });
   };
 
   const handleLeftButtonClick = () => {
-    setCarouselIndex(prevIndex =>
-      prevIndex > 0 ? prevIndex - 1 : reviews.length - 1
-    );
+    setCarouselIndex(prevIndex => (prevIndex > 0 ? prevIndex - 1 : reviews.length - 1));
   };
 
   const handleRightButtonClick = () => {
-    setCarouselIndex(prevIndex =>
-      prevIndex < reviews.length - 1 ? prevIndex + 1 : 0
-    );
+    setCarouselIndex(prevIndex => (prevIndex < reviews.length - 1 ? prevIndex + 1 : 0));
   };
 
   return (
@@ -298,21 +344,21 @@ const BestReview: React.FC<BestReviewProps> = ({ reviews }) => {
                 </UserInfo>
                 <LikeInfo>
                   <LikeIcon
-                    src={liked ? '/heart1.png' : '/heart.png'}
-                    liked={liked}
-                    onClick={handleLikeClick}
+                    src={likeStates[index].liked ? '/heart1.png' : '/heart.png'}
+                    liked={likeStates[index].liked}
+                    onClick={() => handleLikeClick(review.review_id, index)}
                   />
-                  <LikeCount>{likeCount}</LikeCount>
+                  <LikeCount>{likeStates[index].likeCount}</LikeCount>
                 </LikeInfo>
               </Header>
               <TagsWrapper>
                 <TagGroup>
                   <TagLabel>공포</TagLabel>
                   <IconWrapper>
-                    {Array.from({ length: 5 }, (_, index) => (
+                    {Array.from({ length: 5 }, (_, iconIndex) => (
                       <Icon
-                        key={index}
-                        src={index < review.fear ? '/fear1.png' : '/fear2.png'}
+                        key={iconIndex}
+                        src={iconIndex < review.fear ? '/fear1.png' : '/fear2.png'}
                         onClick={() => {}}
                         onDoubleClick={() => {}}
                       />
@@ -322,10 +368,10 @@ const BestReview: React.FC<BestReviewProps> = ({ reviews }) => {
                 <TagGroup>
                   <TagLabel>선정성</TagLabel>
                   <IconWrapper>
-                    {Array.from({ length: 5 }, (_, index) => (
+                    {Array.from({ length: 5 }, (_, iconIndex) => (
                       <Icon
-                        key={index}
-                        src={index < review.sensitivity ? '/sensationalism1.png' : '/sensationalism2.png'}
+                        key={iconIndex}
+                        src={iconIndex < review.sensitivity ? '/sensationalism1.png' : '/sensationalism2.png'}
                         onClick={() => {}}
                         onDoubleClick={() => {}}
                       />
@@ -335,10 +381,10 @@ const BestReview: React.FC<BestReviewProps> = ({ reviews }) => {
                 <TagGroup>
                   <TagLabel>폭력성</TagLabel>
                   <IconWrapper>
-                    {Array.from({ length: 5 }, (_, index) => (
+                    {Array.from({ length: 5 }, (_, iconIndex) => (
                       <Icon
-                        key={index}
-                        src={index < review.violence ? '/violence1.png' : '/violence2.png'}
+                        key={iconIndex}
+                        src={iconIndex < review.violence ? '/violence1.png' : '/violence2.png'}
                         onClick={() => {}}
                         onDoubleClick={() => {}}
                       />
@@ -347,7 +393,10 @@ const BestReview: React.FC<BestReviewProps> = ({ reviews }) => {
                 </TagGroup>
               </TagsWrapper>
               <CommentSection>
-                <CommentText isExpanded={isExpanded} onClick={toggleExpandText}>
+                <CommentText
+                  isExpanded={likeStates[index].isExpanded}
+                  onClick={() => toggleExpandText(index)}
+                >
                   {review.content}
                 </CommentText>
               </CommentSection>
