@@ -2,10 +2,12 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import profileimg from "/profileimg.png"
-import Component from "../components/mypage-carousel";
+import Component from "../components/myProfile/myReviewCaro";
 import axios from "axios";
-import FollowerModal from "../components/followerModal";
-import FollowingModal from "../components/followingModal";
+import FollowerModal from "../components/userProfile/followerModal";
+import FollowingModal from "../components/userProfile/followingModal";
+import UserReviewCaro from "../components/userProfile/userReviewCaro";
+import UserBookmarkCaro from "../components/userProfile/userBookmarkCaro";
 
 const Wrapper = styled.div`
     display: flex;
@@ -131,7 +133,19 @@ interface UserProfile {
     review_num: number;
     bookmark_num: number;
     profile_image: string | null;
-    is_following: boolean
+    is_following: string
+    reviews: {
+        reviews: Array<{
+            review_id: string;
+            poster_image: string;
+        }>;
+    };
+    bookmarks: {
+        musicals: Array<{
+            musical_id: string;
+            poster_image: string;
+        }>;
+    };
 }
 
 export default function UserProfile() {
@@ -144,7 +158,17 @@ export default function UserProfile() {
         review_num: 0,
         bookmark_num: 0,
         profile_image: null,
-        is_following: false,
+        is_following: '팔로우',
+        reviews: { 
+            reviews: [
+                { review_id: 'defaultReview_id', poster_image: '/empty.png' }
+            ] 
+        }, // 리뷰 초기값 추가
+        bookmarks: { 
+            musicals: [
+                { musical_id: 'defaultBookmark_id', poster_image: '/empty.png' }
+            ] 
+        },
     });
 
     useEffect(() => {
@@ -161,10 +185,12 @@ export default function UserProfile() {
     
     const handleFollowClick = async () => {
         try {
-            if(user.is_following) {
+            if (user.is_following === '팔로잉') {
                 await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
-            } else {
+            } else if (user.is_following === '팔로우') {
                 await axios.post(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+            } else {
+                console.log('본인입니다')
             }
 
             // 화면 상태 업데이트
@@ -173,12 +199,6 @@ export default function UserProfile() {
         } catch (error) {
             console.error('follow, unfollow error : ', error);
         }
-        /*
-        if(isFollowing){
-            setIsFollowing(false);
-        } else {
-            setIsFollowing(true);
-        } */
     }
 
     const [followModal, setFollowModal] = useState<string|null>();
@@ -200,9 +220,11 @@ export default function UserProfile() {
                 <ProfileInfoWrapper>
                     <Row>
                         <Nickname> {user.nickname || '닉네임'} </Nickname>
-                        <Button onClick={handleFollowClick}>
-                            <ButtonImage src={user.is_following ? '/following_btn.svg' : '/follow_btn.svg'}/>
-                        </Button>
+                        {user.is_following !== '본인' && (
+                            <Button onClick={handleFollowClick}>
+                                <ButtonImage src={user.is_following === '팔로잉' ? '/following_btn.svg' : '/follow_btn.svg'}/>
+                            </Button>
+                        )}
                     </Row>
                     <Email> {user.email || 'email@email.com'}</Email>
                     <MyInfo>
@@ -234,9 +256,10 @@ export default function UserProfile() {
                 </BtnWrapper>
             </PropfileWrapper>
             <CaroName> {user.nickname || '닉네임'}님이 작성한 리뷰 </CaroName>
-            <Component />
+            <UserReviewCaro reviews={user.reviews?.reviews || [{review_id: '66a0e7348da2278779d22aba', poster_image: '/poster_basic.png'}, {}]} />
+            
             <CaroName> {user.nickname || '닉네임'}님이 찜한 뮤지컬 </CaroName>
-            <Component />
+            <UserBookmarkCaro musicals={user.bookmarks?.musicals || [{musical_id: '', poster_image: '/poster_basic.png'}, {}]}/>
         </Wrapper>
     );
 }

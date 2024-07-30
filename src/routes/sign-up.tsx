@@ -100,14 +100,17 @@ export default function SignUp() {
             const value = e.target.value;
     
             // 백엔드 경로와 상태 업데이트 함수를 조건에 따라 선택
-            const apiUrl = checkType === 'email' ? '/api/check-email' : '/api/check-nickname';
+            const apiUrl = checkType === 'email' ? 'auth/check/email' : 'auth/check/nickname';
             const setMsg = checkType === 'email' ? setEmailMsg : setNicknameMsg;
             const setMsgError = checkType === 'email' ? setIsEmailError : setIsNameError;
     
             // .env 파일에 백엔드 주소 추가하여 요청 보내기
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}${apiUrl}`, { [checkType]: value });
-    
-            if (response.data.exists) {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}${apiUrl}`, {
+                params: { [checkType]: value }, // 쿼리 파라미터로 설정
+                withCredentials: true // 쿠키 포함 요청
+            });
+                
+            if (response.data.data) {
                 setMsg(`이미 존재하는 ${checkType === 'email' ? '이메일' : '닉네임'}입니다.`);
                 setMsgError(true);
             } else {
@@ -139,12 +142,12 @@ export default function SignUp() {
     };
 
     useEffect(() => {
-        // Password regex condition: 8-12 characters, must contain letters and numbers
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
+        // Password regex condition: 6-12 characters, must contain letters and numbers
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,12}$/;
     
         if (password) {
             if (!passwordRegex.test(password)) {
-                setPwMessege("비밀번호는 8~12자이며, 영어와 숫자를 포함해야 합니다.");
+                setPwMessege("비밀번호는 6~12자이며, 영어와 숫자를 포함해야 합니다.");
                 setIsError(true);
             } else if (password && confirmPassword && password === confirmPassword) {
                 setPwMessege("비밀번호가 일치합니다.");
@@ -180,10 +183,10 @@ export default function SignUp() {
         }
 
         // 비밀번호 조건 검사
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,12}$/;
 
         if( !passwordRegex.test(password) ) {
-            alert("비밀번호는 8~12자 사이이며, 영어와 숫자를 반드시 포함해야 합니다.");
+            alert("비밀번호는 6~12자 사이이며, 영어와 숫자를 반드시 포함해야 합니다.");
             return;
         }
 
@@ -203,24 +206,26 @@ export default function SignUp() {
                 password, // 비밀번호 확인은 서버에서 다시 검증해야 합니다.
                 nickname,
                 gender,
-                birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-                address,
+                birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
+                homearea_name: address,
             });
 
             navigate("/login");
             */
 
             // 회원가입 정보 백엔드로 전달
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/register`, {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/join`, {
                 email,
-                password, // 비밀번호 확인은 서버에서 다시 검증해야 합니다.
+                password,
                 nickname,
-                gender,
-                birthDate: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-                address,
+                sex: gender,
+                birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
+                homearea_name: address,
+                signup_method: '이메일',
             });
 
-            // 성공적으로 회원가입 정보가 전달되었다면, 로그인 페이지로 이동
+            // 성공 알람 문구
+            alert(`${nickname}님 회원가입이 완료되었습니다!!`)
             navigate("/login");
 
             // 백엔드에서 반환된 데이터를 콘솔에 출력 (개발 목적)
@@ -265,7 +270,7 @@ export default function SignUp() {
                             name="password"
                             value={password}
                             type="password"
-                            placeholder="비밀번호 (8~12자리, 영어와 숫자를 포함하세요)"
+                            placeholder="비밀번호 (6~12자리, 영어와 숫자를 포함하세요)"
                             required
                         />
                         <Input
