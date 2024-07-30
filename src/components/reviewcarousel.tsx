@@ -1,7 +1,7 @@
 // src/components/ReviewCarousel.tsx
 
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import DetailModal from './detail-modal';
 
 // 글로벌 스타일 정의
