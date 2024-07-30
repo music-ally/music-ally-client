@@ -4,9 +4,11 @@ import { styled } from "styled-components";
 import profileimg from "/profileimg.png"
 import axios from "axios";
 import LeaveModal from "../components/leaveModal";
-import MyFollowingModal from "../components/myFollowingModal";
-import MyFollowerModal from "../components/myFollowerModal";
-import Carousel4 from "../components/mypage-carousel";
+import MyFollowingModal from "../components/myProfile/myFollowingModal";
+import MyFollowerModal from "../components/myProfile/myFollowerModal";
+import ReviewCaroTest from "../components/myProfile/myReviewCaroTest";
+import MyReviewCaro from "../components/myProfile/myReviewCaro";
+import MyBookmarkCaro from "../components/myProfile/myBookmarkCaro";
 
 const Wrapper = styled.div`
     display: flex;
@@ -65,6 +67,19 @@ const ProfileImage = styled.img`
 const Nickname = styled.h3`
     font-size: 34px;
     margin: 5px 0;
+`
+
+const Row1 = styled.div`
+    display: flex;
+    flex-direction: row;
+`
+
+// 로그인 경로 이미지
+const Path = styled.img`
+    height: 20px;
+    background-color: white;
+    margin: 5px;
+    border-radius: 4px;
 `
 
 const Email = styled.h3`
@@ -126,6 +141,19 @@ interface User {
     follower_num: number;
     review_num: number;
     bookmark_num: number;
+    reviews: {
+        reviews: Array<{
+            review_id: string;
+            poster_image: string;
+        }>;
+    };
+    bookmarks: {
+        musicals: Array<{
+            musical_id: string;
+            poster_image: string;
+        }>;
+    };
+    path: string;
 }
 
 export default function MyPage() {
@@ -137,6 +165,17 @@ export default function MyPage() {
         follower_num: 0,
         review_num: 0,
         bookmark_num: 0,
+        reviews: { 
+            reviews: [
+                { review_id: 'defaultReview_id', poster_image: '/empty.png' }
+            ] 
+        }, // 리뷰 초기값 추가
+        bookmarks: { 
+            musicals: [
+                { musical_id: 'defaultBookmark_id', poster_image: '/empty.png' }
+            ] 
+        },
+        path: '이메일'
     });
     const [profile, setProfile] = useState<string>(profileimg);
 
@@ -145,7 +184,7 @@ export default function MyPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/mypage`);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage`);
                 setUser(response.data);
             } catch (error) {
                 console.error("Fetch data error : ", error);
@@ -153,13 +192,26 @@ export default function MyPage() {
         };
         fetchData();
     }, []);
-/*
-    // {userData.nickname} 등으로 불러오기~~
- */ 
+
+    let iconPath = '';
+    switch (user.path) {
+        case '이메일':
+            iconPath = '/email-icon.svg';
+            break;
+        case '구글':
+            iconPath = '/google-logo.svg';
+            break;
+        case '카카오':
+            iconPath = '/kakaotalk-logo.svg';
+            break;
+        default:
+            iconPath = ''; // 기본 아이콘 경로 또는 빈 문자열
+            break;
+    }
 
     const onNavClick = () => {
         navigate('/mypage/edit');
-    }
+    };
 
     const handleLogout = async () => {
         try {
@@ -197,7 +249,14 @@ export default function MyPage() {
                 </ProfileImageWrapper>
                 <ProfileInfoWrapper>
                 <Nickname> {user.nickname || '닉네임'} </Nickname>
-                    <Email> {user.email || 'email@email.com'}</Email>
+                    <Row1>
+                        {iconPath ? (
+                            <Path src={iconPath} alt={`${user.path} 아이콘`} />
+                        ) : (
+                            <Path src="/email-icon.svg" /> // path 존재하면 해당 아이콘, 아니면 이메일
+                        )}
+                        <Email> {user.email || 'email@email.com'}</Email>
+                    </Row1>
                     <MyInfo>
                         <ModalWrapper onClick={() => handleModalOpen('following')}>
                             <MyInfoName>팔로잉</MyInfoName>
@@ -226,9 +285,11 @@ export default function MyPage() {
                 </BtnWrapper>
             </PropfileWrapper>
             <CaroName> 내가 작성한 리뷰 </CaroName>
-            <Carousel4 />
+            <MyReviewCaro reviews={user.reviews?.reviews || [{review_id: '66a0e7348da2278779d22aba', poster_image: '/poster_basic.png'}, {}, {}]} />
+
             <CaroName> 내가 찜한 뮤지컬 </CaroName>
-            <Carousel4 />
+            {/* <ReviewCaroTest /> */}
+            <MyBookmarkCaro musicals={user.bookmarks?.musicals || [{musical_id: '', poster_image: '/poster_basic.png'}, {},]}/>
             <Row>
                 <DividerText onClick={ handleLogout }>로그아웃</DividerText>
                 <DividerText onClick={() => setIsModalOpen(true)}>뮤지컬리 탈퇴하기</DividerText>

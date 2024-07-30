@@ -1,7 +1,7 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import ProfileCard from "./profileCard";
-import axios from "axios";
+import ProfileCard from "../profileCard";
 
 const Overlay = styled.div`
   position: fixed;
@@ -102,29 +102,46 @@ const Divider = styled.div`
     align-items: center; /* 가운데 정렬 */
 `
 
-interface FollowerModalProps {
+const LoadingContainer = styled.div`
+    /* 로딩 메시지 스타일 추가 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+`;
+
+interface Following {
+    user_id: string; // 실제 타입에 맞게 수정
+    nickname: string;
+    email: string;
+    is_following: string; // '팔로잉' 또는 '팔로우'와 같은 문자열
+}
+
+interface FollowingModalProps {
     onClose: () => void;
 }
 
-export default function MyFollowerModal ({ onClose } : FollowerModalProps) {
-    const [followers, setFollowers] = useState<any[]>([]);
+export default function MyFollowingModal ({ onClose } : FollowingModalProps) {
+    const [followings, setFollowings] = useState<Following[]>([]);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         // api 호출
-        const fetchFollowers = async() => {
+        const fetchFollowings = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage/follower`);
-                setFollowers(response.data.follow_list);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage/following`);
+                setFollowings(response.data.follow_list);
             } catch (error) {
-                console.error("Error fetching followers: ", error);
-            } 
+                console.error("Error fetching followings: ", error);
+            }
             // finally {
             //     setLoading(false);
             // }
         };
-        fetchFollowers();
+        fetchFollowings();
 
-        // 배경 스크롤 금지
+        // 배경스크롤 금지
         document.body.style.overflow = 'hidden';
         return () => {
           document.body.style.overflow = 'auto';
@@ -133,9 +150,9 @@ export default function MyFollowerModal ({ onClose } : FollowerModalProps) {
       
     return(
         <Overlay onClick={onClose}>
-            <Modal>
+            <Modal onClick={(e) => e.stopPropagation()}>
                 <Header>
-                    <Title>팔로워</Title>
+                    <Title>팔로잉</Title>
                     <CloseButton onClick={onClose}>
                         <img src="/x_icon.svg"/>
                     </CloseButton>
@@ -144,15 +161,21 @@ export default function MyFollowerModal ({ onClose } : FollowerModalProps) {
                 <ModalContent>
                     <ProfileCard />
                     {loading ? (
-                        <div>Loading...</div>
+                        <LoadingContainer>Loading...</LoadingContainer>
                     ):(
-                        followers && followers.map((follower) => (
-                            <ProfileCard 
-                                key={follower.user_id}
-                                // profileImage=""
-                                nickname={follower.nickname}
-                                email={follower.email}
-                                is_following={follower.is_following}
+                        followings && followings.map((following) => (
+                            <ProfileCard
+                                key={following.user_id}
+                                nickname={following.nickname}
+                                email={following.email}
+                                is_following={following.is_following}
+                                onFollowStatusChange={(userId, isFollowing) => {
+                                    // 팔로우 상태 변경 로직
+                                    const updatedFollowings = followings.map((f) => 
+                                        f.user_id === userId ? { ...f, is_following: isFollowing } : f // isFollowing을 직접 사용
+                                    );
+                                    setFollowings(updatedFollowings);
+                                }}
                             />
                         ))
                     )}
