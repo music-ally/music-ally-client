@@ -102,7 +102,7 @@ const Header: React.FC = () => {
                 <Nav>
                     <NavLink to="/">Main</NavLink>
                     <NavLink to="/review">Review</NavLink>
-                    <NavLink to="/actor">Actor</NavLink>
+                    <NavLink to="/actor/musical">Actor</NavLink>
                     <NavLink to="/mypage">My page</NavLink>
                     <NotificationContainer>
                         <FiBell size={24} color="#EED18F" onClick={toggleModal} />

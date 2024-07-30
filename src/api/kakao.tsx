@@ -31,6 +31,7 @@ const Kakao: React.FC = () => {
                 redirectUri: 'http://localhost:3000',
                 success: (authObj: any) => {
                     console.log('로그인 성공', authObj);
+                    localStorage.setItem('kakaoToken', authObj.access_token);
                     getUserInfo();
                 },
                 fail: (err: any) => {
