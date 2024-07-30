@@ -46,7 +46,7 @@ const Notification: React.FC<NotificationProps> = ({ type, data }) => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('/notification/');
+        const response = await axios.get('${process.env.VITE_BACKEND_URL}/notification');
         setNotifications(response.data);
       } catch (error) {
         console.error('알림 데이터를 가져오는 중 오류 발생:', error);
