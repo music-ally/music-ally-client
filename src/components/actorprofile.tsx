@@ -1,13 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// 배우 정보 인터페이스
 interface Actor {
   name: string;
   birthDate: string;
   physicalCondition: string;
   agency: string;
   works: number;
+  profileImage: string;
+}
+
+interface ActorprofileProps {
+  actor: Actor;
 }
 
 // 스타일링을 위한 컴포넌트들
@@ -15,7 +19,7 @@ const ProfileContainer = styled.div`
   display: flex;
   align-items: flex-start;
   width: 100%;
-  max-width: 1300px; /* 최대 폭을 1200px로 설정 */
+  max-width: 1300px; /* 최대 폭을 1300px로 설정 */
   margin: 138px auto; /* 위아래 간격을 138px로 설정, 중앙 정렬 */
   padding: 0 64px; /* 좌우 간격을 64px로 설정 */
   box-sizing: border-box; /* padding이 포함된 박스 크기 계산 */
@@ -69,19 +73,10 @@ const InfoValue = styled.p`
   margin: 0; /* 아래 여백을 없앰 */
 `;
 
-// Actorprofile 컴포넌트
-const Actorprofile: React.FC = () => {
-  const actor: Actor = {
-    name: '홍광호',
-    birthDate: '2001.01.01',
-    physicalCondition: '185cm, 66kg, A형',
-    agency: 'SM',
-    works: 120,
-  };
-
+const Actorprofile: React.FC<ActorprofileProps> = ({ actor }) => {
   return (
     <ProfileContainer>
-      <Image src="/testprofile-actor.png" alt={`${actor.name} 프로필 이미지`} />
+      <Image src={actor.profileImage} alt={`${actor.name} 프로필 이미지`} />
       <InfoContainer>
         <ActorName>{actor.name}</ActorName>
         <Divider />
@@ -96,10 +91,6 @@ const Actorprofile: React.FC = () => {
         <InfoItem>
           <InfoLabel>소속사</InfoLabel>
           <InfoValue>{actor.agency}</InfoValue>
-        </InfoItem>
-        <InfoItem>
-          <InfoLabel>출연작</InfoLabel>
-          <InfoValue>{actor.works}개</InfoValue>
         </InfoItem>
       </InfoContainer>
     </ProfileContainer>
