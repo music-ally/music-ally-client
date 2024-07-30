@@ -83,6 +83,7 @@ const MyInfo = styled.div`
     font-weight: 600;
     display: flex;
     flex-direction: row;
+    margin: 15px 0;
 `
 
 const MyInfoName = styled.div`
@@ -115,7 +116,6 @@ const DividerText = styled.span`
 
 const Row = styled.div`
     display: flex;
-    margin: 10px 0;
     justify-content: space-between;
 `
 

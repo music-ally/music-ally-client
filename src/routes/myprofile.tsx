@@ -92,6 +92,7 @@ const MyInfo = styled.div`
     font-weight: 600;
     display: flex;
     flex-direction: row;
+    margin: 15px 0;
 `
 
 const MyInfoName = styled.div`
