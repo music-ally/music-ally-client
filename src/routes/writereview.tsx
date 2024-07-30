@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import { useNavigate, useParams } from 'react-router-dom'; // useHistory를 useNavigate로 변경
+import { useNavigate, useParams } from 'react-router-dom';
 import WriteReview from '../components/wirtereview';
 import MusicalTicket from '../components/musicalticket';
 import Actorcircle from '../components/actorcircle';
-import MusicalSearchModal from '../components/musicalsearch'; // 뮤지컬 검색 모달 컴포넌트 임포트
-import ActorSearchModal from '../components/actorcarousel'; // 배우 검색 모달 컴포넌트 임포트
+import MusicalSearchModal from '../components/musicalsearch';
+import ActorSearchModal from '../components/actorsearch';
 
 const AppContainer = styled.div`
   background-image: url('/reviewpage.png');
@@ -77,7 +77,7 @@ const SearchIcon2 = styled.img`
 const ConfirmIcon = styled.img`
   width: 30px;
   height: 29px;
-  cursor: pointer; /* 클릭 가능 표시 */
+  cursor: pointer;
 `;
 
 const RightAlignedContainer = styled.div`
@@ -94,7 +94,7 @@ const RightAlignedContent = styled.div`
   align-items: center;
 `;
 
-interface MusicalData {
+interface Musical {
   musical_id: string;
   musical_name: string;
   theater_name: string;
@@ -109,14 +109,14 @@ interface Actor {
 }
 
 const WriteReviewPage: React.FC = () => {
-  const navigate = useNavigate(); // useNavigate 훅 사용
-  const { review_id } = useParams<{ review_id: string }>(); // URL 파라미터에서 review_id 가져오기
-  const [tickets, setTickets] = useState<MusicalData[]>([]);
+  const navigate = useNavigate();
+  const { review_id } = useParams<{ review_id: string }>();
+  const [tickets, setTickets] = useState<Musical[]>([]);
   const [actors, setActors] = useState<Actor[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
   const [isActorSearchModalOpen, setIsActorSearchModalOpen] = useState<boolean>(false);
-  const [selectedTicket, setSelectedTicket] = useState<MusicalData | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<Musical | null>(null);
   const [selectedActor, setSelectedActor] = useState<Actor | null>(null);
   const [fear, setFear] = useState<number>(0);
   const [sensitivity, setSensitivity] = useState<number>(0);
@@ -129,7 +129,7 @@ const WriteReviewPage: React.FC = () => {
     const fetchData = async () => {
       try {
         const ticketResponse = await axios.get('/api/musical');
-        const ticketsData: MusicalData[] = ticketResponse.data?.data || [];
+        const ticketsData: Musical[] = ticketResponse.data?.data || [];
         setTickets(ticketsData);
 
         const actorResponse = await axios.get('/api/actor');
@@ -158,9 +158,8 @@ const WriteReviewPage: React.FC = () => {
           setViolence(reviewData.violence);
           setComment(reviewData.content);
           setReviewerName(reviewData.reviewer_nickname);
-          setReviewerHandle(reviewData.reviewer_email); // Assuming email as handle for this example
+          setReviewerHandle(reviewData.reviewer_email);
 
-          // Set selected musical and actor if applicable
           const ticketResponse = await axios.get(`/api/musical/${reviewData.musical_id}`);
           setSelectedTicket(ticketResponse.data);
 
@@ -195,7 +194,7 @@ const WriteReviewPage: React.FC = () => {
 
       if (response.data.success) {
         alert('리뷰 저장 성공');
-        navigate('/seereview'); // 리뷰 저장 후 페이지 이동
+        navigate('/seereview');
       } else {
         alert('리뷰 저장 실패');
       }
@@ -258,13 +257,15 @@ const WriteReviewPage: React.FC = () => {
           <ConfirmIcon 
             src="/confirm.png" 
             alt="Confirm Icon" 
-            onClick={handleSaveReview} // ConfirmIcon 클릭 시 리뷰 저장
+            onClick={handleSaveReview}
           />
         </RightAlignedContent>
       </RightAlignedContainer>
 
       {isSearchModalOpen && (
         <MusicalSearchModal 
+          musicals={tickets} // musicals prop 추가
+          isOpen={isSearchModalOpen}
           onSelect={(ticket) => {
             setSelectedTicket(ticket);
             setIsSearchModalOpen(false);
@@ -275,6 +276,8 @@ const WriteReviewPage: React.FC = () => {
 
       {isActorSearchModalOpen && (
         <ActorSearchModal 
+          actors={actors} // 추가: actors prop 전달
+          isOpen={isActorSearchModalOpen}
           onSelect={(actor) => {
             setSelectedActor(actor);
             setIsActorSearchModalOpen(false);

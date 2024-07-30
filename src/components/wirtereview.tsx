@@ -9,103 +9,152 @@ interface WriteReviewProps {
 
 // 스타일 정의
 const Container = styled.div`
-  width: 100%;
+  border-radius: 15.6px;
+  background: linear-gradient(to right, #5c1e19, #3c0d0a);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  padding: 16px 20px 15px 20px;
+  width: 1092px;
+  box-sizing: border-box;
 `;
 
 const ContentWrapper = styled.div`
-  width: 80%;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 1px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 `;
 
 const Header = styled.div`
+  margin: 0 4.1px 16px 4px;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
 `;
 
 const UserInfo = styled.div`
+  margin-bottom: 3.4px;
   display: flex;
+  flex-direction: row;
   align-items: center;
+  box-sizing: border-box;
 `;
 
-const Avatar = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
+const Avatar = styled.div`
+  box-shadow: 0px 2px 4.1px rgba(0, 0, 0, 0.25);
+  border-radius: 27.3px;
+  background: url('/musicalposter-1.jpeg') 50% 50% / cover no-repeat;
+  margin-right: 8.7px;
+  width: 54.6px;
+  height: 54.6px;
 `;
 
 const UserNameHandleWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  word-break: break-word;
 `;
 
-const UserNameText = styled.span`
-  font-size: 18px;
+const UserNameText = styled.div`
+  word-break: break-word;
+  font-family: 'Inter', sans-serif;
   font-weight: bold;
+  font-size: 28px;
+  letter-spacing: 0.8px;
+  line-height: 1.347;
+  color: #F2F2F2;
 `;
 
-const UserHandle = styled.span`
-  font-size: 14px;
-  color: gray;
+const UserHandle = styled.div`
+  word-break: break-word;
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+  font-size: 15.3px;
+  letter-spacing: 0.5px;
+  line-height: 1.347;
+  color: #c0c0c0;
 `;
 
-const Warning = styled.h3`
-  font-size: 18px;
-  color: red;
-  margin-bottom: 20px;
+const Warning = styled.div`
+  font-family: 'Bebas', sans-serif;
+  font-size: 32px;
+  color: #D3C187; /* 글자색 설정 */
+  margin-top: 0px; /* 태그와의 간격 설정 */
+  margin-bottom: 10px; /* 태그와의 간격 설정 */
 `;
 
 const TagsWrapper = styled.div`
+  margin: 0 4px 21px 4px;
   display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 649.6px;
+  box-sizing: border-box;
 `;
 
 const TagGroup = styled.div`
   display: flex;
+  flex-direction: row;
   align-items: center;
-  margin-bottom: 10px;
+  box-sizing: border-box;
 `;
 
 const TagLabel = styled.span`
-  font-size: 18px;
-  font-weight: bold;
-  margin-right: 10px;
+  margin-right: 11.4px;
+  word-break: break-word;
+  font-family: 'Inter', sans-serif;
+  font-weight: medium;
+  font-size: 18.8px;
+  letter-spacing: 0.6px;
+  line-height: 1.347;
+  color: #e5ddab;
 `;
 
 const IconWrapper = styled.div`
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-sizing: border-box;
+  gap: 10px;
 `;
 
 const Icon = styled.img`
-  width: 30px;
-  height: 30px;
-  margin-right: 5px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
 `;
 
 const CommentSection = styled.div`
-  margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: #e8e5d2;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 13.5px 21.6px 15.5px 17px;
 `;
 
 const CommentTextArea = styled.textarea`
   width: 100%;
-  min-height: 100px;
   resize: none;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
+  border: none;
+  background: none;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  line-height: 1.347;
+  color: #444444;
+  outline: none;
+  overflow-y: hidden;
+  min-height: 105px;
+  max-height: 400px;
+  box-sizing: border-box;
 `;
-
 const WriteReview: React.FC<WriteReviewProps> = ({ onChange, userName, userHandle }) => {
   const [ratings, setRatings] = useState<boolean[][]>([
     [false, false, false, false, false],
@@ -162,7 +211,7 @@ const WriteReview: React.FC<WriteReviewProps> = ({ onChange, userName, userHandl
       <ContentWrapper>
         <Header>
           <UserInfo>
-            <Avatar src='/profileimg.png' />
+            <Avatar/>
             <UserNameHandleWrapper>
               <UserNameText>{userName}</UserNameText>
               <UserHandle>@{userHandle}</UserHandle>
