@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-// import axios from 'axios'; 
+import axios from 'axios'; 
 import NotifiLike from './notifi_like';
 import NotificationFollow from './notifi_follow'; 
 import ToggleButton from './notifi-toggle'; 
@@ -44,16 +44,16 @@ const Notification: React.FC<NotificationProps> = ({ type, data }) => {
   };
 
   useEffect(() => {
-    // const fetchNotifications = async () => {
-    //   try {
-    //     const response = await axios.get('/notification/');
-    //     setNotifications(response.data);
-    //   } catch (error) {
-    //     console.error('알림 데이터를 가져오는 중 오류 발생:', error);
-    //   }
-    // };
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get('/notification/');
+        setNotifications(response.data);
+      } catch (error) {
+        console.error('알림 데이터를 가져오는 중 오류 발생:', error);
+      }
+    };
 
-    // fetchNotifications();
+    fetchNotifications();
   }, []);
 
   return (

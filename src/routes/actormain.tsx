@@ -1,9 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useParams } from 'react-router-dom';
 import BasicReview from '../components/basicreview';
 import Carousel from '../components/reviewcarousel';
 import Pagination from '../components/pagination';
 import Actorprofile from '../components/actorprofile';
+
+interface Musical {
+  id: number;
+  title: string;
+  posterUrl: string;
+}
+
+interface Actor {
+  name: string;
+  birthDate: string;
+  physicalCondition: string;
+  agency: string;
+  works: number;
+  profileImage: string;
+  musicals: Musical[];
+}
+
+interface Review {
+  id: number;
+  content: string;
+  author: string;
+  rating: number;
+}
+
+interface AppProps {
+  actor: Actor;
+  reviews: Review[];
+}
 
 // 전체 페이지 컨테이너 스타일
 const AppContainer = styled.div`
@@ -49,36 +78,51 @@ const HorizontalLine = styled.hr`
   margin: 75px 0; /* 가로줄 위아래 간격을 75px로 조정 */
 `;
 
-const App: React.FC = () => {
+const App: React.FC<AppProps> = () => {
+  const { actorId } = useParams<{ actorId: string }>();
+  const [actor, setActor] = useState<Actor | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+
+  useEffect(() => {
+    // 배우 정보 가져오기
+    fetch(`/api/actor/${actorId}`)
+      .then(response => response.json())
+      .then(data => setActor(data))
+      .catch(error => console.error('Error fetching actor data:', error));
+
+    // 리뷰 정보 가져오기
+    fetch(`/api/actor/${actorId}/reviews`)
+      .then(response => response.json())
+      .then(data => setReviews(data))
+      .catch(error => console.error('Error fetching reviews:', error));
+  }, [actorId]);
+
+  if (!actor) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <AppContainer>
-      <Actorprofile />
+      <Actorprofile actor={actor} />
       <LeftAlignedContainer>
-        <Title>
-          출연작
-        </Title>
+        <Title>출연작</Title>
       </LeftAlignedContainer>
       <VerticalSpacing topMargin={30}>
-        <Carousel />
+        <Carousel actor={actor} />
       </VerticalSpacing>
-      <HorizontalLine />
-      <LeftAlignedContainer>
-        <Title>
-          연관리뷰
-        </Title>
-      </LeftAlignedContainer>
-      <VerticalSpacing>
-        <BasicReview />
-      </VerticalSpacing>
-      <VerticalSpacing>
-        <BasicReview />
-      </VerticalSpacing>
-      <VerticalSpacing>
-        <BasicReview />
-      </VerticalSpacing>
-      <Pagination />
     </AppContainer>
   );
 };
 
 export default App;
+
+//<HorizontalLine />
+//<LeftAlignedContainer>
+  //<Title>연관리뷰</Title>
+//</LeftAlignedContainer>
+//{reviews.map(review => (
+  //<VerticalSpacing key={review.id}>
+    //<BasicReview review={review} />
+  //</VerticalSpacing>
+//))}
+//<Pagination />

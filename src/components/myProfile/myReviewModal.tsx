@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import ProfileCard from "./profileCard";
 import Poster from "/poster_basic.png"
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Overlay = styled.div`
     position: fixed;
@@ -194,50 +194,59 @@ const LoadingContainer = styled.div`
     font-size: 24px;
 `;
 
-
 interface ReviewModalProps {
     onClose: () => void;
     reviewId: string;
 }
 
-export default function ReviewModalTest({ reviewId, onClose }: ReviewModalProps) {
-    const [stars, setStars] = useState<any[]>([]);
+interface ReviewData {
+    review_id: string,
+    poster_image: string,
+    musical_name: string,
+    fear: number,
+    sensitivity: number,
+    violence: number,
+    content: string,
+}
+
+export default function MyReviewModal({ reviewId, onClose }: ReviewModalProps) {
+    const [reviews, setReviews] = useState<ReviewData>({
+        review_id: "66a0e7348da2278779d22aba",
+        poster_image: Poster,
+        musical_name: "Musical One",
+        fear: 2,
+        sensitivity: 2,
+        violence: 2,
+        content: "리뷰 내용입니다",
+    });
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // API 호출 (여기서는 더미 데이터를 사용)
-        const fetchStars = async () => {
-            // 더미 데이터
-            const dummyStars = [
-                {
-                    review_id: "66a0e7348da2278779d22aba",
-                    poster_image: Poster,
-                    musical_name: "Musical One",
-                    fear: 2,
-                    sensitivity: 2,
-                    violence: 2,
-                    content: "리뷰 내용입니다",
-                },
-            ];
-
-            setTimeout(() => {
-                setStars(dummyStars);
+        const fetchReview = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage/review/${reviewId}/`);
+                setReviews(response.data);
+            } catch (error) {
+                console.error("내 리뷰 모달창 불러오기 Error : ", error);
+            } finally {
                 setLoading(false);
-            }, 500);
+            }
         };
 
-        fetchStars();
+        fetchReview();
 
         // 배경 스크롤 금지
         document.body.style.overflow = 'hidden';
         return () => {
         document.body.style.overflow = 'auto';
         };
-    }, []);
+    }, [reviewId]); // revieId 변경마다 호출
 
     if (loading) {
         return (
-            <Overlay>
+            <Overlay onClick={onClose}>
                 <Modal onClick={(e) => e.stopPropagation()}>
                     <LoadingContainer>Loading...</LoadingContainer>
                 </Modal>
@@ -245,40 +254,62 @@ export default function ReviewModalTest({ reviewId, onClose }: ReviewModalProps)
         ); // 로딩 중일 때 로딩 메시지 표시
     }
 
+    const onModify = async () => {
+        // 리뷰 수정 페이지로 이동.
+        // reviewId 가져가기
+        navigate(`/review/edit/${reviewId}`);
+        onClose();
+    }
+
+    const onDelete = async () => {
+        const confirmDelete = window.confirm(`${reviews.musical_name || 'Musical One'} 리뷰를 삭제하시겠습니까?`);
+        if (confirmDelete) {
+            try {
+                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/myPage/review/${reviewId}`);
+                alert(`${reviews.musical_name || 'Musical One'} 리뷰 삭제가 완료되었습니다`)
+                onClose();
+                window.location.reload();
+            } catch (error) {
+                console.error('삭제 실패:', error);
+                alert('리뷰 삭제에 실패했습니다.'); // 삭제 실패 메시지
+            }
+        }
+    };
+
     return (
         <Overlay onClick={onClose}>
             <Modal onClick={(e) => e.stopPropagation()}> {/* 클릭 이벤트 중지로 모달 닫히지 않도록 설정 */}
             
             <ModalContent>
-                {stars.map((star) => (
-                    <div key={reviewId}>
-                        <PosterImg src={star.poster_image} alt={star.musical_name} />
-                        <Review>
-                            <Title>{star.musical_name}</Title>
-                            <Stars>
-                                <Fear>
-                                    공포
-                                    <FearIcons count={star.fear} />
-                                </Fear>
-                                <Sensitivity>
-                                    선정성
-                                    <SensitivityIcons count={star.sensitivity} />
-                                </Sensitivity>
-                                <Violence>
-                                    폭력성
-                                    <ViolenceIcons count={star.violence} />
-                                </Violence>
-                            </Stars>
-                            <Contents>{star.content}</Contents>
-                        </Review>
+            {reviews && reviews.review_id === reviewId && ( // review가 정의되고 review_id가 reviewId와 일치하는 경우에만 렌더링
+                <div key={reviews.review_id || '66a0e7348da2278779d22aba'}>
+                    <PosterImg src={reviews.poster_image || Poster} alt={reviews.musical_name || 'Musical One'} />
+                    <Review>
+                        <Title>{reviews.musical_name || 'Musical One'}</Title>
+                        <Stars>
+                            <Fear>
+                                공포
+                                <FearIcons count={reviews.fear || 2} />
+                            </Fear>
+                            <Sensitivity>
+                                선정성
+                                <SensitivityIcons count={reviews.sensitivity || 3} />
+                            </Sensitivity>
+                            <Violence>
+                                폭력성
+                                <ViolenceIcons count={reviews.violence || 4} />
+                            </Violence>
+                        </Stars>
+                        <Contents>{reviews.content || '초기 리뷰 내용입니다.'}</Contents>
+                    </Review>
                 </div>
-                ))}
+            )}
                 
                 <Button>
-                    <DeleteButton onClick={onClose}> 
+                    <DeleteButton onClick={onModify}> 
                         <img src="/Modify_btn.svg" />
                     </DeleteButton>
-                    <DeleteButton onClick={onClose}> 
+                    <DeleteButton onClick={onDelete}> 
                         <img src="/Delete_btn.svg" />
                     </DeleteButton>
                 </Button>

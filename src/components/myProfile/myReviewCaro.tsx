@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import ModalTest from './modalTest';
+import ModalTest from '../modalTest';
 import basicimg from "../assets/carousel_basic.png";
-import ReviewModalTest from './reviewModalTest';
+import ReviewModalTest from '../reviewModalTest';
+import MyReviewModal from './myReviewModal';
 
 // 글로벌 스타일 정의
 const GlobalStyle = createGlobalStyle`
@@ -66,25 +67,26 @@ const RightButton = styled(Button)`
   right: -25px;
 `;
 
-interface Props {}
+// reviews array 불러오기
+interface Review {
+  review_id: string;
+  poster_image: string;
+}
 
-const Carousel4: React.FC<Props> = () => {
+interface Props {
+  reviews: Review[];
+}
+
+const MyReviewCaro: React.FC<Props> = ({ reviews }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayImages, setDisplayImages] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
+  const [selectedReviewId, setSelectedReviewId] = useState<string>('');
 
-  const images = [
-    basicimg,
-    basicimg,
-    basicimg,
-    basicimg,
-    basicimg,
-    basicimg,
-  ];
 
   useEffect(() => {
-    const newImages = [...images];
+    const newImages = [...reviews.map(review => review.poster_image)];
     const remainder = newImages.length % 4;
     if (remainder !== 0) {
       const emptySlots = 4 - remainder;
@@ -93,7 +95,7 @@ const Carousel4: React.FC<Props> = () => {
       }
     }
     setDisplayImages(newImages);
-  }, [images]);
+  }, [reviews]);
 
   const handleLeftButtonClick = () => {
     setCurrentIndex((prevIndex) => {
@@ -109,8 +111,8 @@ const Carousel4: React.FC<Props> = () => {
     });
   };
 
-const handleImageClick = (image: string) => {
-    setSelectedImage(image);
+const handleImageClick = (reviewId: string) => {
+    setSelectedReviewId(reviewId);
     setIsModalOpen(true);
   };
 
@@ -129,7 +131,7 @@ const handleImageClick = (image: string) => {
             )}
             <ImageRow>
               {displayImages.slice(currentIndex, currentIndex + 4).map((image, index) => (
-                <Image key={index} src={image} onClick={() => handleImageClick(image)} />
+                <Image key={index} src={image} onClick={() => handleImageClick(reviews[currentIndex + index].review_id)} />
               ))}
             </ImageRow>
             {displayImages.length > 4 && (
@@ -137,10 +139,12 @@ const handleImageClick = (image: string) => {
             )}
           </Row>
         </ContentWrapper>
-        {isModalOpen && <ReviewModalTest reviewId='' onClose={handleCloseModal} />}
+        {/* 백엔드 연결하는 리뷰모달 MyReviewModal 만들기 */}
+        {isModalOpen && <MyReviewModal reviewId={selectedReviewId} onClose={handleCloseModal} />}
+        {/* {isModalOpen && <ReviewModalTest reviewId={selectedReviewId} onClose={handleCloseModal} />} */}
       </Container>
     </>
   );
 };
 
-export default Carousel4;
+export default MyReviewCaro;
