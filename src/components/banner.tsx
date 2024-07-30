@@ -50,7 +50,7 @@ export default function Banner() {
                     loop={true}
                 >
                     <SwiperSlide>
-                        <SlideImage src="https://via.placeholder.com/1280x400?text=Slide+1" alt="Slide 1" />
+                        <SlideImage src="/banner1.png" alt="Slide 1" />
                     </SwiperSlide>
                     <SwiperSlide>
                         <SlideImage src="https://via.placeholder.com/1280x400?text=Slide+2" alt="Slide 2" />
@@ -62,7 +62,7 @@ export default function Banner() {
                         <SlideImage src="https://via.placeholder.com/1280x400?text=Slide+4" alt="Slide 4" />
                     </SwiperSlide>
                     <SwiperSlide>
-                        <SlideImage src="https://via.placeholder.com/1280x400?text=Slide+5" alt="Slide 5" />
+                        <SlideImage src="/banner5.png" alt="Slide 5" />
                     </SwiperSlide>
                 </Swiper>
             </CustomSwiperWrapper>
