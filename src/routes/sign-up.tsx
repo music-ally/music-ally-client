@@ -207,7 +207,7 @@ export default function SignUp() {
                 nickname,
                 gender,
                 birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-                home_area: address,
+                homearea_name: address,
             });
 
             navigate("/login");
@@ -220,8 +220,8 @@ export default function SignUp() {
                 nickname,
                 sex: gender,
                 birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-                home_area: address,
-                path: '이메일',
+                homearea_name: address,
+                signup_method: '이메일',
             });
 
             // 성공 알람 문구

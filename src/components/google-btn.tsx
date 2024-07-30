@@ -116,7 +116,7 @@ export default function GoogleButton(){
                         fetchData(); 
                     }
                 } else {
-                    navigate("/sns-signup", {state: {email: data.email, sub: data.sub}});
+                    navigate("/sns-signup", {state: {email: data.email, social_id: data.sub}});
                 }
 
             } catch (error) {
