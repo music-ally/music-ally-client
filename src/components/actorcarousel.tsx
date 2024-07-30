@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
 // 글로벌 스타일 정의
@@ -98,11 +98,26 @@ interface ImageProps {
 }
 
 interface ComponentProps {
-  images?: ImageProps[]; // images는 선택적인 프로퍼티로 변경
+  actorId: string; // actorId를 prop으로 받음
 }
 
-const Component: React.FC<ComponentProps> = ({ images = [] }) => { // 기본값을 빈 배열로 설정
+const Component: React.FC<ComponentProps> = ({ actorId }) => {
+  const [images, setImages] = useState<ImageProps[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    // actorId를 이용해 이미지를 fetch
+    fetch(`/api/actor/${actorId}/musicals`)
+      .then((response) => response.json())
+      .then((data) => {
+        const fetchedImages: ImageProps[] = data.musicals.map((musical: any) => ({
+          src: musical.posterUrl,
+          name: musical.title,
+        }));
+        setImages(fetchedImages);
+      })
+      .catch((error) => console.error('Error fetching images:', error));
+  }, [actorId]);
 
   const handleLeftButtonClick = () => {
     setCurrentIndex((prevIndex) => {
@@ -118,7 +133,6 @@ const Component: React.FC<ComponentProps> = ({ images = [] }) => { // 기본값�
     });
   };
 
-  // images가 없을 때 렌더링을 건너뜁니다.
   if (!images.length) {
     return <Container>No images available</Container>;
   }
@@ -129,20 +143,19 @@ const Component: React.FC<ComponentProps> = ({ images = [] }) => { // 기본값�
       <Container>
         <ContentWrapper>
           <Row>
-            <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
+            {images.length > 1 && ( // 이미지가 1개 이상일 때 버튼을 보여줌
+              <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
+            )}
             <ImageRow>
-              {images.map((image, index) => {
-                const displayIndex = (index + currentIndex) % images.length;
-                return (
-                  <ImageContainer key={index} style={{ display: index < 4 ? 'block' : 'none' }}>
-                    <Image src={images[displayIndex].src} alt={`Poster ${index}`} />
-                    <GradientOverlay />
-                    <ImageText>{images[displayIndex].name}</ImageText>
-                  </ImageContainer>
-                );
-              })}
+              <ImageContainer>
+                <Image src={images[currentIndex].src} alt={`Poster ${currentIndex}`} />
+                <GradientOverlay />
+                <ImageText>{images[currentIndex].name}</ImageText>
+              </ImageContainer>
             </ImageRow>
-            <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
+            {images.length > 1 && ( 
+              <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
+            )}
           </Row>
         </ContentWrapper>
       </Container>
