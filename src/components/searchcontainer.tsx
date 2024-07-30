@@ -75,21 +75,21 @@ const SearchComponent: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    fetch('/musical')
+    fetch('${import.meta.env.VITE_BACKEND_URL}/musical')
       .then(response => response.json())
       .then(data => setMusicals(data))
-      .catch(error => console.error('뮤지컬정보없음:', error));
+      .catch(error => console.error('뮤지컬정보error:', error));
 
-    fetch('/actor')
+    fetch('${import.meta.env.VITE_BACKEND_URL}/actor')
       .then(response => response.json())
       .then(data => setActors(data))
-      .catch(error => console.error('배우정보없음:', error));
+      .catch(error => console.error('배우정보error:', error));
   }, []);
 
   useEffect(() => {
     setSearchTerm('');
   }, [location]);
-
+  
   const filteredMusicals = searchTerm
     ? musicals.filter(musical =>
         musical.musical_name.toLowerCase().includes(searchTerm.toLowerCase())

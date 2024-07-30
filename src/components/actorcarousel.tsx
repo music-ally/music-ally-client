@@ -98,7 +98,7 @@ interface ImageProps {
 }
 
 interface ComponentProps {
-  actorId: string; // actorId를 prop으로 받음
+  actorId: any;
 }
 
 const Component: React.FC<ComponentProps> = ({ actorId }) => {
