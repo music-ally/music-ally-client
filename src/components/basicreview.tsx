@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 // 스타일 정의
 const Container = styled.div`
@@ -191,7 +192,6 @@ const CommentText = styled.span<{ isExpanded: boolean }>`
   -webkit-box-orient: vertical;
 `;
 
-// ImageWrapper 컴포넌트 정의
 const ImageWrapper = styled.div<{ imageUrl: string }>`
   border-radius: 4.4px;
   background: url(${props => props.imageUrl}) 50% 50% / cover no-repeat;
@@ -223,9 +223,37 @@ const BasicReview: React.FC<BasicReviewProps> = ({ review }) => {
   const [likeCount, setLikeCount] = React.useState(review.like_num);
   const [isExpanded, setIsExpanded] = React.useState(false);
 
-  const handleLikeClick = () => {
+  const addLike = async (reviewId: string) => {
+    try {
+      const response = await axios.post(`/api/review/${reviewId}/like`);
+      if (response.status !== 200) {
+        throw new Error('Failed to add like');
+      }
+    } catch (error) {
+      console.error('Error adding like:', error);
+    }
+  };
+
+  const removeLike = async (reviewId: string) => {
+    try {
+      const response = await axios.delete(`/api/review/${reviewId}/like`);
+      if (response.status !== 200) {
+        throw new Error('Failed to remove like');
+      }
+    } catch (error) {
+      console.error('Error removing like:', error);
+    }
+  };
+
+  const handleLikeClick = async () => {
+    if (liked) {
+      await removeLike(review.review_id);
+      setLikeCount(prev => prev - 1);
+    } else {
+      await addLike(review.review_id);
+      setLikeCount(prev => prev + 1);
+    }
     setLiked(prev => !prev);
-    setLikeCount(prev => (liked ? prev - 1 : prev + 1));
   };
 
   const toggleExpandText = () => {
