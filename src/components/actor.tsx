@@ -24,25 +24,18 @@ const Actor: React.FC = () => {
     const [musicalId, setMusicalId] = useState(0);
 
     useEffect(() => {
-        // fetch('/actor/musical/:num')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         setTitle(data.title);
-        //         setMusicalId(data.id);
-        //     });
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`${process.env.VITE_BACKEND_URL}/actor/musical/:num`);
+                const data = await response.json();
+                setTitle(data.title);
+                setMusicalId(data.id);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
 
-        // 더미데이터
-        const musicals = [
-            { musicalId: 1, title: '레미제라블' },
-            { musicalId: 2, title: '오페라의 유령' },
-            { musicalId: 3, title: '지킬 앤 하이드' },
-            { musicalId: 4, title: '위키드' },
-            { musicalId: 5, title: '캐츠' }
-        ];
-
-        const randomMusical = musicals[Math.floor(Math.random() * musicals.length)];
-        setTitle(randomMusical.title);
-        setMusicalId(randomMusical.musicalId);
+        fetchData();
     }, []);
 
     return (
