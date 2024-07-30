@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -92,6 +92,7 @@ const CommentText = styled.p`
 `;
 
 interface SeeReviewProps {
+  reviewId: string;
   reviewerProfileImage: string | null;
   reviewerNickname: string;
   reviewerEmail: string;
@@ -104,6 +105,7 @@ interface SeeReviewProps {
 }
 
 const SeeReview: React.FC<SeeReviewProps> = ({
+  reviewId,
   reviewerProfileImage,
   reviewerNickname,
   reviewerEmail,
@@ -114,6 +116,36 @@ const SeeReview: React.FC<SeeReviewProps> = ({
   sensitivity,
   content
 }) => {
+  const [likeCount, setLikeCount] = useState(likeNum);
+  const [liked, setLiked] = useState(isLike);
+
+  useEffect(() => {
+    // 초기 상태 설정
+    setLikeCount(likeNum);
+    setLiked(isLike);
+  }, [likeNum, isLike]);
+
+  const handleLikeClick = () => {
+    const url = `/api/review/${reviewId}/like`;
+    const method = liked ? 'DELETE' : 'POST'; 
+
+    fetch(url, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      if (response.ok) {
+        setLiked(!liked);
+        setLikeCount(prevCount => liked ? prevCount - 1 : prevCount + 1);
+      } else {
+        throw new Error('Failed to update like status');
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  };
+
   return (
     <Container>
       <Header>
@@ -125,8 +157,8 @@ const SeeReview: React.FC<SeeReviewProps> = ({
           </div>
         </UserInfo>
         <LikeInfo>
-          <LikeIcon src={isLike ? '/liked-icon.png' : '/unliked-icon.png'} liked={isLike} />
-          <LikeCount>{likeNum}</LikeCount>
+          <LikeIcon src={liked ? '/liked-icon.png' : '/unliked-icon.png'} liked={liked} onClick={handleLikeClick} />
+          <LikeCount>{likeCount}</LikeCount>
         </LikeInfo>
       </Header>
       <TagsWrapper>
