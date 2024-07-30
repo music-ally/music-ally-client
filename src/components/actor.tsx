@@ -21,17 +21,17 @@ const Container = styled.div`
 
 const Actor: React.FC = () => {
     const [title, setTitle] = useState('');
-    const [musicalId, setActorId] = useState(0);
-    const [profile_image,setProfile] = useState('');
+    const [actorId, setActorId] = useState(0);
+    const [profileImage, setProfileImage] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`${process.env.VITE_BACKEND_URL}/actor/musical/:num`);
+                const response = await fetch(`${process.env.VITE_BACKEND_URL}/actor/musical/${actorId}`);
                 const data = await response.json();
                 setTitle(data.musical_name);
                 setActorId(data.actor_id);
-                setProfile(data.profile_image);
+                setProfileImage(data.profile_image);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -43,13 +43,13 @@ const Actor: React.FC = () => {
     return (
         <Container>
             <Title>{title} 출연진을 한눈에 보기!</Title>
-            <ActorCarousel actorId={actor_id} images={profile_image}/>
+            <ActorCarousel actorId={actorId} images={profileImage}/>
 
             <Title>가수 출신 뮤지컬 배우 모아보기</Title>
-            <ActorCarousel actorId={actor_id} images={profile_image}/>
+            <ActorCarousel actorId={actorId} images={profileImage}/>
 
             <Title>최근 핫한 배우 모아보기</Title>
-            <ActorCarousel actorId={actor_id} images={profile_image}/>
+            <ActorCarousel actorId={actorId} images={profileImage}/>
         </Container>
     );
 };
