@@ -221,7 +221,6 @@ export default function SignUp() {
                 sex: gender,
                 birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
                 homearea_name: address,
-                signup_method: '이메일',
             });
 
             // 성공 알람 문구

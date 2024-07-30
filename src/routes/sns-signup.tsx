@@ -87,9 +87,8 @@ export default function SnsSignup(){
         try{
             // 입력 값 추출
             const value = e.target.value;
-            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/check-nickname`, {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/check/nickname`, {
                 params: { nickname: value }, // 쿼리 파라미터로 닉네임 전달
-                withCredentials: true // 쿠키 포함 요청
             });
                         
             if(response.data){
@@ -143,7 +142,7 @@ export default function SnsSignup(){
             navigate("/login");
 
             // 회원가입 정보 백엔드로 전달
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/register`, {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/join`, {
                 email,
                 nickname,
                 sex: gender,
