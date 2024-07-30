@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import styled from 'styled-components';
 import axios from "axios";
 import Cookies from 'js-cookie';
 import GoogleButton from "../components/google-btn";
@@ -8,16 +9,14 @@ import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Divider, DividerText, Form, Input, LeftHalf, Name, RightHalf, RightWrapper, Row, Row1, ShowPwButton, Switcher, Title, Wrapper } from "../components/auth-components";
 
-
 export default function Login() {
     const MYAPI = import.meta.env.VITE_GOOGLE_API_KEY;
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(''); // 에러 메시지 상태 추가
+    const [error, setError] = useState(''); 
     const navigate = useNavigate();
 
-    // 비밀번호 표시/숨기기 기능
     const passwordVisible = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setShowPassword(!showPassword);
@@ -31,18 +30,27 @@ export default function Login() {
         try {
             // axios 요청: 로그인 엔드포인트로 이메일과 비밀번호를 전송
             const response = await axios.post('/api/auth/login', { email, password });
-            const { token } = response.data;
+            const { success, message, data } = response.data;
 
-            // JWT 토큰을 쿠키에 저장
-            Cookies.set('token', token);
+            if (success) {
+                const { access_token, refresh_token } = data;
 
-            // 홈 페이지 또는 다른 보호된 경로로 이동
-            navigate('/home');
+                // JWT 토큰을 쿠키에 저장
+                Cookies.set('access_token', access_token, { expires: 1 }); // 1일 만료
+                Cookies.set('refresh_token', refresh_token, { expires: 7 }); // 7일 만료
+
+                // 홈 페이지 또는 다른 보호된 경로로 이동
+                navigate('/home');
+            } else {
+                setError(message); // 서버에서 보낸 에러 메시지 설정
+            }
         } catch (error) {
             console.error('Login failed:', error);
             setError('로그인을 실패했습니다. 이메일이나 비밀번호를 확인하세요.'); // 에러 메시지 설정
         }
     };
+
+
 
     return (
         <Wrapper>
@@ -101,3 +109,4 @@ export default function Login() {
         </Wrapper>
     )
 }
+
