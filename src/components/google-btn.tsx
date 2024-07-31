@@ -30,7 +30,7 @@ const Logo = styled.img`
 
 interface UserInfo {
     email: string;
-    sub: number
+    sub: string
 }
 
 export default function GoogleButton(){
@@ -59,23 +59,28 @@ export default function GoogleButton(){
         }
     };
 
-    const fetchData = async (email: string, sub: number) => {
+    const fetchData = async (email: string, social_id: string) => {
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/login/social`, {
-                email: email,
-                social_id: sub,
+                email,
+                social_id,
             });
 
             const { success, message, data } = response.data;
             if(success) {
                 const { access_token, refresh_token } = data;
+                console.log(access_token, refresh_token);
 
-                localStorage.setItem("access_token", access_token);
-                localStorage.setItem("refresh_token", refresh_token);
+                // JWT 토큰을 쿠키에 저장
+                Cookies.set("access_token", access_token, { expires: 1 }); // 1일 만료
+                Cookies.set("refresh_token", refresh_token, { expires: 7 }); // 7일 만료
+
+                // localStorage.setItem("access_token", access_token);
+                // localStorage.setItem("refresh_token", refresh_token);
+                navigate("/home");
             } else {
-                console.error(message);
+                console.error("에러메세지: ", message);
             }
-            console.log('Protected data: ', data);
             navigate("/home"); // 요청 성공 후 홈으로 리디렉션
         } catch (error) {
             console.error('Error fetching protected data: ', error);
@@ -86,7 +91,6 @@ export default function GoogleButton(){
     const login = useGoogleLogin({
         onSuccess: async (credentialResponse) => {
             try {
-                console.log(credentialResponse.access_token);
                 // 쿠키에 토큰 저장
                 Cookies.set('access_token', credentialResponse.access_token, {expires: 1}); // 1일동안 유효
 
@@ -96,15 +100,6 @@ export default function GoogleButton(){
                         Authorization: `Bearer ${credentialResponse.access_token}`,
                     },
                 });
-
-                // 일단 지금은 백엔드 소통 않고 받은 이메일 정보 직접 이동 처리
-                navigate("/sns-signup", {state: {email: data.email, social_id: data.sub, signup_method: "구글"}});
-                console.log(data.sub);
-                ////
-                /*
-                if else 문 이용해서 email 백엔드에 존재하면 바로 로그인
-                존재하지 않으면 sns-signup으로 이동
-                */
 
                 const emailCheck = await checkEmailExistence(data.email);
 
@@ -121,7 +116,7 @@ export default function GoogleButton(){
                             alert("이미 가입된 이메일입니다. 이메일 로그인으로 시도해주세요.");
                         }
                     } else {
-                        navigate("/sns-signup", {state: {email: data.email, social_id: data.sub, signup_method: "구글"}});
+                        navigate("/sns-signup", {state: {email: data.email, sub: data.sub, signup_method: "구글"}});
                     }
                 } else {
                     console.error("에러 발생: ");
