@@ -101,16 +101,24 @@ export default function SignUp() {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/check/email`, {
                 email: email,
             });
-            
-            if (response.data.is_duplicate) {
-                setEmailMsg(`이미 존재하는 이메일입니다. 가입 방법: ${response.data.signup_method}`);
-                setIsEmailError(true);
+
+            const { success, message, data } = response.data;
+
+            if(success) {
+                const {is_duplicate, signup_method} = data;
+
+                if(is_duplicate) {
+                    setEmailMsg(`이미 존재하는 이메일입니다. 가입 방법: ${signup_method}`);
+                    setIsEmailError(true);
+                } else {
+                    setEmailMsg("사용 가능한 이메일입니다.");
+                    setIsEmailError(false);
+                }
+
             } else {
-                setEmailMsg("사용 가능한 이메일입니다.");
-                setIsEmailError(false);
+                setEmailMsg(message);
+                setIsEmailError(true);
             }
-            setEmailMsg("이메일 중복 확인 실패.");
-            setIsEmailError(true);
             
         } catch(error) {
             console.error("이메일 중복 확인 오류: ", error);
@@ -125,16 +133,21 @@ export default function SignUp() {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/check/nickname`, {
                 nickname: nickname,
             });
-                        
-            if(response.data){
-                setNicknameMsg("이미 존재하는 닉네임입니다. ");
+            const { success, message, data } = response.data;
+
+            if(success) {
+                if(data){
+                    setNicknameMsg("이미 존재하는 닉네임입니다. ");
+                    setIsNameError(true);
+                } else{
+                    setNicknameMsg("사용 가능한 닉네임입니다.")
+                    setIsNameError(false);
+                }
+                
+            } else {
+                setNicknameMsg(message);
                 setIsNameError(true);
-            } else{
-                setNicknameMsg("사용 가능한 닉네임입니다.")
-                setIsNameError(false);
             }
-            setNicknameMsg("이미 존재하는 닉네임입니다. ");
-            setIsNameError(true);
             
             
         } catch(error) {

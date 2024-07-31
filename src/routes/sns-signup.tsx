@@ -84,22 +84,27 @@ export default function SnsSignup(){
 
     
     const handleBlur = async (e : React.ChangeEvent<HTMLInputElement>) => {
+        const nickname = e.target.value;
         try{
             // 입력 값 추출
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/check/nickname`, {
                 nickname: nickname,
             });
-                        
-            if(response.data){
-                setNicknameMsg("이미 존재하는 닉네임입니다. ");
+            const { success, message, data } = response.data;
+
+            if(success) {
+                if(data){
+                    setNicknameMsg("이미 존재하는 닉네임입니다. ");
+                    setIsNameError(true);
+                } else{
+                    setNicknameMsg("사용 가능한 닉네임입니다.")
+                    setIsNameError(false);
+                }
+                
+            } else {
+                setNicknameMsg(message);
                 setIsNameError(true);
-            } else{
-                setNicknameMsg("사용 가능한 닉네임입니다.")
-                setIsNameError(false);
             }
-            setNicknameMsg("이미 존재하는 닉네임입니다. ");
-            setIsNameError(true);
-            
             
         } catch(error) {
             console.error("닉네임 중복 확인 오류: ", error);

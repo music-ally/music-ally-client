@@ -37,17 +37,22 @@ export default function GoogleButton(){
     
     const navigate = useNavigate();
 
-    const checkEmailExistence = async (email: string): Promise<{ is_duplicate: boolean; signup_method: string }> => {
+    const checkEmailExistence = async (email: string): Promise<{ is_duplicate: boolean; signup_method: string } | undefined > => {
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/check/email`, {
                 email: email,
             });
-    
-            // 응답에서 중복 여부와 가입 방법을 반환
-            return {
-                is_duplicate: response.data.is_duplicate,
-                signup_method: response.data.signup_method
-            };
+
+            const { success, message, data } = response.data;
+
+            if( success ) {
+                return {
+                    is_duplicate: data.is_duplicate,
+                    signup_method: data.signup_method,
+                };
+            } else {
+                return undefined;
+            }
         } catch (error) {
             console.error('Email 존재 여부 확인 오류: ', error);
             throw error;
@@ -90,21 +95,27 @@ export default function GoogleButton(){
                 if else 문 이용해서 email 백엔드에 존재하면 바로 로그인
                 존재하지 않으면 sns-signup으로 이동
                 */
-                const {is_duplicate , signup_method} = await checkEmailExistence(data.email);
 
-                if(is_duplicate) {
-                    // 이메일이 존재하는 경우, 경로를 확인합니다.
-                    if (signup_method === '구글') {
-                        // 구글로 가입한 경우 구글 로그인 진행
-                        fetchData(data.email, data.sub); 
-                    } else{
-                        // 이메일로 가입한 경우
-                        alert("이미 가입된 이메일입니다. 이메일 로그인으로 시도해주세요.");
+                const emailCheck = await checkEmailExistence(data.email);
+
+                if ( emailCheck ){
+                    const {is_duplicate , signup_method} = emailCheck;
+
+                    if(is_duplicate) {
+                        // 이메일이 존재하는 경우, 경로를 확인합니다.
+                        if (signup_method === '구글') {
+                            // 구글로 가입한 경우 구글 로그인 진행
+                            fetchData(data.email, data.sub); 
+                        } else{
+                            // 이메일로 가입한 경우
+                            alert("이미 가입된 이메일입니다. 이메일 로그인으로 시도해주세요.");
+                        }
+                    } else {
+                        navigate("/sns-signup", {state: {email: data.email, social_id: data.sub}});
                     }
                 } else {
-                    navigate("/sns-signup", {state: {email: data.email, social_id: data.sub}});
+                    console.error("에러 발생: ");
                 }
-
             } catch (error) {
                 console.error("로그인 성공, 그러나 토큰 디코딩 에러:", error);
             }
