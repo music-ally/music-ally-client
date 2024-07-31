@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import axios from 'axios';
-import BasicReview from '../components/basicreview';
-import BestReview from '../components/bestreview';
-import Pagination from '../components/pagination';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import axios from "axios";
+import BasicReview from "../components/basicreview";
+import BestReview from "../components/bestreview";
+import Pagination from "../components/pagination";
+import { useNavigate } from "react-router-dom";
 
 // 전체 페이지 컨테이너 스타일
 const AppContainer = styled.div`
@@ -30,9 +30,9 @@ const LeftAlignedContainer = styled.div`
 // BestReview 제목 스타일
 const BestReviewTitle = styled.h2`
   font-size: 75px;
-  font-family: 'Bebas', sans-serif;
-  color: #BB9D59;
-  background: linear-gradient(to right, #E8E1B1, #BB9D59);
+  font-family: "Bebas", sans-serif;
+  color: #bb9d59;
+  background: linear-gradient(to right, #e8e1b1, #bb9d59);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -45,9 +45,9 @@ const BestReviewTitle = styled.h2`
 // BasicReview 제목 스타일
 const BasicReviewTitle = styled.h2`
   font-size: 75px;
-  font-family: 'Bebas', sans-serif;
-  color: #BB9D59;
-  background: linear-gradient(to right, #E8E1B1, #BB9D59);
+  font-family: "Bebas", sans-serif;
+  color: #bb9d59;
+  background: linear-gradient(to right, #e8e1b1, #bb9d59);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -73,7 +73,7 @@ const VerticalSpacing = styled.div`
 
 const HorizontalLine = styled.hr`
   width: 1131px;
-  border-top: 1px solid #D1D1D1;
+  border-top: 1px solid #d1d1d1;
   margin: 75px 0;
 `;
 
@@ -86,29 +86,31 @@ const App: React.FC = () => {
 
   useEffect(() => {
     // 데이터를 가져오는 API 호출
-    axios.get('/api/review') // 여기에 실제 API URL을 입력!!
-      .then(response => {
+    axios
+      .get("/api/review") // 여기에 실제 API URL을 입력!!
+      .then((response) => {
         const { best_review, all_review, total_pages } = response.data.data;
         setBestReviews(best_review);
         setAllReviews(all_review);
         setTotalPages(total_pages); // 전체 페이지 수 설정
       })
-      .catch(error => console.error('Error fetching reviews:', error));
+      .catch((error) => console.error("Error fetching reviews:", error));
   }, []);
 
   const handleWriteReviewClick = () => {
-    navigate('/write-review');
+    navigate("/write-review");
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     // 페이지가 변경될 때 데이터를 새로 가져오는 경우 추가
-    axios.get(`/api/review?page=${page}`) // 페이지에 맞는 데이터 요청
-      .then(response => {
+    axios
+      .get(`/api/review?page=${page}`) // 페이지에 맞는 데이터 요청
+      .then((response) => {
         const { all_review } = response.data.data;
         setAllReviews(all_review);
       })
-      .catch(error => console.error('Error fetching page data:', error));
+      .catch((error) => console.error("Error fetching page data:", error));
   };
 
   return (
@@ -120,11 +122,16 @@ const App: React.FC = () => {
       <HorizontalLine />
       <LeftAlignedContainer>
         <BasicReviewTitle>ALL Review</BasicReviewTitle>
-        <WriteIcon src="/write.png" alt="Write Icon" onClick={handleWriteReviewClick} />
+        <WriteIcon
+          src="/write.png"
+          alt="Write Icon"
+          onClick={handleWriteReviewClick}
+        />
       </LeftAlignedContainer>
       {allReviews.map((review, index) => (
         <VerticalSpacing key={review.review_id}>
-          <BasicReview review={review} /> {/* BasicReview 컴포넌트는 리뷰 하나를 prop으로 받는다고 가정 */}
+          <BasicReview review={review} />{" "}
+          {/* BasicReview 컴포넌트는 리뷰 하나를 prop으로 받는다고 가정 */}
         </VerticalSpacing>
       ))}
       <Pagination totalPages={totalPages} onPageChange={handlePageChange} />
