@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import styled from "styled-components";
 import Cookies from 'js-cookie'
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Card = styled.div`
     //height: 90px;
@@ -77,6 +78,12 @@ export default function ProfileCard(
     is_following,
     onFollowStatusChange,
 } : ProfileCardProps) {
+    const navigate = useNavigate();
+
+    const onCardClick = () => {
+        navigate(`/profile/${userId}`);
+    };
+
     const handleFollowClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         try {
@@ -107,7 +114,7 @@ export default function ProfileCard(
         }
     }
     return (
-        <Card>
+        <Card onClick={onCardClick}>
             <ProfileImg src={profileImage}  />
                 <Info>
                     <Nickname>{nickname}</Nickname>
