@@ -152,7 +152,7 @@ export default function SnsSignup(){
                 nickname,
                 sex: gender,
                 birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-                home_area: address,
+                homearea_name: address,
                 social_id,
                 signup_method: signup_method,
             });
