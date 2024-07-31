@@ -62,11 +62,21 @@ export default function GoogleButton(){
     const fetchData = async (email: string, sub: number) => {
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/login/social`, {
-                email,
-                sub,
+                email: email,
+                social_id: sub,
             });
-            console.log('Protected data: ', response.data);
-            navigate("/"); // 요청 성공 후 홈으로 리디렉션
+
+            const { success, message, data } = response.data;
+            if(success) {
+                const { access_token, refresh_token } = data;
+
+                localStorage.setItem("access_token", access_token);
+                localStorage.setItem("refresh_token", refresh_token);
+            } else {
+                console.error(message);
+            }
+            console.log('Protected data: ', data);
+            navigate("/home"); // 요청 성공 후 홈으로 리디렉션
         } catch (error) {
             console.error('Error fetching protected data: ', error);
         }
