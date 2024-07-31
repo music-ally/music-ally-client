@@ -69,6 +69,7 @@ export default function SnsSignup(){
     const email = location.state?.email || ''; // 이메일 정보 있으면 이메일, 없으면 공백
     // 위 같은 이메일 값 구글, 카카오에서 모두 불러오기
     const social_id = location.state?.sub ;
+    const signup_method = location.state?.signup_method;
 
     const [nickname, setNickname] = useState("");
     const [nicknameMsg, setNicknameMsg] = useState("");
@@ -151,9 +152,9 @@ export default function SnsSignup(){
                 nickname,
                 sex: gender,
                 birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-                home_area: address,
+                homearea_name: address,
                 social_id,
-                signup_method: '구글',
+                signup_method: signup_method,
             });
 
             // 성공 알람 문구

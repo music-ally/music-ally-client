@@ -98,7 +98,7 @@ export default function GoogleButton(){
                 });
 
                 // 일단 지금은 백엔드 소통 않고 받은 이메일 정보 직접 이동 처리
-                navigate("/sns-signup", {state: {email: data.email, social_id: data.sub}});
+                navigate("/sns-signup", {state: {email: data.email, social_id: data.sub, signup_method: "구글"}});
                 console.log(data.sub);
                 ////
                 /*
@@ -121,7 +121,7 @@ export default function GoogleButton(){
                             alert("이미 가입된 이메일입니다. 이메일 로그인으로 시도해주세요.");
                         }
                     } else {
-                        navigate("/sns-signup", {state: {email: data.email, social_id: data.sub}});
+                        navigate("/sns-signup", {state: {email: data.email, social_id: data.sub, signup_method: "구글"}});
                     }
                 } else {
                     console.error("에러 발생: ");
