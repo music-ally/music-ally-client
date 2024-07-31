@@ -9,6 +9,7 @@ import MyFollowerModal from "../components/myProfile/myFollowerModal";
 import ReviewCaroTest from "../components/myProfile/myReviewCaroTest";
 import MyReviewCaro from "../components/myProfile/myReviewCaro";
 import MyBookmarkCaro from "../components/myProfile/myBookmarkCaro";
+import Cookies from 'js-cookie'
 
 const Wrapper = styled.div`
     display: flex;
@@ -92,6 +93,7 @@ const MyInfo = styled.div`
     font-weight: 600;
     display: flex;
     flex-direction: row;
+    margin: 15px 0;
 `
 
 const MyInfoName = styled.div`
@@ -153,7 +155,7 @@ interface User {
             poster_image: string;
         }>;
     };
-    path: string;
+    social_id: string;
 }
 
 export default function MyPage() {
@@ -175,7 +177,7 @@ export default function MyPage() {
                 { musical_id: 'defaultBookmark_id', poster_image: '/empty.png' }
             ] 
         },
-        path: '이메일'
+        social_id: '이메일'
     });
     const [profile, setProfile] = useState<string>(profileimg);
 
@@ -184,8 +186,15 @@ export default function MyPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage`);
-                setUser(response.data);
+                //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+                const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                    },
+                });
+                setUser(response.data.data);
             } catch (error) {
                 console.error("Fetch data error : ", error);
             }
@@ -194,10 +203,7 @@ export default function MyPage() {
     }, []);
 
     let iconPath = '';
-    switch (user.path) {
-        case '이메일':
-            iconPath = '/email-icon.svg';
-            break;
+    switch (user.social_id) {
         case '구글':
             iconPath = '/google-logo.svg';
             break;
@@ -205,7 +211,7 @@ export default function MyPage() {
             iconPath = '/kakaotalk-logo.svg';
             break;
         default:
-            iconPath = ''; // 기본 아이콘 경로 또는 빈 문자열
+            iconPath = '/email-icon.svg';
             break;
     }
 
@@ -251,7 +257,7 @@ export default function MyPage() {
                 <Nickname> {user.nickname || '닉네임'} </Nickname>
                     <Row1>
                         {iconPath ? (
-                            <Path src={iconPath} alt={`${user.path} 아이콘`} />
+                            <Path src={iconPath} alt={`${user.social_id} 아이콘`} />
                         ) : (
                             <Path src="/email-icon.svg" /> // path 존재하면 해당 아이콘, 아니면 이메일
                         )}
