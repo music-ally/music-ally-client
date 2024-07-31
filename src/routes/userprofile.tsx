@@ -8,6 +8,7 @@ import FollowerModal from "../components/userProfile/followerModal";
 import FollowingModal from "../components/userProfile/followingModal";
 import UserReviewCaro from "../components/userProfile/userReviewCaro";
 import UserBookmarkCaro from "../components/userProfile/userBookmarkCaro";
+import Cookies from 'js-cookie'
 
 const Wrapper = styled.div`
     display: flex;
@@ -103,17 +104,6 @@ const CaroName = styled.div`
     margin: 20px 64px;
 `
 
-const DividerText = styled.span`
-    display: inline-block; /* 블록 요소로 설정하여 가로 크기를 설정할 수 있게 함 */
-    margin: 35px 10px; /* 좌우 마진 추가 */
-    color: white;
-    cursor: pointer;
-    text-decoration: underline;
-    &:hover {
-        opacity: 0.8; /* 호버 시 약간 투명하게 */
-    }
-`
-
 const Row = styled.div`
     display: flex;
     justify-content: space-between;
@@ -157,7 +147,7 @@ export default function UserProfile() {
         follower_num: 0,
         review_num: 0,
         bookmark_num: 0,
-        profile_image: null,
+        profile_image: profileimg,
         is_following: '팔로우',
         reviews: { 
             reviews: [
@@ -173,9 +163,16 @@ export default function UserProfile() {
 
     useEffect(() => {
         const fetchUser = async () => {
+            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`);
-                setUser(response.data);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                    },
+                });
+                setUser(response.data.data);
+                console.log(response.data.data);
             } catch (error) {
                 console.error('Fetching profile error : ', error);
             }
@@ -185,17 +182,34 @@ export default function UserProfile() {
     
     const handleFollowClick = async () => {
         try {
+            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+            
             if (user.is_following === '팔로잉') {
-                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                    },
+                });
+
             } else if (user.is_following === '팔로우') {
-                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`, {}, { 
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                    },
+                });
+
             } else {
                 console.log('본인입니다')
             }
 
             // 화면 상태 업데이트
-            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`);
-            setUser(response.data);
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`, { 
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                },
+            });
+            setUser(response.data.data);
         } catch (error) {
             console.error('follow, unfollow error : ', error);
         }
