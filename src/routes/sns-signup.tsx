@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import { createGlobalStyle, styled } from "styled-components";
 import isPropValid from '@emotion/is-prop-valid';
 import { LeftHalf, Name, RightHalf, RightWrapper, Title, Wrapper } from "../components/auth-components";
 import { useState } from "react";
@@ -8,6 +8,9 @@ import GenderSelect from "../components/gender-select";
 import Address from "../components/address-select";
 import { useLocation, useNavigate } from "react-router-dom";
 
+const GlobalStyle = createGlobalStyle`
+  font-family: 'Inter';
+`;
 
 interface TextProps {
     isError ?: boolean
@@ -172,6 +175,8 @@ export default function SnsSignup(){
 
 
     return(
+        <>
+        <GlobalStyle />
         <Wrapper>
             <LeftHalf />
             <RightHalf>
@@ -219,5 +224,6 @@ export default function SnsSignup(){
                 </RightWrapper>
             </RightHalf>
         </Wrapper>
+        </>        
     )
 }

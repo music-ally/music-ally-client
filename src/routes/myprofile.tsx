@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { styled } from "styled-components";
+import { createGlobalStyle, styled } from "styled-components";
 import profileimg from "/profileimg.png"
 import axios from "axios";
 import LeaveModal from "../components/leaveModal";
@@ -10,6 +10,10 @@ import ReviewCaroTest from "../components/myProfile/myReviewCaroTest";
 import MyReviewCaro from "../components/myProfile/myReviewCaro";
 import MyBookmarkCaro from "../components/myProfile/myBookmarkCaro";
 import Cookies from 'js-cookie'
+
+const GlobalStyle = createGlobalStyle`
+  font-family: 'Inter';
+`;
 
 const Wrapper = styled.div`
     display: flex;
@@ -265,6 +269,8 @@ export default function MyPage() {
     };
 
     return (
+        <>
+        <GlobalStyle />
         <Wrapper>
             <PropfileWrapper>
                 <ProfileImageWrapper>
@@ -326,5 +332,6 @@ export default function MyPage() {
             </Row>
             
         </Wrapper>
+        </>
     );
 }

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { styled } from "styled-components";
+import { createGlobalStyle, styled } from "styled-components";
 import profileimg from "/profileimg.png"
 import Component from "../components/myProfile/myReviewCaro";
 import axios from "axios";
@@ -9,6 +9,10 @@ import FollowingModal from "../components/userProfile/followingModal";
 import UserReviewCaro from "../components/userProfile/userReviewCaro";
 import UserBookmarkCaro from "../components/userProfile/userBookmarkCaro";
 import Cookies from 'js-cookie'
+
+const GlobalStyle = createGlobalStyle`
+  font-family: 'Inter';
+`;
 
 const Wrapper = styled.div`
     display: flex;
@@ -226,6 +230,8 @@ export default function UserProfile() {
       };
     
     return (
+        <>
+        <GlobalStyle />
         <Wrapper>
             <PropfileWrapper>
                 <ProfileImageWrapper>
@@ -275,5 +281,7 @@ export default function UserProfile() {
             <CaroName> {user.nickname || '닉네임'}님이 찜한 뮤지컬 </CaroName>
             <UserBookmarkCaro musicals={user.bookmarks?.musicals || [{musical_id: '', poster_image: '/poster_basic.png'}, {}]}/>
         </Wrapper>
+        </>
+        
     );
 }

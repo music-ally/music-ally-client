@@ -22,6 +22,13 @@ import {
   Title,
   Wrapper,
 } from "../components/auth-components";
+import { createGlobalStyle } from "styled-components";
+
+
+const GlobalStyle = createGlobalStyle`
+  font-family: 'Inter';
+`;
+
 
 export default function Login() {
   const MYAPI = import.meta.env.VITE_GOOGLE_API_KEY;
@@ -74,6 +81,8 @@ export default function Login() {
   };
 
   return (
+    <>
+    <GlobalStyle />
     <Wrapper>
       <LeftHalf />
       <RightHalf>
@@ -136,5 +145,6 @@ export default function Login() {
         </RightWrapper>
       </RightHalf>
     </Wrapper>
+    </>
   );
 }

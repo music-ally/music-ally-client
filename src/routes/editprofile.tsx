@@ -1,10 +1,13 @@
-import { styled } from "styled-components";
+import { createGlobalStyle, styled } from "styled-components";
 import bgimg from "../assets/bgimage_01.png"
 import profileimg from "/profileimg.png"
 import Address from "../components/address-select";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+const GlobalStyle = createGlobalStyle`
+  font-family: 'Inter';
+`;
 
 const Wrapper = styled.div`
     display: flex;
@@ -248,6 +251,8 @@ export default function EditProfile() {
     }
 
     return (
+        <>
+        <GlobalStyle />
         <Wrapper>
             <LeftHalf>
                 {/* <ProfileImage src={formData.profileImage ? URL.createObjectURL(formData.profileImage) : profileimg} alt="Profile" />
@@ -309,5 +314,6 @@ export default function EditProfile() {
                 </RightWrapper>
             </RightHalf>
         </Wrapper>
+        </>
     );
 }
