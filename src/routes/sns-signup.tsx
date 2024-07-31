@@ -86,9 +86,8 @@ export default function SnsSignup(){
     const handleBlur = async (e : React.ChangeEvent<HTMLInputElement>) => {
         try{
             // 입력 값 추출
-            const value = e.target.value;
-            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/check/nickname`, {
-                params: { nickname: value }, // 쿼리 파라미터로 닉네임 전달
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/check/nickname`, {
+                nickname: nickname,
             });
                         
             if(response.data){

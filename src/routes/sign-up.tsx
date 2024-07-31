@@ -94,38 +94,53 @@ export default function SignUp() {
 
     const [address, setAddress] = useState("");
 
-    const handleBlur = async (e: React.ChangeEvent<HTMLInputElement>, checkType: 'email' | 'nickname') => {
-        try {
-            // 입력 값 추출
-            const value = e.target.value;
-    
-            // 백엔드 경로와 상태 업데이트 함수를 조건에 따라 선택
-            const apiUrl = checkType === 'email' ? 'auth/check/email' : 'auth/check/nickname';
-            const setMsg = checkType === 'email' ? setEmailMsg : setNicknameMsg;
-            const setMsgError = checkType === 'email' ? setIsEmailError : setIsNameError;
-    
-            // .env 파일에 백엔드 주소 추가하여 요청 보내기
-            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}${apiUrl}`, {
-                params: { [checkType]: value }, // 쿼리 파라미터로 설정
-                withCredentials: true // 쿠키 포함 요청
+    const handleEmailBlur = async (e : React.ChangeEvent<HTMLInputElement>) => {
+        // 입력 값 추출
+        const email = e.target.value;
+        try{
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/check/email`, {
+                email: email,
             });
-                
-            if (response.data.data) {
-                setMsg(`이미 존재하는 ${checkType === 'email' ? '이메일' : '닉네임'}입니다.`);
-                setMsgError(true);
+            
+            if (response.data.is_duplicate) {
+                setEmailMsg(`이미 존재하는 이메일입니다. 가입 방법: ${response.data.signup_method}`);
+                setIsEmailError(true);
             } else {
-                setMsg(`사용 가능한 ${checkType === 'email' ? '이메일' : '닉네임'}입니다.`);
-                setMsgError(false);
+                setEmailMsg("사용 가능한 이메일입니다.");
+                setIsEmailError(false);
             }
-            setMsg(`이미 존재하는 ${checkType === 'email' ? '이메일' : '닉네임'}입니다.`);
-            setMsgError(true);
-        } catch (error) {
-            console.error(`${checkType === 'email' ? '이메일' : '닉네임'} 중복 확인 오류: `, error);
+            setEmailMsg("이메일 중복 확인 실패.");
+            setIsEmailError(true);
+            
+        } catch(error) {
+            console.error("이메일 중복 확인 오류: ", error);
         }
-    }
-    
+    };
 
-    // setIsEmailError(true) 이면 submit 불가하도록
+    const handleNicknameBlur = async (e : React.ChangeEvent<HTMLInputElement>) => {
+        // 입력 값 추출
+        const nickname = e.target.value;
+        try{
+            // 입력 값 추출
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/check/nickname`, {
+                nickname: nickname,
+            });
+                        
+            if(response.data){
+                setNicknameMsg("이미 존재하는 닉네임입니다. ");
+                setIsNameError(true);
+            } else{
+                setNicknameMsg("사용 가능한 닉네임입니다.")
+                setIsNameError(false);
+            }
+            setNicknameMsg("이미 존재하는 닉네임입니다. ");
+            setIsNameError(true);
+            
+            
+        } catch(error) {
+            console.error("닉네임 중복 확인 오류: ", error);
+        }
+    };
     
 
     const onChange = async (e : React.ChangeEvent<HTMLInputElement>) => {
@@ -255,7 +270,7 @@ export default function SignUp() {
                             name="email"
                             value={email}
                             type="email"
-                            onBlur={(e) => handleBlur(e, 'email')}
+                            onBlur={handleEmailBlur}
                             placeholder="이메일"
                             required
                         />
@@ -288,7 +303,7 @@ export default function SignUp() {
                             name="nickname"
                             value={nickname}
                             type="name"
-                            onBlur={(e) => handleBlur(e, 'nickname')}
+                            onBlur={handleNicknameBlur}
                             placeholder="닉네임 (최대 20자)"
                             maxLength={20}
                             required
