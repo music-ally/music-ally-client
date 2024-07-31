@@ -87,6 +87,11 @@ const UserReviewCaro: React.FC<Props> = ({ reviews }) => {
 
   useEffect(() => {
     const newImages = [...reviews.map(review => review.poster_image)];
+    // 리뷰가 없거나 poster_image가 없는 경우 처리
+    if (newImages.length === 0 || newImages.every(image => !image)) {
+        setDisplayImages(Array(4).fill("/empty.png"));
+        return;
+    }
     const remainder = newImages.length % 4;
     if (remainder !== 0) {
       const emptySlots = 4 - remainder;
