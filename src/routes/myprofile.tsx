@@ -159,7 +159,7 @@ interface User {
             poster_image: string;
         }>;
     };
-    social_id: string;
+    signup_method: string;
 }
 
 export default function MyPage() {
@@ -181,7 +181,7 @@ export default function MyPage() {
                 { musical_id: 'defaultBookmark_id', poster_image: '/empty.png' }
             ] 
         },
-        social_id: '이메일'
+        signup_method: '이메일'
     });
     const [profile, setProfile] = useState<string>(profileimg);
 
@@ -199,6 +199,7 @@ export default function MyPage() {
                     },
                 });
                 setUser(response.data.data);
+                console.log(response.data.data)
             } catch (error) {
                 console.error("Fetch data error : ", error);
             }
@@ -207,7 +208,7 @@ export default function MyPage() {
     }, []);
 
     let iconPath = '';
-    switch (user.social_id) {
+    switch (user.signup_method) {
         case '구글':
             iconPath = '/google-logo.svg';
             break;
@@ -251,6 +252,7 @@ export default function MyPage() {
                     Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
                 },
             });
+            alert(`${user.nickname} 님 탈퇴가 완료되었습니다.`)
             navigate('/login');
         } catch (error) {
             console.error('탈퇴 실패: ', error);
@@ -280,7 +282,7 @@ export default function MyPage() {
                 <Nickname> {user.nickname || '닉네임'} </Nickname>
                     <Row1>
                         {iconPath ? (
-                            <Path src={iconPath} alt={`${user.social_id} 아이콘`} />
+                            <Path src={iconPath} alt={`${user.signup_method} 아이콘`} />
                         ) : (
                             <Path src="/email-icon.svg" /> // path 존재하면 해당 아이콘, 아니면 이메일
                         )}
