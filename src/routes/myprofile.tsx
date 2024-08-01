@@ -190,8 +190,8 @@ export default function MyPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
-                //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+                //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+                const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
 
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage`, {
                     headers: {
