@@ -1,12 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { LeftHalf, Name, RightHalf, RightWrapper, Row1, Switcher, Title, Wrapper } from "../components/auth-components";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import isPropValid from '@emotion/is-prop-valid';
 import GenderSelect from "../components/gender-select";
 import Birthday from "../components/birth-select";
 import Address from "../components/address-select";
 import axios from "axios";
+
+const GlobalStyle = createGlobalStyle`
+  font-family: 'Inter';
+`;
 
 interface TextProps {
     isError ?: boolean;
@@ -265,6 +269,8 @@ export default function SignUp() {
     };
 
     return (
+        <>
+        <GlobalStyle />
         <Wrapper>
             <LeftHalf />
             <RightHalf>
@@ -345,5 +351,6 @@ export default function SignUp() {
                 </RightWrapper>
             </RightHalf>
         </Wrapper>
+        </>
     )
 }

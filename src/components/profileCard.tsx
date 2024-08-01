@@ -1,6 +1,8 @@
 import axios from "axios";
 import React from "react";
 import styled from "styled-components";
+import Cookies from 'js-cookie'
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Card = styled.div`
     //height: 90px;
@@ -76,15 +78,34 @@ export default function ProfileCard(
     is_following,
     onFollowStatusChange,
 } : ProfileCardProps) {
+    const navigate = useNavigate();
+
+    const onCardClick = () => {
+        navigate(`/profile/${userId}`);
+    };
+
     const handleFollowClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         try {
+            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+
             if(is_following === '팔로잉'){
-                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                },
+            });
                 onFollowStatusChange(userId, '팔로우');
+
             } else if(is_following === '팔로우'){
-                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`);
+                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`, {}, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                },
+            });
                 onFollowStatusChange(userId, '팔로잉');
+
             } else {
                 console.log('본인');
             }
@@ -93,7 +114,7 @@ export default function ProfileCard(
         }
     }
     return (
-        <Card>
+        <Card onClick={onCardClick}>
             <ProfileImg src={profileImage}  />
                 <Info>
                     <Nickname>{nickname}</Nickname>
@@ -108,16 +129,4 @@ export default function ProfileCard(
                 )}
         </Card>
     );
-}
-
-// defaultProps 사용
-ProfileCard.defaultProps = {
-    profileImage: '/profileimg.png',
-    nickname: '예시닉네임',
-    email: 'example@email.com',
-    is_following: '팔로우',
-    userId: 'abc',
-    onFollowStatusChange: (userId: string, isFollowing: string) => {
-        console.log(`User ID: ${userId}, Following: ${isFollowing}`);
-    },
 };

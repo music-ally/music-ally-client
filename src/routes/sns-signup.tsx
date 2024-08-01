@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import { createGlobalStyle, styled } from "styled-components";
 import isPropValid from '@emotion/is-prop-valid';
 import { LeftHalf, Name, RightHalf, RightWrapper, Title, Wrapper } from "../components/auth-components";
 import { useState } from "react";
@@ -8,6 +8,9 @@ import GenderSelect from "../components/gender-select";
 import Address from "../components/address-select";
 import { useLocation, useNavigate } from "react-router-dom";
 
+const GlobalStyle = createGlobalStyle`
+  font-family: 'Inter';
+`;
 
 interface TextProps {
     isError ?: boolean
@@ -68,7 +71,8 @@ export default function SnsSignup(){
     const location = useLocation();
     const email = location.state?.email || ''; // 이메일 정보 있으면 이메일, 없으면 공백
     // 위 같은 이메일 값 구글, 카카오에서 모두 불러오기
-    const social_id = location.state?.sub ;
+    const sub = location.state?.sub ;
+    const signup_method = location.state?.signup_method;
 
     const [nickname, setNickname] = useState("");
     const [nicknameMsg, setNicknameMsg] = useState("");
@@ -151,9 +155,9 @@ export default function SnsSignup(){
                 nickname,
                 sex: gender,
                 birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-                home_area: address,
-                social_id,
-                signup_method: '구글',
+                homearea_name: address,
+                social_id: sub,
+                signup_method: signup_method,
             });
 
             // 성공 알람 문구
@@ -171,6 +175,8 @@ export default function SnsSignup(){
 
 
     return(
+        <>
+        <GlobalStyle />
         <Wrapper>
             <LeftHalf />
             <RightHalf>
@@ -218,5 +224,6 @@ export default function SnsSignup(){
                 </RightWrapper>
             </RightHalf>
         </Wrapper>
+        </>        
     )
 }

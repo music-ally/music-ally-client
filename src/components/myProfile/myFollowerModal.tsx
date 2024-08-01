@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import ProfileCard from "../profileCard";
 import axios from "axios";
+import Cookies from 'js-cookie'
 
 const Overlay = styled.div`
   position: fixed;
@@ -129,15 +130,21 @@ export default function MyFollowerModal ({ onClose } : FollowerModalProps) {
     useEffect(() => {
         // api 호출
         const fetchFollowers = async() => {
+            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage/follower`);
-                setFollowers(response.data.follow_list);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage/follower`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                    },
+                });
+                setFollowers(response.data.data.follow_list);
             } catch (error) {
                 console.error("Error fetching followers: ", error);
             } 
-            // finally {
-            //     setLoading(false);
-            // }
+            finally {
+                setLoading(false);
+            }
         };
         fetchFollowers();
 
@@ -159,12 +166,12 @@ export default function MyFollowerModal ({ onClose } : FollowerModalProps) {
                 </Header>
                 <Divider />
                 <ModalContent>
-                    <ProfileCard />
                     {loading ? (
                         <LoadingContainer>Loading...</LoadingContainer>
                     ):(
                         followers && followers.map((follower) => (
-                            <ProfileCard 
+                            <ProfileCard
+                                userId={follower.user_id}
                                 key={follower.user_id}
                                 // profileImage=""
                                 nickname={follower.nickname}

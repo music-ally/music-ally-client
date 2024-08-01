@@ -35,7 +35,8 @@ const Kakao: React.FC = () => {
                 redirectUri: 'http://192.168.219.168:3000/home',
                 success: (authObj: any) => {
                     console.log('로그인 성공', authObj);
-                    localStorage.setItem('kakaoToken', authObj.access_token);
+                    localStorage.setItem('accessToken', authObj.access_token);
+                    localStorage.setItem("refresh_token", authObj.refresh_token);
                     getUserInfo(authObj.access_token);
                 },
                 fail: (err: any) => {
@@ -55,13 +56,11 @@ const Kakao: React.FC = () => {
                     console.log(res);
                     const { email, id: social_id } = res.kakao_account;
 
-                    // 이메일 존재 여부 확인
                     const emailCheckResult = await checkEmailExistence(email);
                     if (emailCheckResult) {
                         const { is_duplicate, signup_method } = emailCheckResult;
 
                         if (is_duplicate) {
-                            // 이미 존재하는 이메일인 경우, 로그인 진행
                             if (signup_method === '카카오') {
                                 await fetchData(email, social_id);
                             } else {

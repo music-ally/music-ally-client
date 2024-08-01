@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Poster from "/poster_basic.png"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie'
 
 const Overlay = styled.div`
     position: fixed;
@@ -223,11 +224,16 @@ export default function MyReviewModal({ reviewId, onClose }: ReviewModalProps) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // API 호출 (여기서는 더미 데이터를 사용)
+        
         const fetchReview = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage/review/${reviewId}/`);
-                setReviews(response.data);
+                const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage/review/${reviewId}/`,{
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                    },
+                });
+                setReviews(response.data.data);
             } catch (error) {
                 console.error("내 리뷰 모달창 불러오기 Error : ", error);
             } finally {
@@ -265,7 +271,12 @@ export default function MyReviewModal({ reviewId, onClose }: ReviewModalProps) {
         const confirmDelete = window.confirm(`${reviews.musical_name || 'Musical One'} 리뷰를 삭제하시겠습니까?`);
         if (confirmDelete) {
             try {
-                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/myPage/review/${reviewId}`);
+                const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/myPage/review/${reviewId}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                    },
+                });
                 alert(`${reviews.musical_name || 'Musical One'} 리뷰 삭제가 완료되었습니다`)
                 onClose();
                 window.location.reload();

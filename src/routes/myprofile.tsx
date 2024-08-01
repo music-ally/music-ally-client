@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { styled } from "styled-components";
+import { createGlobalStyle, styled } from "styled-components";
 import profileimg from "/profileimg.png"
 import axios from "axios";
 import LeaveModal from "../components/leaveModal";
@@ -10,6 +10,10 @@ import ReviewCaroTest from "../components/myProfile/myReviewCaroTest";
 import MyReviewCaro from "../components/myProfile/myReviewCaro";
 import MyBookmarkCaro from "../components/myProfile/myBookmarkCaro";
 import Cookies from 'js-cookie'
+
+const GlobalStyle = createGlobalStyle`
+  font-family: 'Inter';
+`;
 
 const Wrapper = styled.div`
     display: flex;
@@ -188,6 +192,7 @@ export default function MyPage() {
             try {
                 //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
                 const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
@@ -220,7 +225,17 @@ export default function MyPage() {
 
     const handleLogout = async () => {
         try {
-            await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`);
+            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+            await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                },
+            });
+            Cookies.remove("access_token");
+            Cookies.remove("refresh_token");
+            //localStorage.removeItem("access_token");
+            //localStorage.removeItem("refresh_token");
             navigate('/login');
         } catch (error) {
             console.error('로그아웃 실패: ', error);
@@ -229,7 +244,13 @@ export default function MyPage() {
 
     const handleLeave = async () => {
         try {
-            await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/auth/leave`);
+            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+            await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/auth/leave`, {}, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                },
+            });
             navigate('/login');
         } catch (error) {
             console.error('탈퇴 실패: ', error);
@@ -244,9 +265,12 @@ export default function MyPage() {
 
     const handleModalClose = () => {
         setFollowModal(null);
-      };
+        window.location.reload(); // 모달창에서 팔로우 클릭하면 새로고침하여 프로필 화면에서 팔로잉 수 바뀌도록
+    };
 
     return (
+        <>
+        <GlobalStyle />
         <Wrapper>
             <PropfileWrapper>
                 <ProfileImageWrapper>
@@ -308,5 +332,6 @@ export default function MyPage() {
             </Row>
             
         </Wrapper>
+        </>
     );
 }
