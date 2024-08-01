@@ -61,7 +61,7 @@ const ButtonImage = styled.img<{ src: string }>`
 `;
 
 interface ProfileCardProps {
-    profileImage?: string;
+    profile_image?: string;
     nickname?: string;
     email?: string;
     userId: string;
@@ -71,7 +71,7 @@ interface ProfileCardProps {
 
 export default function ProfileCard(
 {
-    profileImage = '/profileimg.png',
+    profile_image = '/profileimg.png',
     nickname = '닉네임',
     email = '이메일',
     userId,
@@ -115,7 +115,7 @@ export default function ProfileCard(
     }
     return (
         <Card onClick={onCardClick}>
-            <ProfileImg src={profileImage}  />
+            <ProfileImg src={profile_image}  />
                 <Info>
                     <Nickname>{nickname}</Nickname>
                     <Email>{email}</Email>

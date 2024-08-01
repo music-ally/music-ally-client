@@ -160,6 +160,7 @@ interface User {
         }>;
     };
     signup_method: string;
+    profile_image: string | null;
 }
 
 export default function MyPage() {
@@ -181,7 +182,8 @@ export default function MyPage() {
                 { musical_id: 'defaultBookmark_id', poster_image: '/empty.png' }
             ] 
         },
-        signup_method: '이메일'
+        signup_method: '이메일',
+        profile_image: '/profileimg.png',
     });
     const [profile, setProfile] = useState<string>(profileimg);
 
@@ -276,7 +278,7 @@ export default function MyPage() {
         <Wrapper>
             <PropfileWrapper>
                 <ProfileImageWrapper>
-                    <ProfileImage src={ profileimg }/>
+                    <ProfileImage src={ user.profile_image || profileimg }/>
                 </ProfileImageWrapper>
                 <ProfileInfoWrapper>
                 <Nickname> {user.nickname || '닉네임'} </Nickname>
