@@ -138,6 +138,12 @@ export default function Login() {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault(); // 기본 이벤트 방지
+                  onSubmit(e as any); // 폼 제출 함수 호출
+                }
+              }}
               required
             />
             <Input type="submit" value="로그인하기" />
