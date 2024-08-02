@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import { FiSearch } from 'react-icons/fi';
 import styled from 'styled-components';
 import token from './token';
@@ -31,6 +31,7 @@ const SearchBox = styled.div`
   align-items: center;
   border-radius: 6px;
   padding: 5px 10px;
+  background-color: #ffffff;
 `;
 
 const SearchInput = styled.input`
@@ -58,6 +59,7 @@ const ResultsList = styled.ul`
   margin: 0;
   color: black;
   list-style: none;
+  z-index: 1000;
 `;
 
 const ResultItem = styled.li`
@@ -73,36 +75,24 @@ const SearchComponent: React.FC = () => {
   const [actors, setActors] = useState<Actor[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
-    token.get('/musical')
-      .then(response => setMusicals(response.data.musicals))
-      .catch(error => console.error('뮤지컬정보error:', error));
+    if (searchTerm) {
+      token.get(`/search/musical?keyword=${encodeURIComponent(searchTerm)}`)
+        .then(response => setMusicals(response.data.musicals || []))
+        .catch(error => console.error('뮤지컬 정보 에러:', error));
 
-    token.get('/actor')
-      .then(response => setActors(response.data.actors))
-      .catch(error => console.error('배우정보error:', error));
-  }, []);
-
-  useEffect(() => {
-    setSearchTerm('');
-  }, [location]);
-  
-  const filteredMusicals = searchTerm
-    ? musicals.filter(musical =>
-        musical.musical_name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
-
-  const filteredActors = searchTerm
-    ? actors.filter(actor =>
-        actor.actor_name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
+      token.get(`/search/actor?keyword=${encodeURIComponent(searchTerm)}`)
+        .then(response => setActors(response.data.actors || []))
+        .catch(error => console.error('배우 정보 에러:', error));
+    } else {
+      setMusicals([]);
+      setActors([]);
+    }
+  }, [searchTerm]);
 
   const handleSearch = () => {
-    navigate('/search', { state: { musicals: filteredMusicals, actors: filteredActors } });
+    navigate('/search', { state: { musicals, actors } });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -111,14 +101,12 @@ const SearchComponent: React.FC = () => {
     }
   };
 
-  const handleMusicalItemClick = (id: string) => {
-    console.log(`musical ID: ${id}`);
-    handleSearch();
+  const handleMusicalItemClick = (musical: Musical) => {
+    navigate(`/musical/${musical.musical_id}`, { state: { musical } });
   };
 
-  const handleActorItemClick = (id: string) => {
-    console.log(`actor ID: ${id}`);
-    handleSearch();
+  const handleActorItemClick = (actor: Actor) => {
+    navigate(`/actor/${actor.actor_id}`, { state: { actor } });
   };
 
   return (
@@ -135,13 +123,13 @@ const SearchComponent: React.FC = () => {
       </SearchBox>
       {searchTerm && (
         <ResultsList>
-          {filteredMusicals.map(musical => (
-            <ResultItem key={musical.musical_id} onClick={() => handleMusicalItemClick(musical.musical_id)}>
+          {musicals.map(musical => (
+            <ResultItem key={musical.musical_id} onClick={() => handleMusicalItemClick(musical)}>
               {musical.musical_name}
             </ResultItem>
           ))}
-          {filteredActors.map(actor => (
-            <ResultItem key={actor.actor_id} onClick={() => handleActorItemClick(actor.actor_id)}>
+          {actors.map(actor => (
+            <ResultItem key={actor.actor_id} onClick={() => handleActorItemClick(actor)}>
               {actor.actor_name}
             </ResultItem>
           ))}

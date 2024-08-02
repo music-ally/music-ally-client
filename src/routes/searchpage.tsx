@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MusicalInfo from '../components/musicalInfo';
 import ActorInfo from '../components/actorInfo';
-import token from '../components/token';
 
 const PageContainer = styled.div`
   width: 1280px;
@@ -33,8 +32,8 @@ const SeeMore = styled.div`
 const SearchPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [musicals, setMusicals] = useState(location.state?.musicals || []);
-  const [actors, setActors] = useState(location.state?.actors || []);
+  const musicals = location.state?.musicals || [];
+  const actors = location.state?.actors || [];
 
   const handleSeeMoreMusicals = () => {
     navigate('/search/musical', { state: { musicals } });
@@ -44,31 +43,30 @@ const SearchPage: React.FC = () => {
     navigate('/search/actor', { state: { actors } });
   };
 
-  useEffect(() => {
-    if (!musicals.length) {
-      token.get('/musical')
-        .then(response => setMusicals(response.data.musicals))
-        .catch(error => console.error('뮤지컬 정보를 가져오는데 오류가 발생했습니다:', error));
-    }
-    if (!actors.length) {
-      token.get('/actor')
-        .then(response => setActors(response.data.actors))
-        .catch(error => console.error('배우 정보를 가져오는데 오류가 발생했습니다:', error));
-    }
-  }, [musicals, actors]);
-
   return (
     <PageContainer>
       <SectionWrapper>
         <SectionTitle>Musical ({musicals.length})</SectionTitle>
-        <MusicalInfo musicals={musicals.slice(0, 4)} />
-        <SeeMore onClick={handleSeeMoreMusicals}>More</SeeMore>
+        {musicals.length > 0 ? (
+          <>
+            <MusicalInfo musicals={musicals.slice(0, 4)} />
+            <SeeMore onClick={handleSeeMoreMusicals}>More</SeeMore>
+          </>
+        ) : (
+          <p>No musicals found</p>
+        )}
       </SectionWrapper>
 
       <SectionWrapper>
         <SectionTitle>Actor ({actors.length})</SectionTitle>
-        <ActorInfo actors={actors.slice(0, 4)} />
-        <SeeMore onClick={handleSeeMoreActors}>More</SeeMore>
+        {actors.length > 0 ? (
+          <>
+            <ActorInfo actors={actors.slice(0, 4)} />
+            <SeeMore onClick={handleSeeMoreActors}>More</SeeMore>
+          </>
+        ) : (
+          <p>No actors found</p>
+        )}
       </SectionWrapper>
     </PageContainer>
   );
