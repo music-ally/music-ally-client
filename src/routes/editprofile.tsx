@@ -214,6 +214,7 @@ export default function EditProfile() {
     const [nicknameMsg, setNicknameMsg] = useState("");
     const [isNameError, setIsNameError] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [method, setMethod] = useState(false);
 
     // 데이터 가져오기
     useEffect(() => {
@@ -241,6 +242,13 @@ export default function EditProfile() {
                     setImgFile(response.data.data.profile_image);
                 } else {
                     setImgFile(profileimg);
+                }
+
+                // 로그인 경로 뮤지컬리일 때만 비번 입력 가능
+                if(response.data.data.signup_method === "뮤지컬리"){
+                    setMethod(false);
+                } else {
+                    setMethod(true);
                 }
             } catch (error) {
                 console.error("User 데이터 가져오기 오류 : ", error);
@@ -485,6 +493,7 @@ export default function EditProfile() {
                             value={formData.password}
                             type="password"
                             placeholder="비밀번호 (6~12자리, 영어와 숫자를 포함하세요)"
+                            disabled={method ? true : false}
                         />
                         <Name> 비밀번호 확인 </Name>
                         <Input
@@ -493,6 +502,7 @@ export default function EditProfile() {
                             value={confirmPassword}
                             type="password"
                             placeholder="비밀번호 확인"
+                            disabled={method ? true : false}
                         />
                         <Name> 거주지 </Name>
                         <Address address={formData.homearea_name} onChange={(e) => onChange1(e)}/>
