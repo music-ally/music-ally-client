@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import SearchContainerMusical, { Musical } from './searchcontainer-mus';
-import MusicalInfo from './musicalInfo';
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import MusicalSearchComponent from "./searchcontainer-mus";
+import MusicalInfo from "./musicalInfo";
+
+interface Musical {
+  musical_id: string;
+  poster_image: string;
+  musical_name: string;
+  start_at: string;
+  end_at: string;
+  theater_name: string;
+}
 
 const ModalContainer = styled.div`
   position: fixed;
@@ -20,8 +29,7 @@ const ModalContent = styled.div`
   background: #282828;
   padding: 20px;
   border-radius: 8px;
-  width: 80%;
-  max-width: 800px;
+  width: 1250px;
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
@@ -39,21 +47,42 @@ const CloseButton = styled.button`
 `;
 
 interface Props {
-  musicals?: Musical[];
   isOpen: boolean;
   onClose: () => void;
 }
 
-const MusicalSearchModal: React.FC<Props> = ({ musicals = [], isOpen, onClose }) => {
+const MusicalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [filteredMusicals, setFilteredMusicals] = useState<Musical[]>([]);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
     <ModalContainer>
-      <ModalContent>
+      <ModalContent ref={modalRef}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
-        <SearchContainerMusical musicals={musicals} setFilteredMusicals={setFilteredMusicals} />
+        <MusicalSearchComponent setFilteredMusicals={setFilteredMusicals} />
         <MusicalInfo musicals={filteredMusicals} />
       </ModalContent>
     </ModalContainer>

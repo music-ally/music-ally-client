@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { FiSearch } from "react-icons/fi";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import token from "./token";
 
-export interface Musical {
+interface Musical {
   musical_id: string;
   poster_image: string;
   musical_name: string;
@@ -15,7 +13,8 @@ export interface Musical {
 
 const Container = styled.div`
   position: relative;
-  width: 400px;
+  width: 100%;
+  margin-bottom: 30px;
 `;
 
 const SearchBox = styled.div`
@@ -62,12 +61,21 @@ const ResultItem = styled.li`
   }
 `;
 
-const SearchComponentMusical: React.FC = () => {
+interface Props {
+  setFilteredMusicals: (musicals: Musical[]) => void;
+}
+
+const MusicalSearchComponent: React.FC<Props> = ({ setFilteredMusicals }) => {
   const [musicals, setMusicals] = useState<Musical[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
+  const [showResults, setShowResults] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    console.log("Musicals state updated:", musicals);
+  }, [musicals]);
+
+  const handleSearch = () => {
     if (searchTerm) {
       console.log("Search term:", searchTerm);
 
@@ -75,48 +83,42 @@ const SearchComponentMusical: React.FC = () => {
         .get(`/search/musical?keyword=${encodeURIComponent(searchTerm)}`)
         .then((response) => {
           setMusicals(response.data.data.musicals || []);
+          setFilteredMusicals(response.data.data.musicals || []);
+          setShowResults(true);
         })
         .catch((error) => console.error("뮤지컬 정보 에러:", error));
     } else {
       setMusicals([]);
+      setFilteredMusicals([]);
+      setShowResults(false);
     }
-  }, [searchTerm]);
-
-  useEffect(() => {
-    console.log("Musicals state updated:", musicals);
-  }, [musicals]);
-
-  const handleSearch = (musical_id?: string) => {
-    navigate("/search", { state: { musical_id } });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const foundMusical = musicals.find((musical) =>
-        musical.musical_name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-
-      if (foundMusical) {
-        handleSearch(foundMusical.musical_id);
-      } else {
-        handleSearch(undefined);
-      }
+      handleSearch();
     }
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(event.target as Node)
+    ) {
+      setShowResults(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <Container>
+    <Container ref={containerRef}>
       <SearchBox>
-        <FiSearch
-          size={20}
-          color="#251611"
-          onClick={() =>
-            handleKeyDown({
-              key: "Enter",
-            } as React.KeyboardEvent<HTMLInputElement>)
-          }
-          style={{ cursor: "pointer" }}
-        />
         <SearchInput
           type="text"
           placeholder="뮤지컬이 궁금해!"
@@ -125,13 +127,10 @@ const SearchComponentMusical: React.FC = () => {
           onKeyDown={handleKeyDown}
         />
       </SearchBox>
-      {searchTerm && (
+      {showResults && (
         <ResultsList>
           {musicals.map((musical) => (
-            <ResultItem
-              key={musical.musical_id}
-              onClick={() => handleSearch(musical.musical_id)}
-            >
+            <ResultItem key={musical.musical_id} onClick={handleSearch}>
               {musical.musical_name}
             </ResultItem>
           ))}
@@ -141,4 +140,4 @@ const SearchComponentMusical: React.FC = () => {
   );
 };
 
-export default SearchComponentMusical;
+export default MusicalSearchComponent;

@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { FiSearch } from "react-icons/fi";
 import styled from "styled-components";
 import token from "./token";
-
-export interface Actor {
-  actor_id: string;
-  profile_image: string;
-  actor_name: string;
-  agency: string;
-  birthday: string;
-}
+import { Actor } from "./actorsearch";
 
 const Container = styled.div`
   position: relative;
-  width: 400px;
+  width: 100%;
 `;
 
 const SearchBox = styled.div`
@@ -61,23 +52,31 @@ const ResultItem = styled.li`
   }
 `;
 
-const SearchComponentActor: React.FC = () => {
+interface Props {
+  setFilteredActors: (actors: Actor[]) => void;
+}
+
+const ActorSearchComponent: React.FC<Props> = ({ setFilteredActors }) => {
   const [actors, setActors] = useState<Actor[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
+  const [showResults, setShowResults] = useState(false);
+
+  const fetchActors = () => {
+    token
+      .get(`/search/actor?keyword=${encodeURIComponent(searchTerm)}`)
+      .then((response) => {
+        setActors(response.data.data.actors || []);
+        setFilteredActors(response.data.data.actors || []);
+        setShowResults(true);
+      })
+      .catch((error) => console.error("배우 정보 에러:", error));
+  };
 
   useEffect(() => {
-    if (searchTerm) {
-      console.log("Search term:", searchTerm);
-
-      token
-        .get(`/search/actor?keyword=${encodeURIComponent(searchTerm)}`)
-        .then((response) => {
-          setActors(response.data.data.actors || []);
-        })
-        .catch((error) => console.error("배우 정보 에러:", error));
-    } else {
+    if (searchTerm === "") {
       setActors([]);
+      setFilteredActors([]);
+      setShowResults(false);
     }
   }, [searchTerm]);
 
@@ -85,37 +84,15 @@ const SearchComponentActor: React.FC = () => {
     console.log("Actors state updated:", actors);
   }, [actors]);
 
-  const handleSearch = (actor_id?: string) => {
-    navigate("/search", { state: { actor_id } });
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const foundActor = actors.find((actor) =>
-        actor.actor_name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-
-      if (foundActor) {
-        handleSearch(foundActor.actor_id);
-      } else {
-        handleSearch(undefined);
-      }
+      fetchActors();
     }
   };
 
   return (
     <Container>
       <SearchBox>
-        <FiSearch
-          size={20}
-          color="#251611"
-          onClick={() =>
-            handleKeyDown({
-              key: "Enter",
-            } as React.KeyboardEvent<HTMLInputElement>)
-          }
-          style={{ cursor: "pointer" }}
-        />
         <SearchInput
           type="text"
           placeholder="배우가 궁금해!"
@@ -124,13 +101,10 @@ const SearchComponentActor: React.FC = () => {
           onKeyDown={handleKeyDown}
         />
       </SearchBox>
-      {searchTerm && (
+      {showResults && (
         <ResultsList>
           {actors.map((actor) => (
-            <ResultItem
-              key={actor.actor_id}
-              onClick={() => handleSearch(actor.actor_id)}
-            >
+            <ResultItem key={actor.actor_id} onClick={fetchActors}>
               {actor.actor_name}
             </ResultItem>
           ))}
@@ -140,4 +114,4 @@ const SearchComponentActor: React.FC = () => {
   );
 };
 
-export default SearchComponentActor;
+export default ActorSearchComponent;

@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const Container = styled.div`
   display: grid;
@@ -16,9 +16,9 @@ const ImageContainer = styled.div`
 `;
 
 const Image = styled.img`
-  border-radius: 13.68px;
-  width: 250.9px;
-  height: 250.9px;
+  border-radius: 10px;
+  width: 240px;
+  height: 315px;
 `;
 
 const ActorInfoContainer = styled.div`
@@ -29,23 +29,23 @@ const ActorInfoContainer = styled.div`
 `;
 
 const ActorName = styled.div`
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: black;
   font-size: 23.49px;
   line-height: 1.5;
-  color: #FAFAFA;
+  color: #fafafa;
 `;
 
 const Company = styled.div`
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 18.07px;
-  color: #ECECEC;
+  color: #ececec;
   margin: 14px 0 0 0;
   letter-spacing: 5%;
 `;
 
 const Birthday = styled.div`
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 18.07px;
   color: #888888;
   letter-spacing: 5%;
@@ -53,10 +53,10 @@ const Birthday = styled.div`
 
 interface Actor {
   actor_id: string;
-  name: string;
+  actor_name: string;
   agency: string;
   birthday: string;
-  imageUrl: string;
+  profile_image: string;
 }
 
 interface Props {
@@ -69,9 +69,9 @@ const ActorInfo: React.FC<Props> = ({ actors = [] }) => {
       {actors.length > 0 ? (
         actors.map((actor, index) => (
           <ImageContainer key={index}>
-            <Image src={actor.imageUrl} alt={actor.name} />
+            <Image src={actor.profile_image} alt={actor.actor_name} />
             <ActorInfoContainer>
-              <ActorName>{actor.name}</ActorName>
+              <ActorName>{actor.actor_name}</ActorName>
               <Company>{actor.agency}</Company>
               <Birthday>{actor.birthday}</Birthday>
             </ActorInfoContainer>
