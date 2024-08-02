@@ -88,9 +88,55 @@ const HorizontalLine = styled.hr`
   margin: 75px 0;
 `;
 
+// 캐로셀 버튼 스타일
+const Button = styled.img`
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-170%);
+  z-index: 1;
+`;
+
+const LeftButton = styled(Button)`
+  left: 2px; /* 왼쪽 위치 조정 */
+`;
+
+const RightButton = styled(Button)`
+  right: 2px; /* 오른쪽 위치 조정 */
+`;
+
+// 캐로셀 컨테이너 스타일
+const CarouselContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1200px; /* 최대 너비 설정 */
+  height: 400px; /* 캐로셀 높이 설정 */
+`;
+
+// 캐로셀 내용 스타일
+const CarouselContent = styled.div`
+  display: flex;
+  transition: transform 0.3s ease;
+  width: 100%;
+  height: 100%;
+`;
+
+// 캐로셀 아이템 스타일
+const CarouselItem = styled.div`
+  flex: 0 0 100%; /* 한 아이템이 전체 너비를 차지하도록 설정 */
+  max-width: 100%; /* 아이템의 최대 너비를 100%로 설정 */
+  height: 100%; /* 아이템의 높이를 100%로 설정 */
+  box-sizing: border-box;
+`;
+
 const App: React.FC = () => {
   const [bestReviews, setBestReviews] = useState<Review[]>([]);
-  const [allReviews, setAllReviews] = useState<Review[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -117,7 +163,6 @@ const App: React.FC = () => {
         // 데이터 검증
         if (Array.isArray(best_review) && Array.isArray(all_review)) {
           setBestReviews(best_review);
-          setAllReviews(all_review);
         } else {
           console.error("Unexpected data structure:", response.data);
         }
@@ -129,8 +174,16 @@ const App: React.FC = () => {
     fetchReviews();
   }, []);
 
-  const handleWriteReviewClick = () => {
-    navigate("/write-review");
+  const handleLeftButtonClick = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? bestReviews.length - 1 : prevIndex - 1
+    );
+  };
+
+  const handleRightButtonClick = () => {
+    setCurrentIndex((prevIndex) =>
+      (prevIndex + 1) % bestReviews.length
+    );
   };
 
   return (
@@ -138,21 +191,27 @@ const App: React.FC = () => {
       <LeftAlignedContainer>
         <BestReviewTitle>Best Review</BestReviewTitle>
       </LeftAlignedContainer>
-      {bestReviews.map((review) => (
-        <VerticalSpacing key={review.review_id}>
-          <BestReview review={review} />
-        </VerticalSpacing>
-      ))}
+      <CarouselContainer>
+        <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
+        <CarouselContent style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+          {bestReviews.map((review) => (
+            <CarouselItem key={review.review_id}>
+              <BestReview review={review} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
+      </CarouselContainer>
       <HorizontalLine />
       <LeftAlignedContainer>
         <BasicReviewTitle>ALL Review</BasicReviewTitle>
         <WriteIcon
           src="/write.png"
           alt="Write Icon"
-          onClick={handleWriteReviewClick}
+          onClick={() => navigate("/write-review")}
         />
       </LeftAlignedContainer>
-      {allReviews.map((review) => (
+      {bestReviews.map((review) => (
         <VerticalSpacing key={review.review_id}>
           <BasicReview review={review} />
         </VerticalSpacing>
