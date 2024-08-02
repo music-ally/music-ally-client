@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import styled from 'styled-components';
 import Actorcircle from '../components/actorcircle';
 import MusicalTicket from '../components/musicalticket';
 import SeeReview from '../components/seereview';
+import Cookies from 'js-cookie';
+
 
 // 스타일 컴포넌트
 const AppContainer = styled.div`
-  background-image: url('/reviewpage.png');
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh;
@@ -37,7 +39,6 @@ const MainTitle = styled.h1`
   margin: 6px 0;
   display: flex;
   align-items: center;
-  margin-left: 100px;
   font-weight: 300;
 `;
 
@@ -109,12 +110,25 @@ const SeeReviewPage: React.FC = () => {
   useEffect(() => {
     const fetchReviewData = async () => {
       try {
-        const response = await fetch(`/review/${reviewId}`);
-        const result = await response.json();
-        if (result.success) {
-          setReviewData(result.data);
+        // 쿠키에서 토큰 가져오기
+        const accessToken = Cookies.get("access_token");
+
+        if (!accessToken) {
+          console.error("No access token found");
+          return;
+        }
+
+
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+        },
+      });
+
+        if (response.data.success) {
+          setReviewData(response.data.data);
         } else {
-          console.error('리뷰 데이터 조회 실패:', result.message);
+          console.error('리뷰 데이터 조회 실패:', response.data.message);
         }
       } catch (error) {
         console.error('리뷰 데이터 조회 중 오류 발생:', error);
@@ -131,7 +145,7 @@ const SeeReviewPage: React.FC = () => {
   return (
     <AppContainer>
       <LeftAlignedContainer>
-        <MainTitle>{musical.musical_name}</MainTitle>
+        <MainTitle>MUSICAL</MainTitle>
       </LeftAlignedContainer>
       <MusicalTicket
         tickets={[{
@@ -139,7 +153,7 @@ const SeeReviewPage: React.FC = () => {
           musical_name: musical.musical_name,
           theater_name: musical.theater_name,
           watch_at: musical.watch_at,
-          poster_image: musical.poster_image // 실제 데이터로 대체
+          poster_image: musical.poster_image
         }]}
       />
       <LeftAlignedContainer>
