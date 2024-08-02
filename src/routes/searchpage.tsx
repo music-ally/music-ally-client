@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MusicalInfo from '../components/musicalInfo';
 import ActorInfo from '../components/actorInfo';
+import token from '../components/token';
 
 const PageContainer = styled.div`
   width: 1280px;
@@ -32,7 +33,8 @@ const SeeMore = styled.div`
 const SearchPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { musicals, actors } = location.state || { musicals: [], actors: [] };
+  const [musicals, setMusicals] = useState(location.state?.musicals || []);
+  const [actors, setActors] = useState(location.state?.actors || []);
 
   const handleSeeMoreMusicals = () => {
     navigate('/search/musical', { state: { musicals } });
@@ -43,7 +45,15 @@ const SearchPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!musicals.length || !actors.length) {
+    if (!musicals.length) {
+      token.get('/musical')
+        .then(response => setMusicals(response.data.musicals))
+        .catch(error => console.error('뮤지컬 정보를 가져오는데 오류가 발생했습니다:', error));
+    }
+    if (!actors.length) {
+      token.get('/actor')
+        .then(response => setActors(response.data.actors))
+        .catch(error => console.error('배우 정보를 가져오는데 오류가 발생했습니다:', error));
     }
   }, [musicals, actors]);
 

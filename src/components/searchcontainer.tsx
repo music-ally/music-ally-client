@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FiSearch } from 'react-icons/fi';
 import styled from 'styled-components';
+import token from './token';
 
 export interface Musical {
   musical_id: string;
@@ -75,14 +76,12 @@ const SearchComponent: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    fetch('${import.meta.env.VITE_BACKEND_URL}/musical')
-      .then(response => response.json())
-      .then(data => setMusicals(data))
+    token.get('/musical')
+      .then(response => setMusicals(response.data.musicals))
       .catch(error => console.error('뮤지컬정보error:', error));
 
-    fetch('${import.meta.env.VITE_BACKEND_URL}/actor')
-      .then(response => response.json())
-      .then(data => setActors(data))
+    token.get('/actor')
+      .then(response => setActors(response.data.actors))
       .catch(error => console.error('배우정보error:', error));
   }, []);
 

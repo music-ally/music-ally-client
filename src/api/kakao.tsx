@@ -35,7 +35,7 @@ const Kakao: React.FC = () => {
                 redirectUri: 'http://192.168.219.168:3000/home',
                 success: (authObj: any) => {
                     console.log('로그인 성공', authObj);
-                    localStorage.setItem('accessToken', authObj.access_token);
+                    localStorage.setItem('access_token', authObj.access_token);
                     localStorage.setItem("refresh_token", authObj.refresh_token);
                     getUserInfo(authObj.access_token);
                 },
