@@ -134,9 +134,8 @@ const WriteReviewPage: React.FC = () => {
   const [userProfileImage, setUserProfileImage] = useState<string>('');
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProfileData = async () => {
       try {
-        // 쿠키에서 토큰 가져오기
         const accessToken = Cookies.get("access_token");
 
         if (!accessToken) {
@@ -144,34 +143,15 @@ const WriteReviewPage: React.FC = () => {
           return;
         }
 
-        // 사용자 프로필 데이터 가져오기
         const profileResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/review/writer/profile`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+            Authorization: `Bearer ${accessToken}`,
           },
         });
         const profileData = profileResponse.data.data;
         setUserProfileImage(profileData.reviewer_profile_image);
         setUserName(profileData.reviewer_nickname);
         setUserHandle(profileData.reviewer_email);
-
-        // 뮤지컬 티켓 데이터 가져오기
-        const ticketResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/musical`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
-          },
-        });
-        const ticketsData: Musical[] = ticketResponse.data?.data || [];
-        setTickets(ticketsData);
-
-        // 배우 데이터 가져오기
-        const actorResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/actor`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
-          },
-        });
-        const actorsData: Actor[] = actorResponse.data?.data?.actors || [];
-        setActors(actorsData);
 
         setIsLoading(false);
       } catch (error) {
@@ -180,7 +160,7 @@ const WriteReviewPage: React.FC = () => {
       }
     };
 
-    fetchData();
+    fetchProfileData();
   }, []);
 
   useEffect(() => {
@@ -196,7 +176,7 @@ const WriteReviewPage: React.FC = () => {
 
           const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/review/${review_id}`, {
             headers: {
-              Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+              Authorization: `Bearer ${accessToken}`,
             },
           });
           const reviewData = response.data;
@@ -208,14 +188,14 @@ const WriteReviewPage: React.FC = () => {
 
           const ticketResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/musical/${reviewData.musical_id}`, {
             headers: {
-              Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+              Authorization: `Bearer ${accessToken}`,
             },
           });
           setSelectedTicket(ticketResponse.data);
 
           const actorResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/actor/${reviewData.actor_id}`, {
             headers: {
-              Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+              Authorization: `Bearer ${accessToken}`,
             },
           });
           setSelectedActor(actorResponse.data);
@@ -253,7 +233,7 @@ const WriteReviewPage: React.FC = () => {
         actor_id: selectedActor?.actor_id,
       }, {
         headers: {
-          Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
@@ -281,7 +261,7 @@ const WriteReviewPage: React.FC = () => {
           />
         </MainTitle>
       </LeftAlignedContainer>
-      <MusicalTicket tickets={selectedTicket ? [selectedTicket] : tickets} />
+      <MusicalTicket tickets={selectedTicket ? [selectedTicket] : []} />
       <LeftAlignedContainer>
         <Title>
           ACTOR
