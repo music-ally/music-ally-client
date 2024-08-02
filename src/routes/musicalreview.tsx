@@ -134,9 +134,33 @@ const CarouselItem = styled.div`
   box-sizing: border-box;
 `;
 
+// 페이지 네비게이션 스타일
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const PageNumber = styled.span<{ active: boolean }>`
+  padding: 10px;
+  margin: 0 5px;
+  cursor: pointer;
+  font-size: 20px;
+  color: ${({ active }) => (active ? "#E8E1B1" : "#A7A7A7")};
+  background: transparent; /* 배경색 투명 */
+  border-radius: 5px;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #E8E1B1;
+  }
+`;
+
 const App: React.FC = () => {
   const [bestReviews, setBestReviews] = useState<Review[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const reviewsPerPage = 3;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -186,6 +210,17 @@ const App: React.FC = () => {
     );
   };
 
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const paginatedReviews = bestReviews.slice(
+    currentPage * reviewsPerPage,
+    (currentPage + 1) * reviewsPerPage
+  );
+
+  const totalPages = Math.ceil(bestReviews.length / reviewsPerPage);
+
   return (
     <AppContainer>
       <LeftAlignedContainer>
@@ -211,11 +246,22 @@ const App: React.FC = () => {
           onClick={() => navigate("/write-review")}
         />
       </LeftAlignedContainer>
-      {bestReviews.map((review) => (
+      {paginatedReviews.map((review) => (
         <VerticalSpacing key={review.review_id}>
           <BasicReview review={review} />
         </VerticalSpacing>
       ))}
+      <PaginationContainer>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <PageNumber
+            key={index}
+            active={index === currentPage}
+            onClick={() => handlePageChange(index)}
+          >
+            {index + 1}
+          </PageNumber>
+        ))}
+      </PaginationContainer>
     </AppContainer>
   );
 };
