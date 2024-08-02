@@ -212,6 +212,7 @@ interface Review {
   sensitivity: number;
   violence: number;
   content: string;
+  poster_image?: string; // 포스터 이미지 추가
 }
 
 interface BasicReviewProps {
@@ -225,7 +226,7 @@ const BasicReview: React.FC<BasicReviewProps> = ({ review }) => {
 
   const addLike = async (reviewId: string) => {
     try {
-      const response = await axios.post(`/api/review/${reviewId}/like`);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
       if (response.status !== 200) {
         throw new Error('Failed to add like');
       }
@@ -236,7 +237,7 @@ const BasicReview: React.FC<BasicReviewProps> = ({ review }) => {
 
   const removeLike = async (reviewId: string) => {
     try {
-      const response = await axios.delete(`/api/review/${reviewId}/like`);
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
       if (response.status !== 200) {
         throw new Error('Failed to remove like');
       }
@@ -262,7 +263,7 @@ const BasicReview: React.FC<BasicReviewProps> = ({ review }) => {
 
   return (
     <Container>
-      <ImageWrapper imageUrl='/musicalposter-1.jpeg' /> {/* 예시 URL */}
+      <ImageWrapper imageUrl={review.poster_image || '/default-poster.png'} /> {/* 포스터 이미지 적용 */}
       <Content>
         <DateText>{new Date(review.create_at).toLocaleDateString()} {new Date(review.create_at).toLocaleTimeString()}</DateText>
         <Header>
