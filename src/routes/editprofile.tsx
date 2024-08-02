@@ -61,11 +61,37 @@ const MyProfile = styled.div`
     margin-left: 30px;
 `
 
-const ProfileImage = styled.img`
+const ProfileImageContainer = styled.div`
+    position: relative;
     width: 185px;
     height: 185px;
     border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+`;
+
+const ProfileImage = styled.img`
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
     object-fit: cover;
+`;
+
+const Overlay = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2); // 검정색 배경, 투명도 25%
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const CameraIcon = styled.img`
+    color: white; // 아이콘 색상
+    width: 32px;
 `;
 
 const Nickname = styled.h3`
@@ -405,6 +431,13 @@ export default function EditProfile() {
             <LeftHalf>
                 {/* <ProfileImage src={formData.profileImage ? URL.createObjectURL(formData.profileImage) : profileimg} alt="Profile" />
                 */}
+                <ProfileImageContainer onClick={handleImageClick}>
+                    {imgFile && typeof imgFile === 'string' && <ProfileImage src={imgFile} />}
+                    <Overlay>
+                        <CameraIcon src="/camera.svg"/>
+                    </Overlay>
+                </ProfileImageContainer>
+                
                 <MyProfile>
                     <Nickname> {formData.nickname || '닉네임'} </Nickname>
                     <Email> {formData.email || 'email@email.com'}</Email>
@@ -415,6 +448,7 @@ export default function EditProfile() {
                         ref={imgRef}
                         accept="image/*"
                         name="profile_image"
+                        style={{ display : "none" }}
                     />
                 </MyProfile>
             </LeftHalf>
