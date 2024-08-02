@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import styled, { createGlobalStyle } from 'styled-components';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import DetailModal from './detail-modal';
 
 // 글로벌 스타일 정의
 const GlobalStyle = createGlobalStyle`
@@ -11,12 +14,12 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-// 스타일 컴포넌트들 정의
 const Container = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 72px;
 `;
 
 const ContentWrapper = styled.div`
@@ -36,7 +39,8 @@ const ImageRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 17px; /* 이미지 간 간격 조절 */
+  gap: 17px;
+  overflow: hidden;
 `;
 
 const ImageContainer = styled.div`
@@ -68,9 +72,9 @@ const ImageText = styled.div`
   bottom: 10px;
   width: 100%;
   text-align: center;
-  font-family: 'Inter-SemiBold', sans-serif; /* 'Inter-SemiBold' 폰트 사용 */
-  font-size: 18pt;
-  color: #FAFAFA;
+  font-family: 'Inter-SemiBold', sans-serif;
+  font-size: 16pt;
+  color: #F2F2F2;
   z-index: 2;
 `;
 
@@ -93,49 +97,65 @@ const RightButton = styled(Button)`
 `;
 
 interface ImageProps {
-  src: string;
+  src: string | null;
   name: string;
 }
 
-interface ComponentProps {
-  actorId: any;
+interface ActorCarouselProps {
+  actorId: string[];
 }
 
-const Component: React.FC<ComponentProps> = ({ actorId }) => {
+const ActorCarousel: React.FC<ActorCarouselProps> = ({ actorId }) => {
   const [images, setImages] = useState<ImageProps[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedActorID, setSelectedActorID] = useState<string>('');
 
+  // 이미지 데이터 가져오기
   useEffect(() => {
-    // actorId를 이용해 이미지를 fetch
-    fetch(`/api/actor/${actorId}/musicals`)
-      .then((response) => response.json())
-      .then((data) => {
-        const fetchedImages: ImageProps[] = data.musicals.map((musical: any) => ({
-          src: musical.posterUrl,
-          name: musical.title,
-        }));
-        setImages(fetchedImages);
-      })
-      .catch((error) => console.error('Error fetching images:', error));
+    const fetchImages = async () => {
+      try {
+        const allImages = await Promise.all(
+          actorId.map(id =>
+            axios.get(`${import.meta.env.VITE_BACKEND_URL}/actor/${id}`, {
+              headers: {
+                Authorization: `Bearer ${Cookies.get("access_token")}`,
+              },
+            })
+              .then(response => ({
+                src: response.data.data.profile_image || '/empty.png', // Fallback to /empty.png
+                name: response.data.data.actor_name,
+              }))
+          )
+        );
+        setImages(allImages);
+      } catch (error) {
+        console.error('Error fetching images:', error.response ? error.response.data : error.message);
+      }
+    };
+
+    fetchImages();
   }, [actorId]);
 
   const handleLeftButtonClick = () => {
-    setCurrentIndex((prevIndex) => {
-      const newIndex = prevIndex === 0 ? images.length - 1 : prevIndex - 1;
-      return newIndex;
-    });
+    setCurrentIndex(prevIndex => (prevIndex === 0 ? images.length - 4 : prevIndex - 4));
   };
 
   const handleRightButtonClick = () => {
-    setCurrentIndex((prevIndex) => {
-      const newIndex = prevIndex === images.length - 1 ? 0 : prevIndex + 1;
-      return newIndex;
-    });
+    setCurrentIndex(prevIndex => (prevIndex + 4) % images.length);
   };
 
-  if (!images.length) {
-    return <Container>No images available</Container>;
-  }
+  const handleImageClick = (actorID: string) => {
+    setSelectedActorID(actorID);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // Ensure that we always have 4 images to show, by repeating the images if necessary
+  const displayedImages = [...images, ...images, ...images].slice(currentIndex, currentIndex + 4);
 
   return (
     <>
@@ -143,24 +163,27 @@ const Component: React.FC<ComponentProps> = ({ actorId }) => {
       <Container>
         <ContentWrapper>
           <Row>
-            {images.length > 1 && ( // 이미지가 1개 이상일 때 버튼을 보여줌
+            {images.length > 4 && (
               <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
             )}
             <ImageRow>
-              <ImageContainer>
-                <Image src={images[currentIndex].src} alt={`Poster ${currentIndex}`} />
-                <GradientOverlay />
-                <ImageText>{images[currentIndex].name}</ImageText>
-              </ImageContainer>
+              {displayedImages.map((image, index) => (
+                <ImageContainer key={index}>
+                  <Image src={image.src} alt={`Poster ${index}`} onClick={() => handleImageClick(image.name)} />
+                  <GradientOverlay />
+                  <ImageText>{image.name}</ImageText>
+                </ImageContainer>
+              ))}
             </ImageRow>
-            {images.length > 1 && ( 
+            {images.length > 4 && (
               <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
             )}
           </Row>
         </ContentWrapper>
+        {isModalOpen && <DetailModal actor_ID={selectedActorID} onClose={handleCloseModal} />}
       </Container>
     </>
   );
 };
 
-export default Component;
+export default ActorCarousel;
