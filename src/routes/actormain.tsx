@@ -8,11 +8,9 @@ import MusicalCarousel from '../components/musicalcarousel';
 import Actorprofile from '../components/actorprofile';
 
 const AppContainer = styled.div`
-  background-image: url('/actorpage.png');
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh;
-  padding: 162px 74px 100px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

@@ -21,7 +21,7 @@ const ProfileContainer = styled.div`
   width: 100%;
   max-width: 1200px;
   margin: 138px auto;
-  padding: 0 64px;
+  padding: 0 px;
   box-sizing: border-box;
 `;
 
