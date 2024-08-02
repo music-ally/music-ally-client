@@ -81,7 +81,11 @@ export default function ProfileCard(
     const navigate = useNavigate();
 
     const onCardClick = () => {
-        navigate(`/profile/${userId}`);
+        if(is_following === '본인') {
+            navigate(`/mypage`);
+        } else {
+            navigate(`/profile/${userId}`);
+        }
     };
 
     const handleFollowClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
