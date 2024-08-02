@@ -132,8 +132,8 @@ export default function FollowingModal ({userId, onClose} : FollowingModalProps)
     useEffect(() => {
         // api 호출
         const fetchFollowings = async () => {
-            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
-            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+            //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/following`, {
                     headers: {

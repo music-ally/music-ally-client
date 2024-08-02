@@ -167,8 +167,8 @@ export default function UserProfile() {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
-            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+            //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`, {
                     headers: {
@@ -186,8 +186,8 @@ export default function UserProfile() {
     
     const handleFollowClick = async () => {
         try {
-            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
-            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+            //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             
             if (user.is_following === '팔로잉') {
                 await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follow`, {
@@ -203,7 +203,7 @@ export default function UserProfile() {
                     },
                 });
 
-            } else {
+            } else { // 나 자신인데 왜 본인이 아닌건가요
                 console.log('본인입니다')
             }
 

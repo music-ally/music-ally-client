@@ -66,8 +66,11 @@ export default function Login() {
         const { access_token, refresh_token } = data;
 
         // JWT 토큰을 쿠키에 저장
-        Cookies.set("access_token", access_token, { expires: 1 }); // 1일 만료
-        Cookies.set("refresh_token", refresh_token, { expires: 7 }); // 7일 만료
+        // Cookies.set("access_token", access_token, { expires: 1 }); // 1일 만료
+        // Cookies.set("refresh_token", refresh_token, { expires: 7 }); // 7일 만료
+
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("refresh_token", refresh_token);
 
         // 홈 페이지 또는 다른 보호된 경로로 이동
         navigate("/home");

@@ -228,17 +228,17 @@ export default function MyPage() {
 
     const handleLogout = async () => {
         try {
-            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
-            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+            //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
                 },
             });
-            Cookies.remove("access_token");
-            Cookies.remove("refresh_token");
-            //localStorage.removeItem("access_token");
-            //localStorage.removeItem("refresh_token");
+            //Cookies.remove("access_token");
+            //Cookies.remove("refresh_token");
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
             navigate('/login');
         } catch (error) {
             console.error('로그아웃 실패: ', error);
@@ -247,8 +247,8 @@ export default function MyPage() {
 
     const handleLeave = async () => {
         try {
-            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
-            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+            //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/auth/leave`, {}, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
