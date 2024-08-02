@@ -118,6 +118,7 @@ interface Follower {
     nickname: string;
     email: string;
     is_following: string; // '팔로잉' 또는 '팔로우'와 같은 문자열
+    profile_image: string;
 }
 
 interface FollowerModalProps {
@@ -158,7 +159,7 @@ export default function FollowerModal ({userId, onClose} : FollowerModalProps) {
       
     return(
         <Overlay onClick={onClose}>
-            <Modal onClick={(e) => e.stopPropagation()}>
+            <Modal>
                 <Header>
                     <Title>팔로워</Title>
                     <CloseButton onClick={onClose}>
@@ -174,7 +175,7 @@ export default function FollowerModal ({userId, onClose} : FollowerModalProps) {
                             <ProfileCard
                                 userId={follower.user_id}
                                 key={follower.user_id}
-                                // profileImage=""
+                                profile_image={follower.profile_image}
                                 nickname={follower.nickname}
                                 email={follower.email}
                                 is_following={follower.is_following}

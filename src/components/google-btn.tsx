@@ -69,7 +69,7 @@ export default function GoogleButton(){
             const { success, message, data } = response.data;
             if(success) {
                 const { access_token, refresh_token } = data;
-                console.log(access_token, refresh_token);
+                // console.log(access_token, refresh_token);
 
                 // JWT 토큰을 쿠키에 저장
                 Cookies.set("access_token", access_token, { expires: 1 }); // 1일 만료

@@ -118,6 +118,7 @@ interface Following {
     nickname: string;
     email: string;
     is_following: string; // '팔로잉' 또는 '팔로우'와 같은 문자열
+    profile_image: string;
 }
 
 interface FollowingModalProps {
@@ -173,6 +174,7 @@ export default function MyFollowingModal ({ onClose } : FollowingModalProps) {
                             <ProfileCard
                                 userId={following.user_id}
                                 key={following.user_id}
+                                profile_image={following.profile_image}
                                 nickname={following.nickname}
                                 email={following.email}
                                 is_following={following.is_following}
