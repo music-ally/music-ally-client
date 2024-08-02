@@ -17,6 +17,7 @@ import DetailSearchAct from './routes/detailsearch-actor';
 import DetailSearchMus from './routes/detailsearch-musical';
 import SeeReview from './routes/seereview';
 import { AuthProvider } from './components/AuthContext'; 
+import ProtectedRoute from './ProtectedRoute';
 
 const GlobalStyles = createGlobalStyle`
   * {
@@ -34,7 +35,11 @@ const GlobalStyles = createGlobalStyle`
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Layout />,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     children: [
       { path: 'home', element: <Home /> },
       { path: 'actor/musical', element: <ActorPage /> },
@@ -48,7 +53,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <Layout2 />,
+    element: (
+      <ProtectedRoute>
+        <Layout2 />
+      </ProtectedRoute>
+    ),
     children: [
       { path: 'mypage', element: <MyPage /> },
       { path: 'mypage/edit', element: <EditProfile /> },
