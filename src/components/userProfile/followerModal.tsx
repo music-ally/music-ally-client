@@ -159,7 +159,7 @@ export default function FollowerModal ({userId, onClose} : FollowerModalProps) {
       
     return(
         <Overlay onClick={onClose}>
-            <Modal onClick={(e) => e.stopPropagation()}>
+            <Modal>
                 <Header>
                     <Title>팔로워</Title>
                     <CloseButton onClick={onClose}>
