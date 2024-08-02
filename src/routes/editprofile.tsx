@@ -221,8 +221,8 @@ export default function EditProfile() {
         setImgFile(profileimg); // 근데 이렇게 하면 이미 프사가 있는 사람은 어떻게 나타나는지?
         const fetchData = async() => {
             try {
-                const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
-                //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+                //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+                const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
 
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/mypage`, {
                     headers: {
@@ -410,8 +410,8 @@ export default function EditProfile() {
         // 제출 성공하면 mypage로 navigate
         /* */
         try {
-            const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
-            //const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+            // const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+            const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             
             await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/mypage`, formDataSend, {
                 headers: {
