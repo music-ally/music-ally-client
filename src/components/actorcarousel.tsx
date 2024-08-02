@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import DetailModal from './detail-modal';
+import { useNavigate } from 'react-router-dom';
 
 // 글로벌 스타일 정의
 const GlobalStyle = createGlobalStyle`
@@ -99,6 +99,7 @@ const RightButton = styled(Button)`
 interface ImageProps {
   src: string | null;
   name: string;
+  id: string;
 }
 
 interface ActorCarouselProps {
@@ -108,10 +109,8 @@ interface ActorCarouselProps {
 const ActorCarousel: React.FC<ActorCarouselProps> = ({ actorId }) => {
   const [images, setImages] = useState<ImageProps[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedActorID, setSelectedActorID] = useState<string>('');
+  const navigate = useNavigate();
 
-  // 이미지 데이터 가져오기
   useEffect(() => {
     const fetchImages = async () => {
       try {
@@ -123,8 +122,9 @@ const ActorCarousel: React.FC<ActorCarouselProps> = ({ actorId }) => {
               },
             })
               .then(response => ({
-                src: response.data.data.profile_image || '/empty.png', // Fallback to /empty.png
+                src: response.data.data.profile_image || '/empty.png', // Fallback to /empty.png if profile_image is missing
                 name: response.data.data.actor_name,
+                id: response.data.data._id, // Store the ID
               }))
           )
         );
@@ -146,20 +146,14 @@ const ActorCarousel: React.FC<ActorCarouselProps> = ({ actorId }) => {
   };
 
   const handleImageClick = (actorID: string) => {
-    setSelectedActorID(actorID);
-    setIsModalOpen(true);
+    navigate(`/actor/${actorID}`);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  // Ensure that we always have 4 images to show, by repeating the images if necessary
   const displayedImages = [...images, ...images, ...images].slice(currentIndex, currentIndex + 4);
 
   return (
     <>
-      <GlobalStyle /> {/* 글로벌 스타일 적용 */}
+      <GlobalStyle />
       <Container>
         <ContentWrapper>
           <Row>
@@ -169,7 +163,12 @@ const ActorCarousel: React.FC<ActorCarouselProps> = ({ actorId }) => {
             <ImageRow>
               {displayedImages.map((image, index) => (
                 <ImageContainer key={index}>
-                  <Image src={image.src} alt={`Poster ${index}`} onClick={() => handleImageClick(image.name)} />
+                  <Image 
+                    src={image.src || '/empty.png'} 
+                    alt={`Poster ${index}`} 
+                    onClick={() => handleImageClick(image.id)} 
+                    onError={(e) => (e.currentTarget.src = '/empty.png')} // Handle image load error
+                  />
                   <GradientOverlay />
                   <ImageText>{image.name}</ImageText>
                 </ImageContainer>
@@ -180,7 +179,6 @@ const ActorCarousel: React.FC<ActorCarouselProps> = ({ actorId }) => {
             )}
           </Row>
         </ContentWrapper>
-        {isModalOpen && <DetailModal actor_ID={selectedActorID} onClose={handleCloseModal} />}
       </Container>
     </>
   );
