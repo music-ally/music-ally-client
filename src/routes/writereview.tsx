@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
-import WriteReview from '../components/wirtereview';
+import Cookies from 'js-cookie';
+import WriteReview from '../components/writereview';
 import MusicalTicket from '../components/musicalticket';
 import Actorcircle from '../components/actorcircle';
 import MusicalSearchModal from '../components/musicalsearch';
@@ -108,6 +109,12 @@ interface Actor {
   actor_name: string;
 }
 
+interface WriteReviewPageProps {
+  userName: string;
+  userHandle: string;
+  userProfileImage: string;
+}
+
 const WriteReviewPage: React.FC = () => {
   const navigate = useNavigate();
   const { review_id } = useParams<{ review_id: string }>();
@@ -122,17 +129,47 @@ const WriteReviewPage: React.FC = () => {
   const [sensitivity, setSensitivity] = useState<number>(0);
   const [violence, setViolence] = useState<number>(0);
   const [comment, setComment] = useState<string>('');
-  const [reviewerName, setReviewerName] = useState<string>('');
-  const [reviewerHandle, setReviewerHandle] = useState<string>('');
+  const [userName, setUserName] = useState<string>('');
+  const [userHandle, setUserHandle] = useState<string>('');
+  const [userProfileImage, setUserProfileImage] = useState<string>('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const ticketResponse = await axios.get('/api/musical');
+        // 쿠키에서 토큰 가져오기
+        const accessToken = Cookies.get("access_token");
+
+        if (!accessToken) {
+          console.error("No access token found");
+          return;
+        }
+
+        // 사용자 프로필 데이터 가져오기
+        const profileResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/review/writer/profile`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+          },
+        });
+        const profileData = profileResponse.data.data;
+        setUserProfileImage(profileData.reviewer_profile_image);
+        setUserName(profileData.reviewer_nickname);
+        setUserHandle(profileData.reviewer_email);
+
+        // 뮤지컬 티켓 데이터 가져오기
+        const ticketResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/musical`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+          },
+        });
         const ticketsData: Musical[] = ticketResponse.data?.data || [];
         setTickets(ticketsData);
 
-        const actorResponse = await axios.get('/api/actor');
+        // 배우 데이터 가져오기
+        const actorResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/actor`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+          },
+        });
         const actorsData: Actor[] = actorResponse.data?.data?.actors || [];
         setActors(actorsData);
 
@@ -150,20 +187,37 @@ const WriteReviewPage: React.FC = () => {
     if (review_id) {
       const fetchReviewData = async () => {
         try {
-          const response = await axios.get(`/api/review/${review_id}`);
+          const accessToken = Cookies.get("access_token");
+
+          if (!accessToken) {
+            console.error("No access token found");
+            return;
+          }
+
+          const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/review/${review_id}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+            },
+          });
           const reviewData = response.data;
 
           setFear(reviewData.fear);
           setSensitivity(reviewData.sensitivity);
           setViolence(reviewData.violence);
           setComment(reviewData.content);
-          setReviewerName(reviewData.reviewer_nickname);
-          setReviewerHandle(reviewData.reviewer_email);
 
-          const ticketResponse = await axios.get(`/api/musical/${reviewData.musical_id}`);
+          const ticketResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/musical/${reviewData.musical_id}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+            },
+          });
           setSelectedTicket(ticketResponse.data);
 
-          const actorResponse = await axios.get(`/api/actor/${reviewData.actor_id}`);
+          const actorResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/actor/${reviewData.actor_id}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+            },
+          });
           setSelectedActor(actorResponse.data);
         } catch (error) {
           console.error('리뷰 데이터 가져오기 오류:', error);
@@ -183,13 +237,24 @@ const WriteReviewPage: React.FC = () => {
 
   const handleSaveReview = async () => {
     try {
-      const response = await axios.post('/api/review', {
+      const accessToken = Cookies.get("access_token");
+
+      if (!accessToken) {
+        console.error("No access token found");
+        return;
+      }
+
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/review/`, {
         fear,
         sensitivity,
         violence,
         content: comment,
         musical_id: selectedTicket?.musical_id,
         actor_id: selectedActor?.actor_id,
+      }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+        },
       });
 
       if (response.data.success) {
@@ -231,13 +296,13 @@ const WriteReviewPage: React.FC = () => {
         {isLoading ? (
           <p>Loading...</p>
         ) : (
-          actors.map((actor) => (
+          selectedActor && (
             <Actorcircle
-              key={actor.actor_id}
-              profile_image={actor.profile_image}
-              actor_name={actor.actor_name}
+              key={selectedActor.actor_id}
+              profile_image={selectedActor.profile_image}
+              actor_name={selectedActor.actor_name}
             />
-          ))
+          )
         )}
       </LeftAlignedContainer>
       <LeftAlignedContainer>
@@ -248,8 +313,9 @@ const WriteReviewPage: React.FC = () => {
       <VerticalSpacing>
         <WriteReview 
           onChange={handleReviewChange} 
-          userName={reviewerName} 
-          userHandle={reviewerHandle} 
+          userName={userName} 
+          userHandle={userHandle} 
+          userProfileImage={userProfileImage}
         />
       </VerticalSpacing>
       <RightAlignedContainer>
@@ -264,7 +330,7 @@ const WriteReviewPage: React.FC = () => {
 
       {isSearchModalOpen && (
         <MusicalSearchModal 
-          musicals={tickets} // musicals prop 추가
+          musicals={tickets}
           isOpen={isSearchModalOpen}
           onSelect={(ticket) => {
             setSelectedTicket(ticket);
@@ -276,7 +342,7 @@ const WriteReviewPage: React.FC = () => {
 
       {isActorSearchModalOpen && (
         <ActorSearchModal 
-          actors={actors} // 추가: actors prop 전달
+          actors={actors}
           isOpen={isActorSearchModalOpen}
           onSelect={(actor) => {
             setSelectedActor(actor);

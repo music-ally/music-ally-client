@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
-import WriteReview from '../components/wirtereview';
+import WriteReview from '../components/writereview';
 import MusicalTicket from '../components/musicalticket';
 import Actorcircle from '../components/actorcircle';
 
