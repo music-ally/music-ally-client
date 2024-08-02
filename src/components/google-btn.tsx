@@ -72,11 +72,11 @@ export default function GoogleButton(){
                 // console.log(access_token, refresh_token);
 
                 // JWT 토큰을 쿠키에 저장
-                Cookies.set("access_token", access_token, { expires: 1 }); // 1일 만료
-                Cookies.set("refresh_token", refresh_token, { expires: 7 }); // 7일 만료
+                //Cookies.set("access_token", access_token, { expires: 1 }); // 1일 만료
+                //Cookies.set("refresh_token", refresh_token, { expires: 7 }); // 7일 만료
 
-                // localStorage.setItem("access_token", access_token);
-                // localStorage.setItem("refresh_token", refresh_token);
+                localStorage.setItem("access_token", access_token);
+                localStorage.setItem("refresh_token", refresh_token);
                 navigate("/home");
             } else {
                 console.error("에러메세지: ", message);
@@ -92,7 +92,7 @@ export default function GoogleButton(){
         onSuccess: async (credentialResponse) => {
             try {
                 // 쿠키에 토큰 저장
-                Cookies.set('access_token', credentialResponse.access_token, {expires: 1}); // 1일동안 유효
+                Cookies.set('access_token_google', credentialResponse.access_token, {expires: 1}); // 1일동안 유효
 
                 // 토큰으로 사용자 정보 가져오기
                 const {data} = await axios.get<UserInfo>('https://www.googleapis.com/oauth2/v3/userinfo', {
