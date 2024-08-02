@@ -78,6 +78,8 @@ const SearchComponent: React.FC = () => {
 
   useEffect(() => {
     if (searchTerm) {
+      console.log("Search term:", searchTerm);
+
       token
         .get(`/search/musical?keyword=${encodeURIComponent(searchTerm)}`)
         .then((response) => {
@@ -105,29 +107,26 @@ const SearchComponent: React.FC = () => {
     console.log("Actors state updated:", actors);
   }, [actors]);
 
-  const handleSearch = (id: string) => {
-    navigate("/search", { state: { id } });
+  const handleSearch = (musical_id?: string, actor_id?: string) => {
+    navigate("/search", { state: { musical_id, actor_id } });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      console.log("Search term:", searchTerm);
       const foundMusical = musicals.find((musical) =>
         musical.musical_name.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      console.log("Found musical:", foundMusical);
 
       const foundActor = actors.find((actor) =>
         actor.actor_name.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      console.log("Found actor:", foundActor);
 
       if (foundMusical) {
-        handleSearch(foundMusical.musical_id);
+        handleSearch(foundMusical.musical_id, undefined);
       } else if (foundActor) {
-        handleSearch(foundActor.actor_id);
+        handleSearch(undefined, foundActor.actor_id);
       } else {
-        handleSearch("");
+        handleSearch(undefined, undefined);
       }
     }
   };
@@ -158,7 +157,7 @@ const SearchComponent: React.FC = () => {
           {musicals.map((musical) => (
             <ResultItem
               key={musical.musical_id}
-              onClick={() => handleSearch(musical.musical_id)}
+              onClick={() => handleSearch(musical.musical_id, undefined)}
             >
               {musical.musical_name}
             </ResultItem>
@@ -166,7 +165,7 @@ const SearchComponent: React.FC = () => {
           {actors.map((actor) => (
             <ResultItem
               key={actor.actor_id}
-              onClick={() => handleSearch(actor.actor_id)}
+              onClick={() => handleSearch(undefined, actor.actor_id)}
             >
               {actor.actor_name}
             </ResultItem>
