@@ -4,6 +4,7 @@ declare global {
   namespace naver.maps {
     class Map {
       constructor(element: HTMLElement, options: MapOptions);
+      setCenter(center: LatLng): void;
     }
 
     interface MapOptions {
