@@ -1,16 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { FiBell } from "react-icons/fi";
 import bgimg from "../assets/bgimage_01.png";
 import SearchContainer from "./searchcontainer.tsx";
+import Notifi from "./notifiaction.tsx";
 
 const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  //background-image: url('/header-background.png');
   background-size: cover;
   background-position: center;
   padding: 10px 20px;
@@ -30,8 +30,8 @@ const Search = styled.div`
   gap: 9.926px;
   flex-shrink: 0;
   border-radius: 6.617px;
-  border: 0.827px solid #e0e0e0;
-  background: rgba(255, 255, 255, 0.9);
+  // border: 0.827px solid #e0e0e0;
+  background-color: transperant;
 `;
 
 const Nav = styled.nav`
@@ -59,25 +59,68 @@ const NavLink = styled(Link)`
   }
 `;
 
+const NotificationContainer = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const Modal = styled.div`
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  z-index: 1000;
+`;
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+`;
+
 const Header: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
   return (
-    <HeaderContainer>
-      <Logo src="/header-Logo.png" alt="Logo" />
-      <Search>
-        <SearchContainer />
-      </Search>
-      <Nav>
-        <NavLink to="/home">Main</NavLink>
-        <NavLink to="/review">Review</NavLink>
-        <NavLink to="/actor/musical">Actor</NavLink>
-        <NavLink to="/mypage">My page</NavLink>
-        <FiBell size={24} color="#EED18F" />
-      </Nav>
-    </HeaderContainer>
+    <>
+      <HeaderContainer>
+        <Logo src="/header-Logo.png" alt="Logo" />
+        <Search>
+          <SearchContainer />
+        </Search>
+        <Nav>
+          <NavLink to="/home">Main</NavLink>
+          <NavLink to="/review">Review</NavLink>
+          <NavLink to="/actor/musical">Actor</NavLink>
+          <NavLink to="/mypage">My page</NavLink>
+          <NotificationContainer>
+            <FiBell size={24} color="#EED18F" onClick={toggleModal} />
+            {isModalOpen && (
+              <>
+                <Overlay onClick={toggleModal} />
+                <Modal>
+                  <Notifi />
+                </Modal>
+              </>
+            )}
+          </NotificationContainer>
+        </Nav>
+      </HeaderContainer>
+    </>
   );
 };
 
-// Layout 컴포넌트
 const FixedWidthWrapper = styled.div`
   max-width: 1280px;
   min-width: 1280px;

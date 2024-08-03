@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createGlobalStyle, styled } from "styled-components";
 import Banner from "../components/banner";
 import TopRankCaro from "../components/mainCaro/topRankCaro";
@@ -7,6 +7,7 @@ import OnGoingCaro from "../components/mainCaro/onGoingCaro";
 import NearCaro from "../components/mainCaro/nearCaro";
 import MostReviewCaro from "../components/mainCaro/mostReviewCaro";
 import MostBookmarkCaro from "../components/mainCaro/mostBookmarkCaro";
+import axios from "axios";
 
 const GlobalStyle = createGlobalStyle`
   font-family: 'Inter';
@@ -94,11 +95,24 @@ export default function Home() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const accessToken = queryParams.get('access_token');
+    const [nickname, setNickname] = useState();
 
     useEffect(() => {
-        if (accessToken) {
-            localStorage.getItem("access_token");
+      const fetchData = async () => {
+        try {
+            const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                },
+            });
+            setNickname(response.data.data.nickname);
+        } catch (error) {
+            console.error("Fetch data error : ", error);
         }
+    };
+    fetchData();
     }, [accessToken]);
     
 
@@ -117,7 +131,7 @@ return (
       </LeftAlignedContainer>
       <OnGoingCaro />
       <LeftAlignedContainer>
-        <BasicReviewTitle>현생팔아뮤덕살기 님 주변에서 열리는 뮤지컬</BasicReviewTitle>
+        <BasicReviewTitle>{nickname || '닉네임'} 님 주변에서 열리는 뮤지컬</BasicReviewTitle>
       </LeftAlignedContainer>
       <NearCaro />
       <LeftAlignedContainer>

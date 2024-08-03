@@ -159,7 +159,7 @@ const MostReviewCaro: React.FC = () => {
               />
               ))}
             </ImageRow>
-            {displayImages.length > 4 && (
+            {displayImages.length > 0 && (
               <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
             )}
           </Row>
