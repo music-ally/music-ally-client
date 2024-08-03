@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import NaverMap from '../api/naver-map';
-import ReviewComponent from './review.tsx';
-// import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import NaverMap from "../api/naver-map";
+import ReviewComponent from "./review";
+import token from "./token";
 
 interface MusicalDetails {
-  image_url: string;
-  title: string;
+  poster_image: string;
+  musical_name: string;
   genre: string;
-  date: string;
-  place: string;
-  cast: string[];
+  start_at: string;
+  theater_address: string;
+  castings: string[];
+  reviews: string[];
 }
 
 interface DetailModalProps {
@@ -37,13 +38,11 @@ const ModalContainer = styled.div`
   padding: 20px;
   border-radius: 10px;
   position: relative;
-  max-width: 1200px;
-  width: 90%;
+  width: 1000px;
   max-height: 90vh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
   z-index: 1001;
 `;
 
@@ -63,7 +62,7 @@ const Poster = styled.img`
   height: 600px;
   border-radius: 10px;
   margin-top: 50px;
-  margin-left:30px;
+  margin-left: 30px;
 `;
 
 const InfoContainer = styled.div`
@@ -114,7 +113,7 @@ const SectionTitle = styled.h2`
 
 const Cast = styled.p`
   margin: 10px 0;
-  color: #e3bf3d;
+  color: #fffff;
 `;
 
 const BookmarkButton = styled.button`
@@ -129,91 +128,97 @@ const BookmarkIcon = styled.img`
   height: 30px;
 `;
 
-
 const ReviewSection = styled.div`
   margin-top: 20px;
 `;
 
 const ReviewcomponentSection = styled.div`
-  margin-left : 120px;
-   & > div {
+  margin-left: 20px;
+  & > div {
     margin-bottom: 18px;
   }
-`
+`;
 
 const ReviewButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
   display: flex;
+  margin-left: -180px;
 `;
 
 const ReviewIcon = styled.img`
   width: 25px;
   height: 25px;
   margin-top: -65px;
-  margin-left : 1100px;
+  margin-left: 1100px;
 `;
 
 const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
-  const [musicalDetails, setMusicalDetails] = useState<MusicalDetails | null>(null);
+  const [musicalDetails, setMusicalDetails] = useState<MusicalDetails | null>(
+    null
+  );
   const [isBookmarked, setIsBookmarked] = useState(false);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const musicalResponse = await axios.get(`/api/musical/${musical_ID}`);
-  //       setMusicalDetails(musicalResponse.data.musical_details);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log(`Fetching details for musical ID: ${musical_ID}`);
+        const musicalDetails = await token.get(`/musical/${musical_ID}`);
+        console.log("Musical details:", musicalDetails.data.data);
+        setMusicalDetails(musicalDetails.data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-  //   fetchData();
-  // }, [musical_ID]);
+    fetchData();
+  }, [musical_ID]);
 
   const handleBookmarkClick = () => {
     setIsBookmarked(!isBookmarked);
   };
 
   const handleReviewClick = () => {
-    console.log('리뷰 작성 버튼 클릭됨');
-  };
-  const dummyData: MusicalDetails = {
-    image_url: "https://via.placeholder.com/400x600",
-    title: "레미제라블",
-    genre: "뮤지컬",
-    date: "2023.11.30 ~ 2024.03.10",
-    place: "서울특별시 종로구 동숭동 대학로 12길 64 유니플렉스 1관",
-    cast: ["민우혁", "최재림", "김우형", "카이", "조정은", "린아", "임기홍", "김영주", "박지홍", "안시하", "조하훈"]
+    console.log("리뷰 작성 버튼 클릭됨");
   };
 
-  const details = musicalDetails || dummyData;
+  if (!musicalDetails) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <ModalBackground onClick={onClose}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>X</CloseButton>
         <InfoContainer>
-          <Poster src={details.image_url} alt={`${details.title} Poster`} />
+          <Poster
+            src={musicalDetails.poster_image}
+            alt={`${musicalDetails.musical_name} Poster`}
+          />
           <Info>
             <div>
               <TitleContainer>
-                <br/>
-                <Title>{details.title}</Title>
+                <br />
+                <Title>{musicalDetails.musical_name}</Title>
                 <BookmarkButton onClick={handleBookmarkClick}>
-                  <BookmarkIcon src={isBookmarked ? "tag-button-on.svg" : "tag-button-off.svg"} alt="Bookmark" />
+                  <BookmarkIcon
+                    src={
+                      isBookmarked ? "tag-button-on.svg" : "tag-button-off.svg"
+                    }
+                    alt="Bookmark"
+                  />
                 </BookmarkButton>
               </TitleContainer>
-              <Subtitle>{details.genre}</Subtitle>
+              <Subtitle>{musicalDetails.genre}</Subtitle>
               <Section>
                 <SectionTitle>공연 일정</SectionTitle>
-                <p>{details.date}</p>
+                <p>{musicalDetails.start_at}</p>
               </Section>
-              {details.cast.length > 0 && (
+              {musicalDetails.castings.length > 0 && (
                 <Section>
                   <SectionTitle>캐스팅</SectionTitle>
-                  <Cast>{details.cast.join(', ')}</Cast>
+                  <Cast>{musicalDetails.castings.join(", ")}</Cast>
                 </Section>
               )}
             </div>
@@ -221,9 +226,9 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
         </InfoContainer>
         <Section>
           <SectionTitle>공연 장소</SectionTitle>
-          <br/>
+          <br />
           <NaverMap />
-          <p>{details.place}</p>
+          <p>{musicalDetails.theater_address}</p>
         </Section>
         <ReviewSection>
           <SectionTitle>Review</SectionTitle>
@@ -231,9 +236,10 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
             <ReviewIcon src="review-write.svg" alt="리뷰작성" />
           </ReviewButton>
           <ReviewcomponentSection>
-          <ReviewComponent/>
-          <ReviewComponent/>
-          <ReviewComponent/>
+            {musicalDetails.reviews.map((review, index) => (
+              // <ReviewComponent key={index} review={review} />
+              <ReviewComponent />
+            ))}
           </ReviewcomponentSection>
         </ReviewSection>
       </ModalContainer>

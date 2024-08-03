@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import ActorSearchComponent from "./searchcontainer-act";
-import ActorInfo from "./actorInfo";
+import ActorInfo from "./actorInfo-review";
 
 export interface Actor {
   actor_id: string;

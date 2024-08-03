@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import token from "./token";
 import { Actor } from "./actorsearch";
@@ -60,6 +60,7 @@ const ActorSearchComponent: React.FC<Props> = ({ setFilteredActors }) => {
   const [actors, setActors] = useState<Actor[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showResults, setShowResults] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const fetchActors = () => {
     token
@@ -87,11 +88,28 @@ const ActorSearchComponent: React.FC<Props> = ({ setFilteredActors }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       fetchActors();
+      setShowResults(false);
     }
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(event.target as Node)
+    ) {
+      setShowResults(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <Container>
+    <Container ref={containerRef}>
       <SearchBox>
         <SearchInput
           type="text"
