@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import ModalTest from '../modalTest';
-import basicimg from "../assets/carousel_basic.png";
-import ReviewModalTest from '../reviewModalTest';
 import MyReviewModal from './myReviewModal';
 
 // 글로벌 스타일 정의

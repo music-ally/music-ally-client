@@ -119,6 +119,16 @@ const ModalWrapper = styled.div`
     display: flex;
 `
 
+const LoadingContainer = styled.div`
+    /* 로딩 메시지 스타일 추가 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+`;
+
 interface UserProfile {
     nickname: string;
     email: string;
@@ -164,6 +174,7 @@ export default function UserProfile() {
             ] 
         },
     });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -179,6 +190,8 @@ export default function UserProfile() {
                 console.log(response.data.data);
             } catch (error) {
                 console.error('Fetching profile error : ', error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchUser();
@@ -227,7 +240,15 @@ export default function UserProfile() {
 
     const handleModalClose = () => {
         setFollowModal(null);
-      };
+    };
+
+    if (loading) {
+        return (
+            <LoadingContainer>
+                Loading...
+            </LoadingContainer>
+        );
+    }
     
     return (
         <>
