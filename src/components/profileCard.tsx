@@ -3,6 +3,8 @@ import React from "react";
 import styled from "styled-components";
 import Cookies from 'js-cookie'
 import { Navigate, useNavigate } from "react-router-dom";
+import profileimg from "/profileimg.png"
+
 
 const Card = styled.div`
     //height: 90px;
@@ -81,7 +83,11 @@ export default function ProfileCard(
     const navigate = useNavigate();
 
     const onCardClick = () => {
-        navigate(`/profile/${userId}`);
+        if(is_following === '본인') {
+            navigate(`/mypage`);
+        } else {
+            navigate(`/profile/${userId}`);
+        }
     };
 
     const handleFollowClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -115,7 +121,7 @@ export default function ProfileCard(
     }
     return (
         <Card onClick={onCardClick}>
-            <ProfileImg src={profile_image}  />
+            <ProfileImg src={profile_image || profileimg}  />
                 <Info>
                     <Nickname>{nickname}</Nickname>
                     <Email>{email}</Email>

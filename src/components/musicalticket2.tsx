@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
+// 인터페이스 정의
 interface MusicalData {
   musical_id: string;
   musical_name: string;
@@ -15,12 +16,14 @@ interface TicketProps {
   showTime: string;
 }
 
+// 기본값 설정
 const defaultPoster = '/default-poster.png';
 const defaultMusicalName = 'MUSICALLY';
 const defaultPlace = '장소: -';
 const defaultDate = '일시: -';
 const defaultName = '예매자명: -';
 
+// 스타일 컴포넌트 정의
 const Ticket = styled.div`
   display: flex;
   width: 1082px;
@@ -45,12 +48,12 @@ const DetailsContainer = styled.div`
   overflow: hidden;
 `;
 
-const Details = styled.div<{ backgroundImage?: string }>`
+const Details = styled.div`
   width: 120%;
   height: 120%;
-  background-image: ${({ backgroundImage }) => `url(${backgroundImage || '/empty.png'})`};
+  background-image: url('/musicalposter-1.jpeg');
   background-size: cover;
-  background-position: center bottom;
+  background-position: center;
   filter: blur(4px);
   position: absolute;
   top: -10%;
@@ -130,6 +133,7 @@ const Time = styled.p`
   margin: 0;
 `;
 
+// MusicalTicket 컴포넌트 정의
 const MusicalTicket: React.FC<TicketProps> = ({ tickets, buyerName, showTime }) => {
   return (
     <>
@@ -138,7 +142,7 @@ const MusicalTicket: React.FC<TicketProps> = ({ tickets, buyerName, showTime }) 
           <Ticket key={ticket.musical_id}>
             <Poster src={ticket.poster_image || defaultPoster} alt="Poster" />
             <DetailsContainer>
-              <Details backgroundImage={ticket.poster_image} />
+              <Details />
               <DarkOverlay />
               <GradientOverlay />
               <TextOverlay>

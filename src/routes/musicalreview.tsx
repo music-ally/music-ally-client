@@ -71,8 +71,8 @@ const BasicReviewTitle = styled.h2`
 `;
 
 const WriteIcon = styled.img`
-  width: 50px;
-  height: 50px;
+  width: 65px;
+  height: 65px;
   margin-left: auto;
   cursor: pointer;
 `;

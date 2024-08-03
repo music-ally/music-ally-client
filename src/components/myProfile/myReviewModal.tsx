@@ -272,7 +272,8 @@ export default function MyReviewModal({ reviewId, onClose }: ReviewModalProps) {
         const confirmDelete = window.confirm(`${reviews.musical_name || 'Musical One'} 리뷰를 삭제하시겠습니까?`);
         if (confirmDelete) {
             try {
-                const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+                //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
+                const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
                 await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/myPage/review/${reviewId}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
