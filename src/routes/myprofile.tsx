@@ -65,6 +65,7 @@ const ProfileImage = styled.img`
     height: 272px;
     border-radius: 50%;
     object-fit: cover;
+    background-color: white;
 `;
 
 const Nickname = styled.h3`
@@ -208,7 +209,6 @@ export default function MyPage() {
                     },
                 });
                 setUser(response.data.data);
-                console.log(response.data.data)
             } catch (error) {
                 console.error("Fetch data error : ", error);
             } finally {
@@ -236,6 +236,10 @@ export default function MyPage() {
     };
 
     const handleLogout = async () => {
+        const confirmed = window.confirm("로그아웃하시겠습니까?");
+        if (!confirmed) {
+            return;
+        }
         try {
             //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
             const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기

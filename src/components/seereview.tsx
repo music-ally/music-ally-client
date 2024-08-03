@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // useNavigate 훅 추가
 
 // 기본 CSS 스타일
 const Container = styled.div`
@@ -39,13 +40,14 @@ const UserInfo = styled.div`
   box-sizing: border-box;
 `;
 
-const Avatar = styled.div<{ src: string | null }>`
+const Avatar = styled.div<{ src: string | null; onClick?: () => void }>`
   box-shadow: 0px 2px 4.1px rgba(0, 0, 0, 0.25);
   border-radius: 27.3px;
   background: ${({ src }) => src ? `url(${src})` : 'url(/default-avatar.png)'} 50% 50% / cover no-repeat;
   margin-right: 8.7px;
   width: 54.6px;
   height: 54.6px;
+  cursor: pointer; /* 클릭 가능하게 만들기 위해 추가 */
 `;
 
 const UserNameHandleWrapper = styled.div`
@@ -217,6 +219,8 @@ const SeeReview: React.FC<SeeReviewProps> = ({
   ]);
   const [comment, setComment] = useState<string>(content);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  
+  const navigate = useNavigate(); // useNavigate 훅 추가
 
   useEffect(() => {
     setLikeCount(likeNum);
@@ -269,7 +273,6 @@ const SeeReview: React.FC<SeeReviewProps> = ({
     setComment(event.target.value);
   };
 
-
   const handleIconClick = (type: number, index: number) => {
     // 아이콘 클릭 처리 로직 추가
   };
@@ -278,12 +281,20 @@ const SeeReview: React.FC<SeeReviewProps> = ({
     // 아이콘 초기화 처리 로직 추가
   };
 
+  const handleAvatarClick = (event: React.MouseEvent) => {
+    event.stopPropagation(); // 클릭 이벤트 버블링 방지
+    navigate(`/profile/${reviewId}`); // 프로필 페이지로 이동
+  };
+
   return (
     <Container>
       <ContentWrapper>
         <Header>
           <UserInfo>
-            <Avatar src={reviewerProfileImage} />
+            <Avatar 
+              src={reviewerProfileImage} 
+              onClick={handleAvatarClick} // 아바타 클릭 핸들러 추가
+            />
             <UserNameHandleWrapper>
               <UserName>{reviewerNickname}</UserName>
               <UserEmail>{reviewerEmail}</UserEmail>

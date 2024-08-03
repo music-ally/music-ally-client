@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import axios from 'axios';
 import DetailModal from '../detail-modal';
 
 // 글로벌 스타일 정의
@@ -63,61 +64,70 @@ const RightButton = styled(Button)`
   right: -25px;
 `;
 
-// Bookmark array 불러오기
-
-/*
-"bookmarks": {
-    "musicals": [
-        musical_id: ,
-        poster_image: ,
-    ]
-}
-*/
-interface Bookmark {
+interface Musical {
   musical_id: string;
   poster_image: string;
 }
 
-interface Props {
-  musicals: Bookmark[];
-}
-
-const UserBookmarkCaro: React.FC<Props> = ({ musicals }) => {
+const MostBookmarkCaro: React.FC = () => {
+  const [musicals, setMusicals] = useState<Musical[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayImages, setDisplayImages] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReviewId, setSelectedReviewId] = useState<string>('');
 
   useEffect(() => {
-    const newImages = [...musicals.map(musical => musical.poster_image)];
+    const fetchMusicals = async () => {
+      try {
+        const accessToken = localStorage.getItem("access_token");
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/musical/most/bookmark`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          });
+        if (response.data.success) {
+          setMusicals(response.data.data);
+        }
+      } catch (error) {
+        console.error('뮤지컬 데이터를 가져오는 데 실패했습니다: ', error);
+      }
+    };
+
+    fetchMusicals();
+  }, []);
+
+  useEffect(() => {
+    const newImages = musicals.map(musical => musical.poster_image);
     // 찜이 없거나 poster_image가 없는 경우 처리
     if (newImages.length === 0 || newImages.every(image => !image)) {
       setDisplayImages(Array(4).fill("/empty.png"));
       return;
     }
-    const remainder = newImages.length % 4;
-    if (remainder !== 0) {
-      const emptySlots = 4 - remainder;
-      for (let i = 0; i < emptySlots; i++) {
-        newImages.push("/empty.png");
-      }
-    }
+
+    // const remainder = newImages.length % 4;
+    // if (remainder !== 0) {
+    //   const emptySlots = 4 - remainder;
+    //   for (let i = 0; i < emptySlots; i++) {
+    //     newImages.push("/empty.png");
+    //   }
+    // }
+    
     setDisplayImages(newImages);
   }, [musicals]);
 
   const handleLeftButtonClick = () => {
     setCurrentIndex((prevIndex) => {
-      const newIndex = prevIndex === 0 ? displayImages.length - 4 : prevIndex - 4;
+      const newIndex = prevIndex === 0 ? displayImages.length - 1 : prevIndex - 1; // 한 칸씩 왼쪽으로 이동
       return newIndex;
     });
   };
-
+  
   const handleRightButtonClick = () => {
     setCurrentIndex((prevIndex) => {
-      const newIndex = prevIndex === displayImages.length - 4 ? 0 : prevIndex + 4;
+      const newIndex = prevIndex === displayImages.length - 1 ? 0 : prevIndex + 1; // 한 칸씩 오른쪽으로 이동
       return newIndex;
     });
-  };
+  };  
 
   const handleImageClick = (musicalId: string) => {
     setSelectedReviewId(musicalId);
@@ -128,9 +138,8 @@ const UserBookmarkCaro: React.FC<Props> = ({ musicals }) => {
     setIsModalOpen(false);
   };
 
-  // const onBookmarkClick = () => {
-  //   // 해당 뮤지컬 아이디를 가진 뮤지컬 상세 모달창 open
-  // }
+  const displayedImages = [...displayImages, ...displayImages, ...displayImages].slice(currentIndex, currentIndex + 4);
+
 
   return (
     <>
@@ -138,12 +147,16 @@ const UserBookmarkCaro: React.FC<Props> = ({ musicals }) => {
       <Container>
         <ContentWrapper>
           <Row>
-            {displayImages.length > 4 && (
+            {displayedImages.length > 0 && (
               <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
             )}
             <ImageRow>
-              {displayImages.slice(currentIndex, currentIndex + 4).map((image, index) => (
-                <Image key={index} src={image} onClick={() => handleImageClick(musicals[currentIndex + index].musical_id)}/>
+              {displayedImages.map((image, index) => (
+                <Image
+                key={index}
+                src={image}
+                onClick={() => handleImageClick(musicals[currentIndex + index].musical_id)}
+              />
               ))}
             </ImageRow>
             {displayImages.length > 4 && (
@@ -157,4 +170,4 @@ const UserBookmarkCaro: React.FC<Props> = ({ musicals }) => {
   );
 };
 
-export default UserBookmarkCaro;
+export default MostBookmarkCaro;

@@ -5,7 +5,6 @@ import Address from "../components/address-edit";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
 import isPropValid from '@emotion/is-prop-valid';
 
 const GlobalStyle = createGlobalStyle`
@@ -185,40 +184,46 @@ const AlertText = styled.span.withConfig({
     margin-bottom: 5px;
 `
 
-const ProfileBtn = styled.input`
-    margin-top: 10px;
-
-`
+const ProfileBtn = styled.input``
 
 
-interface FormData {
-    email: string,
-    nickname: string,
-    password: string,
-    homearea_name: string,
-    profile_image: File | null,
-}
+const LoadingContainer = styled.div`
+    /* 로딩 메시지 스타일 추가 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+`;
+
 
 export default function EditProfile() {
     const navigate = useNavigate();
+    //const [nickname, setNickname] = useState("");
+    //const [password, setPassword] = useState("");
+    //const [address, setAddress] = useState(""); // homearea_name
+
+
     // const [image, setImage] = useState<string>(profileimg);
-    const [imgFile, setImgFile] = useState<string|ArrayBuffer|null>();
-    const [formData, setFormData] = useState<FormData>({
-       email: '',
-       nickname: '',
-       password: '',
-       homearea_name: '',
-       profile_image: null, // db에 존재하면 해당 이미지, 없으면 기본이미지
-    });
+    const [imgFile, setImgFile] = useState<string|ArrayBuffer|null>();    
     
     const [nicknameMsg, setNicknameMsg] = useState("");
     const [isNameError, setIsNameError] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
     const [method, setMethod] = useState(false);
+    const [email, setEmail] = useState('');
+    const [userData, setUserData] = useState({
+        email: '',
+        nickname: '',
+        homearea_name: '',
+        password: '',
+    });
+
+    const [loading, setLoading] = useState(true);
 
     // 데이터 가져오기
     useEffect(() => {
-        setImgFile(profileimg); // 근데 이렇게 하면 이미 프사가 있는 사람은 어떻게 나타나는지?
         const fetchData = async() => {
             try {
                 //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
@@ -229,23 +234,22 @@ export default function EditProfile() {
                         Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
                     },
                 });
-                setFormData({
-                    email: response.data.data.email,
-                    nickname: response.data.data.nickname,
-                    homearea_name: response.data.data.homearea_name,
-                    password: '',
-                    profile_image: response.data.profile_image,
-                });
-
+                const { nickname, signup_method, email, homearea_name} = response.data.data; // 데이터 구조에 맞게 수정
+                setUserData({ email, nickname, homearea_name, password: '' }); // 초기화
+                setMethod(signup_method);
+                
                 // 프로필 이미지 설정
-                if(response.data.data && response.data.data.profile_image) {
+                if(response.data.data.profile_image) {
                     setImgFile(response.data.data.profile_image);
                 } else {
                     setImgFile(profileimg);
                 }
 
+                // 이메일 설정
+                setEmail(email);
+
                 // 로그인 경로 뮤지컬리일 때만 비번 입력 가능
-                if(response.data.data.signup_method === "뮤지컬리"){
+                if(signup_method === "뮤지컬리"){
                     setMethod(false);
                 } else {
                     setMethod(true);
@@ -253,42 +257,32 @@ export default function EditProfile() {
             } catch (error) {
                 console.error("User 데이터 가져오기 오류 : ", error);
                 // alert("사용자 데이터 가져오기 실패");
+            } finally {
+                setLoading(false);
             }
         };
         fetchData();
     }, [profileimg]);
 
     // 폼 입력마다 상태 업데이트
-    const [changedFields, setChangedFields] = useState([]);
-    
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target as HTMLInputElement;
-        
-        // 이전 상태를 유지하면서 변경된 요소만 업데이트
-        setFormData(prev => {
+    const [changedFields, setChangedFields] = useState<{ [key: string]: any }>({});
+    // 변경된 필드 상태 업데이트
+    const handleChange = (e : React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        // 이전 상태를 기반으로 업데이트
+        setUserData(prev => {
             const updatedData = { ...prev, [name]: value };
-    
+
+            // 변경된 필드 추적
             setChangedFields(prevFields => ({
                 ...prevFields,
                 [name]: value,
             }));
+
             return updatedData;
         });
     };
-    
-    
-    const onChange1 = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { name, value } = e.target as HTMLSelectElement;
-        setFormData(prev => {
-            const updatedData = { ...prev, [name]: value };
-    
-            setChangedFields(prevFields => ({
-                ...prevFields,
-                [name]: value,
-            }));
-            return updatedData;
-        });
-    };
+
     
     const imgRef = useRef<HTMLInputElement | null>(null);
     // 프로필 사진 업로드 버튼
@@ -299,27 +293,23 @@ export default function EditProfile() {
 
         if(e.target.files && e.target.files[0]) {
             const file: File = e.target.files[0];
-            setFormData(prev => ({
-                ...prev,
-                [name]: file
-            }));
+            // setFormData(prev => ({
+            //     ...prev,
+            //     [name]: file
+            // }));
 
-            // 미리보기 이미지 설정? 파일 업로드 시 화면에 같이 보이기
-            if (imgRef.current && imgRef.current.files && imgRef.current.files.length > 0){
-                //const file = imgRef.current.files[0];
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onloadend = () => {
-                    setImgFile(reader.result);
-                };
-            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImgFile(reader.result);
+            };
+            reader.readAsDataURL(file);
 
         } else {
             setImgFile(profileimg);
-            setFormData(prev => ({
-                ...prev,
-                [name]: null
-            }));
+            // setFormData(prev => ({
+            //     ...prev,
+            //     [name]: null
+            // }));
         }
 
         setChangedFields(prevFields => ({
@@ -365,6 +355,10 @@ export default function EditProfile() {
         }
     };
 
+    interface ChangedFields {
+        [key: string]: string | undefined; // 각 필드는 string 또는 undefined일 수 있음
+    }
+
     const onSubmit = async(e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -377,49 +371,62 @@ export default function EditProfile() {
         // 비밀번호 조건 검사
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,12}$/;
 
-        if( formData.password && !passwordRegex.test(formData.password) ) {
+        if( userData.password && !passwordRegex.test(userData.password) ) {
             alert("비밀번호는 6~12자 사이이며, 영어와 숫자를 반드시 포함해야 합니다.");
             return;
         }
 
         // 비밀번호 일치 검사
-        if( formData.password !== confirmPassword ){
+        if( userData.password !== confirmPassword ){
             alert("비밀번호가 일치하지 않습니다.");
             return;
         }
+        const updateData: ChangedFields = {}; // 변경된 필드만 포함할 객체
+        const formData = new FormData(); // 이미지 저장
 
-        // FormData 생성하고 데이터 객체에 추가
-        const formDataSend = new FormData();
-        
-        // 변경된 필드만 추가
+        let isTextUpdated = false; // 텍스트 정보가 수정되었는지 체크
+        let isImageUpdated = false;
+
+        // 변경된 필드 추가
         for (const key in changedFields) {
             if (changedFields[key]) {
-                formDataSend.append(key, changedFields[key]);
+                if (key === 'profile_image') {
+                    formData.append(key, changedFields[key]); // 이미지 파일 추가
+                } else {
+                    updateData[key] = changedFields[key]; // 동적으로 추가
+                }
             }
         }
 
-        // 최종적으로 전송할 formDataSend 로그
-        console.log(formDataSend); // JSON 형식으로 출력
-
-        // FormData 내용 로그
-        for (const [key, value] of formDataSend.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-
-        // 서버 데이터 전송 trycatch, axios.patch.
-        // 제출 성공하면 mypage로 navigate
-        /* */
+/* */
         try {
-            // const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
-            const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
-            
-            await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/mypage`, formDataSend, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
-                },
-            });
-            alert("정보가 성공적으로 수정되었습니다.");
-            navigate('/mypage'); // 수정 후 페이지 이동
+            const accessToken = localStorage.getItem("access_token");
+            if (Object.keys(updateData).length > 0) {
+                await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/myPage/profile/text`, updateData, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+                isTextUpdated = true;
+                alert("정보가 성공적으로 수정되었습니다.");
+            }
+
+
+            if (changedFields['profile_image']) {
+                await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/myPage/profile/image`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'multipart/form-data', // 파일 전송을 위한 Content-Type 설정
+                    },
+                });
+                isImageUpdated = true;
+                alert("프로필 이미지가 성공적으로 수정되었습니다.");
+            }
+
+            if (!isTextUpdated && !isImageUpdated) {
+                alert("변경된 정보가 없습니다.");
+            }
+            navigate('/mypage');
         } catch (error) {
             console.error("정보 수정 오류: ", error);
             alert("정보 수정에 실패했습니다.");
@@ -430,15 +437,20 @@ export default function EditProfile() {
         if (imgRef.current) {
           imgRef.current.click(); // 파일 입력 요소 클릭
         }
-      };
+    };
 
+    if (loading) {
+        return (
+            <LoadingContainer>
+                Loading...
+            </LoadingContainer>
+        );
+    }
     return (
         <>
         <GlobalStyle />
         <Wrapper>
             <LeftHalf>
-                {/* <ProfileImage src={formData.profileImage ? URL.createObjectURL(formData.profileImage) : profileimg} alt="Profile" />
-                */}
                 <ProfileImageContainer onClick={handleImageClick}>
                     {imgFile && typeof imgFile === 'string' && <ProfileImage src={imgFile} />}
                     <Overlay>
@@ -447,8 +459,8 @@ export default function EditProfile() {
                 </ProfileImageContainer>
                 
                 <MyProfile>
-                    <Nickname> {formData.nickname || '닉네임'} </Nickname>
-                    <Email> {formData.email || 'email@email.com'}</Email>
+                    <Nickname> {userData.nickname || '닉네임'} </Nickname>
+                    <Email> {email || 'email@email.com'}</Email>
                     <ProfileBtn 
                         type="file"
                         id="profile"
@@ -467,16 +479,16 @@ export default function EditProfile() {
                         <Name> 이메일 </Name>
                         <Input
                                 name="email"
-                                value={formData.email}
+                                value={userData.email}
                                 type="email"
                                 disabled
                                 placeholder="이메일"
                         />
                         <Name> 닉네임 </Name>
                         <Input
-                                onChange={onChange}
+                                onChange={handleChange}
                                 name="nickname"
-                                value={formData.nickname}
+                                value={userData.nickname}
                                 type="text"
                                 placeholder="닉네임"
                                 onBlur={handleNicknameBlur}
@@ -488,9 +500,9 @@ export default function EditProfile() {
                         </AlertText>
                         <Name> 비밀번호 </Name>
                         <Input
-                            onChange={onChange}
+                            onChange={handleChange}
                             name="password"
-                            value={formData.password}
+                            value={userData.password}
                             type="password"
                             placeholder="비밀번호 (6~12자리, 영어와 숫자를 포함하세요)"
                             disabled={method ? true : false}
@@ -505,7 +517,7 @@ export default function EditProfile() {
                             disabled={method ? true : false}
                         />
                         <Name> 거주지 </Name>
-                        <Address address={formData.homearea_name} onChange={(e) => onChange1(e)}/>
+                        <Address address={userData.homearea_name} onChange={(e) => handleChange(e)}/>
                         <Row>
                             <Input
                                 type="button"

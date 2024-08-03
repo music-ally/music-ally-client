@@ -53,6 +53,7 @@ const UserInfo = styled.div`
 
 interface AvatarProps {
   image?: string;
+  onClick?: () => void; // 클릭 이벤트 핸들러 추가
 }
 
 const Avatar = styled.div<AvatarProps>`
@@ -62,6 +63,7 @@ const Avatar = styled.div<AvatarProps>`
   margin-right: 8.7px;
   width: 54.6px;
   height: 54.6px;
+  cursor: pointer; /* 클릭 가능하게 만들기 위해 추가 */
 `;
 
 const UserNameHandleWrapper = styled.div`
@@ -273,6 +275,11 @@ const BestReview: React.FC<BestReviewProps> = ({ review = {} as Review }) => {
     navigate(`/see-review/${review.review_id}`);
   };
 
+  // 프로필 페이지로 이동하는 핸들러
+  const handleAvatarClick = () => {
+    navigate(`/profile/${review.review_id}`);
+  };
+
   return (
     <Container onClick={handleReviewClick}> {/* 클릭 시 상세 페이지로 이동 */}
       <ImageWrapper imageUrl={review.poster_image || '/default-poster.png'} /> {/* 포스터 이미지 적용 */}
@@ -280,7 +287,13 @@ const BestReview: React.FC<BestReviewProps> = ({ review = {} as Review }) => {
         <DateText>{new Date(review.create_at).toLocaleDateString()} {new Date(review.create_at).toLocaleTimeString()}</DateText>
         <Header>
           <UserInfo>
-            <Avatar image={review.reviewer_profile_image} />
+            <Avatar 
+              image={review.reviewer_profile_image}
+              onClick={e => {
+                e.stopPropagation(); // 클릭 이벤트 버블링 방지
+                handleAvatarClick();
+              }}
+            />
             <UserNameHandleWrapper>
               <UserNameText>{review.reviewer_nickname}</UserNameText>
               <UserHandle>{review.reviewer_email}</UserHandle>
