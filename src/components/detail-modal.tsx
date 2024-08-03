@@ -9,6 +9,7 @@ interface MusicalDetails {
   musical_name: string;
   musical_genre: string;
   start_at: string;
+  end_at: string;
   theater_address: string;
   theater_name: string;
   castings: string[];
@@ -214,7 +215,9 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
               <Subtitle>{musicalDetails.musical_genre}</Subtitle>
               <Section>
                 <SectionTitle>공연 일정</SectionTitle>
-                <p>{musicalDetails.start_at}</p>
+                <p>
+                  {musicalDetails.start_at}-{musicalDetails.end_at}
+                </p>
               </Section>
               <Section>
                 <SectionTitle>공연 극장</SectionTitle>
@@ -231,7 +234,6 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
         </InfoContainer>
         <Section>
           <SectionTitle>공연 장소</SectionTitle>
-          <br />
           <NaverMap theater_address={musicalDetails.theater_address} />
           <p>{musicalDetails.theater_address}</p>
         </Section>
