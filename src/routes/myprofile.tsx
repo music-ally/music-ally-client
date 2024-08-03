@@ -138,6 +138,16 @@ const ModalWrapper = styled.div`
     display: flex;
 `
 
+const LoadingContainer = styled.div`
+    /* 로딩 메시지 스타일 추가 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+`;
+
 interface User {
     nickname: string;
     email: string;
@@ -184,6 +194,7 @@ export default function MyPage() {
         profile_image: '/profileimg.png',
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -200,6 +211,8 @@ export default function MyPage() {
                 console.log(response.data.data)
             } catch (error) {
                 console.error("Fetch data error : ", error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchData();
@@ -267,6 +280,14 @@ export default function MyPage() {
         setFollowModal(null);
         window.location.reload(); // 모달창에서 팔로우 클릭하면 새로고침하여 프로필 화면에서 팔로잉 수 바뀌도록
     };
+
+    if (loading) {
+        return (
+            <LoadingContainer>
+                Loading...
+            </LoadingContainer>
+        );
+    }
 
     return (
         <>
