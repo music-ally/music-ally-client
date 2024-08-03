@@ -237,8 +237,7 @@ export default function EditProfile() {
                 const { nickname, signup_method, email, homearea_name} = response.data.data; // 데이터 구조에 맞게 수정
                 setUserData({ email, nickname, homearea_name, password: '' }); // 초기화
                 setMethod(signup_method);
-                // console.log(email, nickname, method);                
-
+                
                 // 프로필 이미지 설정
                 if(response.data.data.profile_image) {
                     setImgFile(response.data.data.profile_image);
@@ -383,15 +382,22 @@ export default function EditProfile() {
             return;
         }
         const updateData: ChangedFields = {}; // 변경된 필드만 포함할 객체
+        const formData = new FormData(); // 이미지 저장
+
+        let isTextUpdated = false; // 텍스트 정보가 수정되었는지 체크
+        let isImageUpdated = false;
 
         // 변경된 필드 추가
         for (const key in changedFields) {
             if (changedFields[key]) {
-                updateData[key] = changedFields[key]; // 동적으로 추가
+                if (key === 'profile_image') {
+                    formData.append(key, changedFields[key]); // 이미지 파일 추가
+                } else {
+                    updateData[key] = changedFields[key]; // 동적으로 추가
+                }
             }
         }
 
-        console.log(updateData);
 /* */
         try {
             const accessToken = localStorage.getItem("access_token");
@@ -401,11 +407,26 @@ export default function EditProfile() {
                         Authorization: `Bearer ${accessToken}`,
                     },
                 });
+                isTextUpdated = true;
                 alert("정보가 성공적으로 수정되었습니다.");
-                navigate('/mypage');
-            } else {
+            }
+
+
+            if (changedFields['profile_image']) {
+                await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/myPage/profile/image`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'multipart/form-data', // 파일 전송을 위한 Content-Type 설정
+                    },
+                });
+                isImageUpdated = true;
+                alert("프로필 이미지가 성공적으로 수정되었습니다.");
+            }
+
+            if (!isTextUpdated && !isImageUpdated) {
                 alert("변경된 정보가 없습니다.");
             }
+            navigate('/mypage');
         } catch (error) {
             console.error("정보 수정 오류: ", error);
             alert("정보 수정에 실패했습니다.");
