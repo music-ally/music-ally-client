@@ -45,7 +45,7 @@ const ActorName = styled.h2`
 `;
 
 const Divider = styled.hr`
-  width: 850px;
+  width: 820px;
   border: 0;
   border-top: 1px solid #ddd;
   margin-bottom: 38px;
