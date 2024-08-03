@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import BasicReview from "../components/basicreview";
 import MusicalCarousel from "../components/musicalcarousel";
 import Actorprofile from "../components/actorprofile";
-import ActorInfo from "../components/actorinfo"; // ActorInfo 컴포넌트 가져오기
+import ActorInfo from "../components/actorInfo-search"; // ActorInfo 컴포넌트 가져오기
 
 const AppContainer = styled.div`
   background-size: cover;
