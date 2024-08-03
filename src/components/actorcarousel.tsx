@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import styled, { createGlobalStyle } from "styled-components";
+import { useNavigate } from "react-router-dom";
+import token from "./token";
+import { AxiosError } from "axios";
 
-// 글로벌 스타일 정의
 const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: 'Inter-SemiBold';
@@ -72,9 +71,9 @@ const ImageText = styled.div`
   bottom: 10px;
   width: 100%;
   text-align: center;
-  font-family: 'Inter-SemiBold', sans-serif;
+  font-family: "Inter-SemiBold", sans-serif;
   font-size: 16pt;
-  color: #F2F2F2;
+  color: #f2f2f2;
   z-index: 2;
 `;
 
@@ -115,22 +114,21 @@ const ActorCarousel: React.FC<ActorCarouselProps> = ({ actorId }) => {
     const fetchImages = async () => {
       try {
         const allImages = await Promise.all(
-          actorId.map(id =>
-            axios.get(`${import.meta.env.VITE_BACKEND_URL}/actor/${id}`, {
-              headers: {
-                Authorization: `Bearer ${Cookies.get("access_token")}`,
-              },
-            })
-              .then(response => ({
-                src: response.data.data.profile_image || '/empty.png', // Fallback to /empty.png if profile_image is missing
-                name: response.data.data.actor_name,
-                id: response.data.data._id, // Store the ID
-              }))
+          actorId.map((id) =>
+            token.get(`/actor/${id}`).then((response) => ({
+              src: response.data.data.profile_image || "/empty.png",
+              name: response.data.data.actor_name,
+              id: response.data.data._id,
+            }))
           )
         );
         setImages(allImages);
       } catch (error) {
-        console.error('Error fetching images:', error.response ? error.response.data : error.message);
+        const axiosError = error as AxiosError;
+        console.error(
+          "Error fetching images:",
+          axiosError.response ? axiosError.response.data : axiosError.message
+        );
       }
     };
 
@@ -138,18 +136,23 @@ const ActorCarousel: React.FC<ActorCarouselProps> = ({ actorId }) => {
   }, [actorId]);
 
   const handleLeftButtonClick = () => {
-    setCurrentIndex(prevIndex => (prevIndex === 0 ? images.length - 4 : prevIndex - 4));
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? images.length - 4 : prevIndex - 4
+    );
   };
 
   const handleRightButtonClick = () => {
-    setCurrentIndex(prevIndex => (prevIndex + 4) % images.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 4) % images.length);
   };
 
   const handleImageClick = (actorID: string) => {
     navigate(`/actor/${actorID}`);
   };
 
-  const displayedImages = [...images, ...images, ...images].slice(currentIndex, currentIndex + 4);
+  const displayedImages = [...images, ...images, ...images].slice(
+    currentIndex,
+    currentIndex + 4
+  );
 
   return (
     <>
@@ -158,16 +161,20 @@ const ActorCarousel: React.FC<ActorCarouselProps> = ({ actorId }) => {
         <ContentWrapper>
           <Row>
             {images.length > 4 && (
-              <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
+              <LeftButton
+                src="/carouselbutton-left.png"
+                alt="Left Button"
+                onClick={handleLeftButtonClick}
+              />
             )}
             <ImageRow>
               {displayedImages.map((image, index) => (
                 <ImageContainer key={index}>
-                  <Image 
-                    src={image.src || '/empty.png'} 
-                    alt={`Poster ${index}`} 
-                    onClick={() => handleImageClick(image.id)} 
-                    onError={(e) => (e.currentTarget.src = '/empty.png')} // Handle image load error
+                  <Image
+                    src={image.src || "/empty.png"}
+                    alt={`Poster ${index}`}
+                    onClick={() => handleImageClick(image.id)}
+                    onError={(e) => (e.currentTarget.src = "/empty.png")} // Handle image load error
                   />
                   <GradientOverlay />
                   <ImageText>{image.name}</ImageText>
@@ -175,7 +182,11 @@ const ActorCarousel: React.FC<ActorCarouselProps> = ({ actorId }) => {
               ))}
             </ImageRow>
             {images.length > 4 && (
-              <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
+              <RightButton
+                src="/carouselbutton-right.png"
+                alt="Right Button"
+                onClick={handleRightButtonClick}
+              />
             )}
           </Row>
         </ContentWrapper>

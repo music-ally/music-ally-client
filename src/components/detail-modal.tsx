@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import NaverMap from "../api/naver-map";
 import ReviewComponent from "./detailmodal-review";
 import token from "./token";
@@ -227,6 +228,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
     null
   );
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -247,7 +249,11 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
 
   const handleBookmarkClick = async () => {
     try {
-      await token.post(`/musical/${musical_ID}/bookmark`);
+      if (isBookmarked) {
+        await token.delete(`/musical/${musical_ID}/bookmark`);
+      } else {
+        await token.post(`/musical/${musical_ID}/bookmark`);
+      }
       setIsBookmarked((prev) => !prev);
     } catch (error) {
       console.error("Error updating bookmark status:", error);
@@ -255,7 +261,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
   };
 
   const handleReviewClick = () => {
-    console.log("리뷰 작성 버튼 클릭됨");
+    navigate("/write-review");
   };
 
   if (!musicalDetails) {
