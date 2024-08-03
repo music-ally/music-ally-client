@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import token from "./token";
 
-export interface Musical {
+interface Musical {
   musical_id: string;
   poster_image: string;
   musical_name: string;
@@ -10,14 +11,10 @@ export interface Musical {
   theater_name: string;
 }
 
-interface Props {
-  musicals: Musical[];
-  setFilteredMusicals: (musicals: Musical[]) => void;
-}
-
 const Container = styled.div`
   position: relative;
-  width: 400px;
+  width: 100%;
+  margin-bottom: 30px;
 `;
 
 const SearchBox = styled.div`
@@ -25,6 +22,7 @@ const SearchBox = styled.div`
   align-items: center;
   border-radius: 6px;
   padding: 5px 10px;
+  background-color: #ffffff;
 `;
 
 const SearchInput = styled.input`
@@ -43,7 +41,7 @@ const ResultsList = styled.ul`
   left: 0;
   width: 100%;
   background: white;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #e0e0e0;
   border-radius: 0 0 6px 6px;
   max-height: 200px;
   overflow-y: auto;
@@ -52,6 +50,7 @@ const ResultsList = styled.ul`
   margin: 0;
   color: black;
   list-style: none;
+  z-index: 1000;
 `;
 
 const ResultItem = styled.li`
@@ -62,32 +61,76 @@ const ResultItem = styled.li`
   }
 `;
 
-const SearchContainerMusical: React.FC<Props> = ({ musicals, setFilteredMusicals }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+interface Props {
+  setFilteredMusicals: (musicals: Musical[]) => void;
+}
+
+const MusicalSearchComponent: React.FC<Props> = ({ setFilteredMusicals }) => {
+  const [musicals, setMusicals] = useState<Musical[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const filtered = searchTerm
-      ? musicals.filter(musical =>
-          musical.musical_name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      : musicals;
-    setFilteredMusicals(filtered);
-  }, [searchTerm, musicals, setFilteredMusicals]);
+    console.log("Musicals state updated:", musicals);
+  }, [musicals]);
+
+  const handleSearch = () => {
+    if (searchTerm) {
+      console.log("Search term:", searchTerm);
+
+      token
+        .get(`/search/musical?keyword=${encodeURIComponent(searchTerm)}`)
+        .then((response) => {
+          setMusicals(response.data.data.musicals || []);
+          setFilteredMusicals(response.data.data.musicals || []);
+          setShowResults(true);
+        })
+        .catch((error) => console.error("뮤지컬 정보 에러:", error));
+    } else {
+      setMusicals([]);
+      setFilteredMusicals([]);
+      setShowResults(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(event.target as Node)
+    ) {
+      setShowResults(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <Container>
+    <Container ref={containerRef}>
       <SearchBox>
         <SearchInput
           type="text"
-          placeholder="Search musicals"
+          placeholder="뮤지컬이 궁금해!"
           value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
       </SearchBox>
-      {searchTerm && (
+      {showResults && (
         <ResultsList>
-          {musicals.map(musical => (
-            <ResultItem key={musical.musical_id}>
+          {musicals.map((musical) => (
+            <ResultItem key={musical.musical_id} onClick={handleSearch}>
               {musical.musical_name}
             </ResultItem>
           ))}
@@ -97,4 +140,4 @@ const SearchContainerMusical: React.FC<Props> = ({ musicals, setFilteredMusicals
   );
 };
 
-export default SearchContainerMusical;
+export default MusicalSearchComponent;
