@@ -1,15 +1,13 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
-// 기본 값
-const DEFAULT_IMAGE_PATH = '/profileimg.png';
+const DEFAULT_IMAGE_PATH = "/profileimg.png";
 
-// 스타일 컴포넌트
 const ActorContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 10px; /* 필요에 따라 조정 */
+  margin: 20px;
 `;
 
 const Avatar = styled.div<{ image: string }>`
