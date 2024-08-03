@@ -5,7 +5,6 @@ import axios from "axios";
 import BasicReview from "../components/basicreview";
 import BestReview from "../components/bestreview";
 import { useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
 
 // Review 타입 정의
 interface Review {
@@ -84,7 +83,7 @@ const VerticalSpacing = styled.div`
 
 const HorizontalLine = styled.hr`
   width: 1131px;
-  border-top: 1px solid #d1d1d1;
+  border-top: 1px solid #b0b0b0; /* Darker gray color for the line */
   margin: 75px 0;
 `;
 
@@ -95,7 +94,7 @@ const Button = styled.img`
   cursor: pointer;
   position: absolute;
   top: 50%;
-  transform: translateY(-170%);
+  transform: translateY(-50%);
   z-index: 1;
 `;
 
@@ -166,8 +165,8 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        // 쿠키에서 토큰 가져오기
-        const accessToken = Cookies.get("access_token");
+        // 로컬 스토리지에서 access token 가져오기
+        const accessToken = localStorage.getItem("access_token");
 
         if (!accessToken) {
           console.error("No access token found");
