@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 // 기본 CSS 스타일
 const Container = styled.div`
@@ -149,6 +150,39 @@ const CommentTextArea = styled.textarea`
   box-sizing: border-box;
 `;
 
+const LikeInfo = styled.div`
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding-right: 10px; /* 원하는 만큼 왼쪽 여백 추가 */
+`;
+
+const LikeIcon = styled.img<{ liked: boolean }>`
+  width: 40px;
+  height: 35px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+
+  ${props =>
+    props.liked &&
+    `
+    transform: scale(1.1);
+  `}
+`;
+
+const LikeCount = styled.span`
+  margin: 0 3px;
+  word-break: break-word;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  line-height: 2;
+  color: #fffce5;
+`;
+
 interface SeeReviewProps {
   reviewId: string;
   reviewerProfileImage: string | null;
@@ -182,6 +216,7 @@ const SeeReview: React.FC<SeeReviewProps> = ({
     Array(violence).fill(true).concat(Array(5 - violence).fill(false))
   ]);
   const [comment, setComment] = useState<string>(content);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   useEffect(() => {
     setLikeCount(likeNum);
@@ -197,37 +232,50 @@ const SeeReview: React.FC<SeeReviewProps> = ({
     setRatings(newRatings);
   }, [fear, sensitivity, violence]);
 
-  const handleLikeClick = () => {
-    const url = `/api/review/${reviewId}/like`;
-    const method = liked ? 'DELETE' : 'POST'; 
-
-    fetch(url, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(response => {
-      if (response.ok) {
-        setLiked(!liked);
-        setLikeCount(prevCount => liked ? prevCount - 1 : prevCount + 1);
-      } else {
-        throw new Error('Failed to update like status');
+  const addLike = async (reviewId: string) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
+      if (response.status !== 200) {
+        throw new Error('Failed to add like');
       }
-    })
-    .catch(error => console.error('Error:', error));
+    } catch (error) {
+      console.error('Error adding like:', error);
+    }
+  };
+
+  const removeLike = async (reviewId: string) => {
+    try {
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
+      if (response.status !== 200) {
+        throw new Error('Failed to remove like');
+      }
+    } catch (error) {
+      console.error('Error removing like:', error);
+    }
+  };
+
+  const handleLikeClick = async () => {
+    if (liked) {
+      await removeLike(reviewId);
+      setLikeCount(prev => prev - 1);
+    } else {
+      await addLike(reviewId);
+      setLikeCount(prev => prev + 1);
+    }
+    setLiked(prev => !prev);
   };
 
   const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(event.target.value);
   };
 
+
   const handleIconClick = (type: number, index: number) => {
-    // Icon 클릭 처리 로직 추가
+    // 아이콘 클릭 처리 로직 추가
   };
 
   const handleIconReset = (type: number, index: number) => {
-    // Icon 초기화 처리 로직 추가
+    // 아이콘 초기화 처리 로직 추가
   };
 
   return (
@@ -241,6 +289,14 @@ const SeeReview: React.FC<SeeReviewProps> = ({
               <UserEmail>{reviewerEmail}</UserEmail>
             </UserNameHandleWrapper>
           </UserInfo>
+          <LikeInfo>
+            <LikeIcon
+              src={liked ? '/heart1.png' : '/heart.png'}
+              liked={liked}
+              onClick={handleLikeClick}
+            />
+            <LikeCount>{likeCount}</LikeCount>
+          </LikeInfo>
         </Header>
         <Warning>TRIGGER WARNING</Warning>
         <TagsWrapper>
@@ -288,7 +344,6 @@ const SeeReview: React.FC<SeeReviewProps> = ({
           <CommentTextArea
             value={comment}
             onChange={handleCommentChange}
-            placeholder='배우에 대한 직접적인 비방 및 욕설은 지양해주세요.'
           />
         </CommentSection>
       </ContentWrapper>
