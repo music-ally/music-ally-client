@@ -6,10 +6,8 @@ import axios from "axios";
 import LeaveModal from "../components/leaveModal";
 import MyFollowingModal from "../components/myProfile/myFollowingModal";
 import MyFollowerModal from "../components/myProfile/myFollowerModal";
-import ReviewCaroTest from "../components/myProfile/myReviewCaroTest";
 import MyReviewCaro from "../components/myProfile/myReviewCaro";
-import MyBookmarkCaro from "../components/myProfile/myBookmarkCaro";
-import Cookies from 'js-cookie'
+import UserBookmarkCaro from "../components/userProfile/userBookmarkCaro";
 
 const GlobalStyle = createGlobalStyle`
   font-family: 'Inter';
@@ -185,8 +183,6 @@ export default function MyPage() {
         signup_method: '이메일',
         profile_image: '/profileimg.png',
     });
-    const [profile, setProfile] = useState<string>(profileimg);
-
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
@@ -322,7 +318,7 @@ export default function MyPage() {
 
             <CaroName> 내가 찜한 뮤지컬 </CaroName>
             {/* <ReviewCaroTest /> */}
-            <MyBookmarkCaro musicals={user.bookmarks?.musicals || [{musical_id: '', poster_image: '/poster_basic.png'}, {},]}/>
+            <UserBookmarkCaro musicals={user.bookmarks?.musicals || [{musical_id: '', poster_image: '/poster_basic.png'}, {},]}/>
             <Row>
                 <DividerText onClick={ handleLogout }>로그아웃</DividerText>
                 <DividerText onClick={() => setIsModalOpen(true)}>뮤지컬리 탈퇴하기</DividerText>
