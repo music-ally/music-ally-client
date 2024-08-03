@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 
+// 타입 정의
 interface MusicalData {
   musical_id: string;
+  poster_image: string;
   musical_name: string;
   theater_name: string;
   watch_at: string;
-  poster_image?: string;
 }
 
 interface TicketProps {
-  musical_id: string;  // Modified to accept a single ID
+  musical_id: string;
   buyerName: string;
   showTime: string;
 }
@@ -137,6 +138,12 @@ const MusicalTicket: React.FC<TicketProps> = ({ musical_id, buyerName, showTime 
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!musical_id) {
+      setError('Invalid musical ID');
+      setLoading(false);
+      return;
+    }
+
     const fetchMusicalData = async () => {
       try {
         const accessToken = localStorage.getItem("access_token");
@@ -150,8 +157,9 @@ const MusicalTicket: React.FC<TicketProps> = ({ musical_id, buyerName, showTime 
           },
         });
 
-        setTicketData(response.data);
+        setTicketData(response.data.musical);
       } catch (err) {
+        console.error('Failed to fetch ticket data:', err);
         setError('Failed to fetch ticket data');
       } finally {
         setLoading(false);

@@ -168,10 +168,14 @@ const LikeIcon = styled.img<{ liked: boolean }>`
   transition: transform 0.3s ease-in-out;
 
   ${props =>
-    props.liked &&
+    props.liked ? 
     `
-    transform: scale(1.1);
-  `}
+      transform: scale(1.1);
+    ` : 
+    `
+      transform: scale(1);
+    `
+  }
 `;
 
 const LikeCount = styled.span`
@@ -219,7 +223,7 @@ const SeeReview: React.FC<SeeReviewProps> = ({
   ]);
   const [comment, setComment] = useState<string>(content);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  
+
   const navigate = useNavigate(); // useNavigate 훅 추가
 
   useEffect(() => {
@@ -236,38 +240,11 @@ const SeeReview: React.FC<SeeReviewProps> = ({
     setRatings(newRatings);
   }, [fear, sensitivity, violence]);
 
-  const addLike = async (reviewId: string) => {
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
-      if (response.status !== 200) {
-        throw new Error('Failed to add like');
-      }
-    } catch (error) {
-      console.error('Error adding like:', error);
-    }
+  const getAccessToken = () => {
+    return localStorage.getItem("access_token");
   };
 
-  const removeLike = async (reviewId: string) => {
-    try {
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
-      if (response.status !== 200) {
-        throw new Error('Failed to remove like');
-      }
-    } catch (error) {
-      console.error('Error removing like:', error);
-    }
-  };
 
-  const handleLikeClick = async () => {
-    if (liked) {
-      await removeLike(reviewId);
-      setLikeCount(prev => prev - 1);
-    } else {
-      await addLike(reviewId);
-      setLikeCount(prev => prev + 1);
-    }
-    setLiked(prev => !prev);
-  };
 
   const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(event.target.value);
@@ -300,14 +277,7 @@ const SeeReview: React.FC<SeeReviewProps> = ({
               <UserEmail>{reviewerEmail}</UserEmail>
             </UserNameHandleWrapper>
           </UserInfo>
-          <LikeInfo>
-            <LikeIcon
-              src={liked ? '/heart1.png' : '/heart.png'}
-              liked={liked}
-              onClick={handleLikeClick}
-            />
-            <LikeCount>{likeCount}</LikeCount>
-          </LikeInfo>
+ 
         </Header>
         <Warning>TRIGGER WARNING</Warning>
         <TagsWrapper>
