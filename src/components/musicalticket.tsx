@@ -6,14 +6,15 @@ interface MusicalData {
   musical_name: string;
   theater_name: string;
   watch_at: string;
-  poster_image?: string; // 포스터 이미지가 선택적이므로 ?를 추가
+  poster_image?: string;
 }
 
 interface TicketProps {
   tickets: MusicalData[];
+  buyerName: string;
+  showTime: string;
 }
 
-// 기본 이미지와 정보
 const defaultPoster = '/default-poster.png';
 const defaultMusicalName = 'MUSICALLY';
 const defaultPlace = '장소: -';
@@ -129,8 +130,7 @@ const Time = styled.p`
   margin: 0;
 `;
 
-// MusicalTicket 컴포넌트
-const MusicalTicket: React.FC<TicketProps> = ({ tickets }) => {
+const MusicalTicket: React.FC<TicketProps> = ({ tickets, buyerName, showTime }) => {
   return (
     <>
       {tickets.length > 0 ? (
@@ -147,8 +147,8 @@ const MusicalTicket: React.FC<TicketProps> = ({ tickets }) => {
                 <Info>일 시 : {ticket.watch_at ? new Date(ticket.watch_at).toLocaleDateString() : defaultDate}</Info>
               </TextOverlay>
               <BuyerInfo>
-                <BuyerName>{defaultName}</BuyerName>
-                <Time>{new Date().toLocaleString()}</Time>
+                <BuyerName>예매자명 : {buyerName || defaultName}</BuyerName>
+                <Time>{showTime || new Date().toLocaleString()}</Time>
               </BuyerInfo>
             </DetailsContainer>
           </Ticket>
