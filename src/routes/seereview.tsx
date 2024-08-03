@@ -7,7 +7,6 @@ import MusicalTicket from '../components/musicalticket';
 import SeeReview from '../components/seereview';
 import Cookies from 'js-cookie';
 
-
 // 스타일 컴포넌트
 const AppContainer = styled.div`
   background-size: cover;
@@ -117,12 +116,11 @@ const SeeReviewPage: React.FC = () => {
           return;
         }
 
-
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
-        },
-      });
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+          },
+        });
 
         if (response.data.success) {
           setReviewData(response.data.data);
@@ -139,7 +137,7 @@ const SeeReviewPage: React.FC = () => {
 
   if (!reviewData) return <div>Loading...</div>;
 
-  const { musical, actors, reviewer_profile_image, reviewer_nickname, reviewer_email, like_num, is_like, violence, fear, sensitivity, content } = reviewData;
+  const { musical, actors, reviewer_profile_image, reviewer_nickname, reviewer_email, like_num, is_like, violence, fear, sensitivity, content, create_at } = reviewData;
 
   return (
     <AppContainer>
@@ -154,6 +152,8 @@ const SeeReviewPage: React.FC = () => {
           watch_at: musical.watch_at,
           poster_image: musical.poster_image
         }]}
+        buyerName={reviewer_nickname}
+        showTime={new Date(create_at).toLocaleString()}
       />
       <LeftAlignedContainer>
         <Title>ACTOR</Title>
