@@ -22,7 +22,6 @@ const Wrapper = styled.div`
 
 const PropfileWrapper = styled.div`
     height: 500px;
-    //background-color: lightslategray;
     display: flex;
 `
 const ProfileImageWrapper = styled.div`
@@ -35,7 +34,6 @@ const ProfileInfoWrapper = styled.div`
     flex: 1;
     display: flex;
     justify-content: center;
-    //align-items: center;
     flex-direction: column;
 `
 
@@ -43,7 +41,6 @@ const BtnWrapper = styled.div`
     flex: 1;
     display: flex;
     justify-content: center;
-    //align-items: center;
     flex-direction: column;
 `
 
@@ -140,7 +137,6 @@ const ModalWrapper = styled.div`
 `
 
 const LoadingContainer = styled.div`
-    /* 로딩 메시지 스타일 추가 */
     position: fixed;
     top: 50%;
     left: 50%;
@@ -200,7 +196,6 @@ export default function MyPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
                 const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
 
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage`, {
@@ -241,15 +236,12 @@ export default function MyPage() {
             return;
         }
         try {
-            //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
             const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
                 },
             });
-            //Cookies.remove("access_token");
-            //Cookies.remove("refresh_token");
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
             navigate('/login');
@@ -260,7 +252,6 @@ export default function MyPage() {
 
     const handleLeave = async () => {
         try {
-            //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
             const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/auth/leave`, {}, {
                 headers: {

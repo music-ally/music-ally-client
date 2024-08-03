@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import ProfileCard from "../profileCard";
 import axios from "axios";
-import Cookies from "js-cookie";
 
 const Overlay = styled.div`
   position: fixed;
@@ -24,8 +23,6 @@ const Modal = styled.div`
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    //justify-content: center;
-    //background-color: aliceblue;
     background: #212121;
     z-index: 1000;
 `
@@ -34,7 +31,7 @@ const ModalContent = styled.div`
     display: flex;
     flex-direction: column;
     overflow-y: auto; /* 세로 스크롤 활성화 */
-    max-height: calc(100% - 60px); /* Divider와 Header를 고려한 최대 높이 */
+    max-height: calc(100% - 60px);
     width: 100%; 
 
     /* 스크롤바 스타일 */
@@ -74,7 +71,6 @@ const Header = styled.div`
 `
 
 const Title = styled.div`
-    //color: black;
     color: #F0F0F0;
     font-size: 24.44px;
     font-weight: 600;
@@ -104,7 +100,6 @@ const Divider = styled.div`
 `
 
 const LoadingContainer = styled.div`
-    /* 로딩 메시지 스타일 추가 */
     position: fixed;
     top: 50%;
     left: 50%;
@@ -114,10 +109,10 @@ const LoadingContainer = styled.div`
 `;
 
 interface Follower {
-    user_id: string; // 실제 타입에 맞게 수정
+    user_id: string;
     nickname: string;
     email: string;
-    is_following: string; // '팔로잉' 또는 '팔로우'와 같은 문자열
+    is_following: string;
     profile_image: string;
 }
 
@@ -132,7 +127,6 @@ export default function FollowerModal ({userId, onClose} : FollowerModalProps) {
     useEffect(() => {
         // api 호출
         const fetchFollowers = async() => {
-            //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
             const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}/follower`, {

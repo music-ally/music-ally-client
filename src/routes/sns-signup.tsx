@@ -134,23 +134,10 @@ export default function SnsSignup(){
 
 
         try{
-            // 회원가입 정보 백엔드 전달
-            // 비밀번호 확인, required 필수는 프론트에서 처리
-            // 백에서는 email과 nickname이 unique한지 확인
-            /* 
-            console.log({
-                email,
-                nickname,
-                sex: gender,
-                birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-                home_area: address,
-            });
-            */
-
             navigate("/login");
 
             // 회원가입 정보 백엔드로 전달
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/join`, {
+            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/join`, {
                 email,
                 nickname,
                 sex: gender,
@@ -163,9 +150,6 @@ export default function SnsSignup(){
             // 성공 알람 문구
             alert(`${nickname}님 회원가입이 완료되었습니다!!`)
             navigate("/login");
-
-            // 백엔드에서 반환된 데이터를 콘솔에 출력 (개발 목적)
-            console.log(response.data);
 
             } catch (error) {
                 // 오류 발생 시 처리 로직
