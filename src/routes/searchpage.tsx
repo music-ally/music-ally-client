@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import MusicalInfo from "../components/musicalInfo-search";
-import ActorInfo from "../components/actorInfo-review";
+import ActorInfo from "../components/actorInfo-search";
 
 const PageContainer = styled.div`
   width: 1280px;

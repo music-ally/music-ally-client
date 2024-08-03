@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import MusicalSearchComponent from "./searchcontainer-mus";
-import MusicalInfo from "./musicalInfo-search";
+import MusicalInfo from "./musicalInfo-review";
 
 interface Musical {
   musical_id: string;
