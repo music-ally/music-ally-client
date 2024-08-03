@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Cookies from "js-cookie";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import BasicReview from "../components/basicreview";
@@ -111,7 +110,7 @@ const ActorDetail: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const accessToken = Cookies.get("access_token");
+        const accessToken = localStorage.getItem("access_token");
 
         if (!accessToken) {
           console.error("No access token found");
