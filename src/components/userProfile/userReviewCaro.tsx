@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
 // 글로벌 스타일 정의
@@ -112,6 +113,12 @@ const UserReviewCaro: React.FC<Props> = ({ reviews }) => {
     });
   };
 
+  const navigate = useNavigate();
+
+  const onClick = (reviewId : string) => {
+    navigate(`/see-review/${reviewId}`);
+  }
+
 
 
   return (
@@ -125,7 +132,7 @@ const UserReviewCaro: React.FC<Props> = ({ reviews }) => {
             )}
             <ImageRow>
               {displayImages.slice(currentIndex, currentIndex + 4).map((image, index) => (
-                <Image key={index} src={image} />
+                <Image key={index} src={image} onClick={() => onClick(reviews[currentIndex + index].review_id)}/>
               ))}
             </ImageRow>
             {displayImages.length > 4 && (
