@@ -1,63 +1,87 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import SearchContainerMusical, { Musical } from './searchcontainer-mus';
-import MusicalInfo from './musicalInfo';
+import React from "react";
+import styled from "styled-components";
 
-const ModalContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+const Container = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 `;
 
-const ModalContent = styled.div`
-  background: #282828;
-  padding: 20px;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 800px;
-  max-height: 80vh;
-  overflow-y: auto;
+const ImageContainer = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
 `;
 
-const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5em;
-  cursor: pointer;
+const Image = styled.img`
+  border-radius: 10px;
+  width: 240px;
+  height: 315px;
 `;
 
-interface Props {
-  musicals?: Musical[];
-  isOpen: boolean;
-  onClose: () => void;
+const ActorInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 10px;
+`;
+
+const ActorName = styled.div`
+  font-family: "Inter", sans-serif;
+  font-weight: black;
+  font-size: 23.49px;
+  line-height: 1.5;
+  color: #fafafa;
+`;
+
+const Company = styled.div`
+  font-family: "Inter", sans-serif;
+  font-size: 18.07px;
+  color: #ececec;
+  margin: 14px 0 0 0;
+  letter-spacing: 5%;
+`;
+
+const Birthday = styled.div`
+  font-family: "Inter", sans-serif;
+  font-size: 18.07px;
+  color: #888888;
+  letter-spacing: 5%;
+`;
+
+interface Actor {
+  actor_id: string;
+  actor_name: string;
+  agency: string;
+  birthday: string;
+  profile_image: string;
 }
 
-const MusicalSearchModal: React.FC<Props> = ({ musicals = [], isOpen, onClose }) => {
-  const [filteredMusicals, setFilteredMusicals] = useState<Musical[]>([]);
+interface Props {
+  actors?: Actor[];
+}
 
-  if (!isOpen) return null;
-
+const ActorInfo: React.FC<Props> = ({ actors = [] }) => {
   return (
-    <ModalContainer>
-      <ModalContent>
-        <CloseButton onClick={onClose}>&times;</CloseButton>
-        <SearchContainerMusical musicals={musicals} setFilteredMusicals={setFilteredMusicals} />
-        <MusicalInfo musicals={filteredMusicals} />
-      </ModalContent>
-    </ModalContainer>
+    <Container>
+      {actors.length > 0 ? (
+        actors.map((actor, index) => (
+          <ImageContainer key={index}>
+            <Image src={actor.profile_image} alt={actor.actor_name} />
+            <ActorInfoContainer>
+              <ActorName>{actor.actor_name}</ActorName>
+              <Company>{actor.agency}</Company>
+              <Birthday>{actor.birthday}</Birthday>
+            </ActorInfoContainer>
+          </ImageContainer>
+        ))
+      ) : (
+        <div>No actors available</div>
+      )}
+    </Container>
   );
 };
 
-export default MusicalSearchModal;
+export default ActorInfo;
