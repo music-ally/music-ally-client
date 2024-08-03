@@ -97,7 +97,7 @@ const Button = styled.img`
   cursor: pointer;
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-170%);
   z-index: 1;
 `;
 
