@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState } from "react";
+import styled from "styled-components";
 
 interface Page5Props {}
 
@@ -36,7 +36,7 @@ const UserInfo = styled.div`
 const Avatar = styled.div`
   box-shadow: 0px 1.8px 3.6px 0px rgba(0, 0, 0, 0.25);
   border-radius: 30px;
-  background: url('/musicalposter-1.jpeg') 50% 50% / cover no-repeat;
+  background: url("/musicalposter-1.jpeg") 50% 50% / cover no-repeat;
   margin: 0 13px 0 0;
   width: 60px;
   height: 60px;
@@ -52,7 +52,7 @@ const UserName = styled.div`
 
 const UserNameText = styled.span`
   word-break: break-word;
-  font-family: 'Abhaya Libre', sans-serif;
+  font-family: "Abhaya Libre", sans-serif;
   font-weight: bold;
   font-size: 21px;
   letter-spacing: 0.6px;
@@ -63,7 +63,7 @@ const UserNameText = styled.span`
 const SubInfo = styled.p`
   margin: 0 8.5px 0 0;
   word-break: break-word;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: bold;
   font-size: 13.4px;
   letter-spacing: 0.4px;
@@ -75,7 +75,7 @@ const UserHandle = styled.div`
   margin: 16px 0 28px 0;
   display: inline-block;
   word-break: break-word;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 600;
   font-size: 12px;
   letter-spacing: 0.4px;
@@ -97,7 +97,7 @@ const RatingItem = styled.div`
 `;
 
 const RatingLabel = styled.span`
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 600;
   font-size: 12px;
   letter-spacing: 0.4px;
@@ -107,7 +107,7 @@ const RatingLabel = styled.span`
 `;
 
 const RatingValue = styled.span`
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 600;
   font-size: 12px;
   letter-spacing: 0.4px;
@@ -129,7 +129,8 @@ const LikeIcon = styled.div<LikeIconProps>`
   width: 27.9px;
   height: 24.3px;
   box-sizing: border-box;
-  background: url(${props => (props.liked ? '/heart1.png' : '/heart.png')}) 50% 50% / cover no-repeat;
+  background: url(${(props) => (props.liked ? "/heart1.png" : "/heart.png")})
+    50% 50% / cover no-repeat;
   transition: background-image 0.3s ease-in-out;
   cursor: pointer;
 
@@ -141,7 +142,7 @@ const LikeIcon = styled.div<LikeIconProps>`
 const LikeCount = styled.span`
   margin: 0 3px;
   word-break: break-word;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 600;
   font-size: 12px;
   letter-spacing: 0.5px;
@@ -161,7 +162,7 @@ const CommentSection = styled.div`
 
 const CommentText = styled.span`
   word-break: break-word;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 600;
   font-size: 14px;
   letter-spacing: 0.3px;
@@ -175,7 +176,7 @@ const CommentText = styled.span`
   cursor: pointer;
 
   &:hover {
-    text-decoration: none; /* 밑줄 효과 제거 */
+    text-decoration: none;
   }
 `;
 
@@ -184,8 +185,8 @@ const Page5: React.FC<Page5Props> = () => {
   const [likeCount, setLikeCount] = useState<number>(0);
 
   const handleLikeClick = () => {
-    setLiked(prevLiked => !prevLiked);
-    setLikeCount(prevCount => (liked ? prevCount - 1 : prevCount + 1));
+    setLiked((prevLiked) => !prevLiked);
+    setLikeCount((prevCount) => (liked ? prevCount - 1 : prevCount + 1));
   };
 
   return (
@@ -227,7 +228,12 @@ const Page5: React.FC<Page5Props> = () => {
       </Header>
       <CommentSection>
         <CommentText>
-          승식 세준 배우님 공연을 수차례 봤지만 이 날 신은 왜 넘버는 역대급이라 말할 수 있습니다 ㅜㅜ두 분 이런 퀄리티의 공연을 완성하기까지 얼마나 피나는 노력을 했을지 눈에 선하고 원래 그룹 활동을 함께하셔서 그런지 각자 다른 배우님들과 호흡을 맞출 때와는 또 다른 .. 그런 애틋함이 느껴졌던거 같아요 이퀄 만약 또 기회가 된다면 승식 배우님의 니콜라도 궁금하네요 ,, 세준 배우님 승식 배우님 고생했어요 !!
+          승식 세준 배우님 공연을 수차례 봤지만 이 날 신은 왜 넘버는 역대급이라
+          말할 수 있습니다 ㅜㅜ두 분 이런 퀄리티의 공연을 완성하기까지 얼마나
+          피나는 노력을 했을지 눈에 선하고 원래 그룹 활동을 함께하셔서 그런지
+          각자 다른 배우님들과 호흡을 맞출 때와는 또 다른 .. 그런 애틋함이
+          느껴졌던거 같아요 이퀄 만약 또 기회가 된다면 승식 배우님의 니콜라도
+          궁금하네요 ,, 세준 배우님 승식 배우님 고생했어요 !!
         </CommentText>
       </CommentSection>
     </Container>
