@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // useNavigate 훅 추가
+import { useNavigate } from 'react-router-dom';
 
 // 스타일 정의
 const Container = styled.div`
@@ -229,9 +229,15 @@ const BestReview: React.FC<BestReviewProps> = ({ review = {} as Review }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const navigate = useNavigate(); // useNavigate 훅 추가
 
+  const accessToken = localStorage.getItem("access_token");
+
   const addLike = async (reviewId: string) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`, {}, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+        },
+      });
       if (response.status !== 200) {
         throw new Error('Failed to add like');
       }
@@ -242,7 +248,11 @@ const BestReview: React.FC<BestReviewProps> = ({ review = {} as Review }) => {
 
   const removeLike = async (reviewId: string) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+        },
+      });
       if (response.status !== 200) {
         throw new Error('Failed to remove like');
       }

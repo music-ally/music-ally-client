@@ -229,9 +229,15 @@ const BasicReview: React.FC<BasicReviewProps> = ({ review }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const navigate = useNavigate(); // useNavigate 훅 추가
 
+  const accessToken = localStorage.getItem("access_token");
+
   const addLike = async (reviewId: string) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`, {}, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+        },
+      });
       if (response.status !== 200) {
         throw new Error('Failed to add like');
       }
@@ -242,7 +248,11 @@ const BasicReview: React.FC<BasicReviewProps> = ({ review }) => {
 
   const removeLike = async (reviewId: string) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+        },
+      });
       if (response.status !== 200) {
         throw new Error('Failed to remove like');
       }
