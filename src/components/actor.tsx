@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import ActorCarousel from './actorcarousel';
+import ActorCarousel from './actorcarousel'; 
 import styled from 'styled-components';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const Title = styled.h1`
     font-family: Inter;
@@ -20,43 +22,78 @@ const Container = styled.div`
 `;
 
 const Actor: React.FC = () => {
-    const [title, setTitle] = useState('');
-    const [actorId, setActorId] = useState<number | null>(null);
+    const [title, setTitle] = useState<string>('');
+    const [actorIds, setActorIds] = useState<string[]>([]);
     const [singerActors, setSingerActors] = useState<any[]>([]);
     const [hotActors, setHotActors] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
+    // 데이터 fetching 함수
     const fetchData = async (endpoint: string, setter: Function) => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${endpoint}`);
-            if (!response.ok) {
-                throw new Error('네트워크 없음');
+            const accessToken = Cookies.get("access_token");
+
+            if (!accessToken) {
+                console.error("No access token found");
+                return;
             }
-            const data = await response.json();
-            setter(data);
+
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}${endpoint}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            console.log(`Data from ${endpoint}:`, response.data);
+            setter(response.data.data); // 응답 데이터의 'data' 필드 사용
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('데이터 가져오기 오류:', error.response ? error.response.data : error.message);
         }
     };
 
     useEffect(() => {
-        fetchData(`/actor/musical`, (data: any) => {
-            setTitle(data.musical_name);
-            setActorId(data.actor_id);
-        });
-        fetchData(`/actor/job`, setSingerActors);
-        fetchData(`/actor/view`, setHotActors);
+        const fetchAllData = async () => {
+            try {
+                await fetchData(`/actor/musical`, (data: any) => {
+                    setTitle(data.musical_name);
+                    setActorIds(data.actors.map((actor: any) => actor.actor_id)); // 배우 ID 설정
+                });
+                await fetchData(`/actor/job`, (data: any) => {
+                    setSingerActors(data.actors || []);
+                });
+                await fetchData(`/actor/view`, (data: any) => {
+                    setHotActors(data.actors || []);
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAllData();
     }, []);
+
+    if (loading) {
+        return <Container>로딩 중...</Container>;
+    }
 
     return (
         <Container>
             <Title>{title ? `${title} 출연진을 한눈에 보기!` : '로딩 중...'}</Title>
-            {actorId && <ActorCarousel actorId={actorId} />}
+            {actorIds.length > 0 && <ActorCarousel actorId={actorIds} />}
 
             <Title>가수 출신 뮤지컬 배우 모아보기</Title>
-            <ActorCarousel actorId={singerActors.map(actor => actor.id)} />
+            {singerActors.length > 0 ? (
+                <ActorCarousel actorId={singerActors.map((actor: any) => actor.actor_id)} />
+            ) : (
+                <p>가수 출신 배우 정보가 없습니다.</p>
+            )}
 
             <Title>최근 핫한 배우 모아보기</Title>
-            <ActorCarousel actorId={hotActors.map(actor => actor.id)} />
+            {hotActors.length > 0 ? (
+                <ActorCarousel actorId={hotActors.map((actor: any) => actor.actor_id)} />
+            ) : (
+                <p>최근 핫한 배우 정보가 없습니다.</p>
+            )}
         </Container>
     );
 };

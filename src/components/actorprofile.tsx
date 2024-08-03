@@ -1,17 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
+// 배우 정보 인터페이스
 interface Actor {
-  name: string;
-  birthDate: string;
-  physicalCondition: string;
+  actor_id: string;
+  profile_image: string;
+  actor_name: string;
+  birthday: string;
+  debut: string;
   agency: string;
-  works: number;
-  profileImage: string;
-}
-
-interface ActorprofileProps {
-  actor: Actor;
+  job: string;
+  physical: string;
+  works_count: number;
 }
 
 // 스타일링을 위한 컴포넌트들
@@ -19,17 +19,17 @@ const ProfileContainer = styled.div`
   display: flex;
   align-items: flex-start;
   width: 100%;
-  max-width: 1300px; /* 최대 폭을 1300px로 설정 */
-  margin: 138px auto; /* 위아래 간격을 138px로 설정, 중앙 정렬 */
-  padding: 0 64px; /* 좌우 간격을 64px로 설정 */
-  box-sizing: border-box; /* padding이 포함된 박스 크기 계산 */
+  max-width: 1200px;
+  margin: 138px auto;
+  padding: 0 px;
+  box-sizing: border-box;
 `;
 
 const Image = styled.img`
-  width: 275px; /* 이미지 폭 설정 */
-  height: 389px; /* 이미지 높이 설정 */
-  object-fit: cover; /* 이미지 비율 유지하며 자르기 */
-  margin-right: 32px; /* 이미지와 정보 사이 간격 설정 */
+  width: 275px;
+  height: 389px;
+  object-fit: cover;
+  margin-right: 32px;
 `;
 
 const InfoContainer = styled.div`
@@ -39,58 +39,74 @@ const InfoContainer = styled.div`
 const ActorName = styled.h2`
   font-size: 40px;
   font-family: 'Inter', sans-serif;
-  font-weight: 600; /* 세미볼드 설정 */
-  color: #EBEBEB; /* 글자색 설정 */
-  margin: 64px 0 19px; /* 위쪽 여백을 64px, 아래쪽 여백을 19px로 설정 */
+  font-weight: 600;
+  color: #EBEBEB;
+  margin: 30px 0 19px;
 `;
 
 const Divider = styled.hr`
   width: 850px;
   border: 0;
   border-top: 1px solid #ddd;
-  margin-bottom: 38px; /* 구분선 아래 간격을 38px로 조정 */
+  margin-bottom: 38px;
 `;
 
 const InfoItem = styled.div`
-  display: flex; /* 레이블과 값을 수평으로 배치 */
-  align-items: center; /* 레이블과 값을 세로 중앙 정렬 */
-  margin-bottom: 15px; /* 각 항목 사이의 간격을 15px로 조정 */
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
 `;
 
 const InfoLabel = styled.span`
   font-size: 20px;
   font-family: 'Inter', sans-serif;
-  font-weight: 600; /* 세미볼드 설정 */
-  color: #A0A0A0; /* 글자색 설정 */
-  margin-right: 10px; /* 레이블과 값 사이 간격 설정 */
+  font-weight: 600;
+  color: #A0A0A0;
+  margin-right: 10px;
 `;
 
 const InfoValue = styled.p`
   font-size: 20px;
   font-family: 'Inter', sans-serif;
-  font-weight: 600; /* 세미볼드 설정 */
-  color: #EBEBEB; /* 글자색 설정 */
-  margin: 0; /* 아래 여백을 없앰 */
+  font-weight: 600;
+  color: #EBEBEB;
+  margin: 0;
 `;
 
-const Actorprofile: React.FC<ActorprofileProps> = ({ actor }) => {
+// 기본값을 제공하는 유틸리티 함수
+const defaultValue = (value: string | undefined | null) => value ? value : '-';
+
+// Actorprofile 컴포넌트
+const Actorprofile: React.FC<{ actor?: Actor }> = ({ actor }) => {
+  if (!actor) {
+    return <div>Loading...</div>; // or return an error component
+  }
+
   return (
     <ProfileContainer>
-      <Image src={actor.profileImage} alt={`${actor.name} 프로필 이미지`} />
+      <Image src={actor.profile_image || '/empty.png'} alt={`${actor.actor_name} 프로필 이미지`} />
       <InfoContainer>
-        <ActorName>{actor.name}</ActorName>
+        <ActorName>{defaultValue(actor.actor_name)}</ActorName>
         <Divider />
         <InfoItem>
           <InfoLabel>생년월일</InfoLabel>
-          <InfoValue>{actor.birthDate}</InfoValue>
+          <InfoValue>{defaultValue(new Date(actor.birthday).toLocaleDateString())}</InfoValue>
         </InfoItem>
         <InfoItem>
-          <InfoLabel>신체조건</InfoLabel>
-          <InfoValue>{actor.physicalCondition}</InfoValue>
+          <InfoLabel>데뷔</InfoLabel>
+          <InfoValue>{defaultValue(actor.debut)}</InfoValue>
         </InfoItem>
         <InfoItem>
           <InfoLabel>소속사</InfoLabel>
-          <InfoValue>{actor.agency}</InfoValue>
+          <InfoValue>{defaultValue(actor.agency)}</InfoValue>
+        </InfoItem>
+        <InfoItem>
+          <InfoLabel>직업</InfoLabel>
+          <InfoValue>{defaultValue(actor.job)}</InfoValue>
+        </InfoItem>
+        <InfoItem>
+          <InfoLabel>신체조건</InfoLabel>
+          <InfoValue>{defaultValue(actor.physical)}</InfoValue>
         </InfoItem>
       </InfoContainer>
     </ProfileContainer>
