@@ -45,12 +45,12 @@ const DetailsContainer = styled.div`
   overflow: hidden;
 `;
 
-const Details = styled.div`
+const Details = styled.div<{ backgroundImage?: string }>`
   width: 120%;
   height: 120%;
-  background-image: url('/empty.png');
+  background-image: ${({ backgroundImage }) => `url(${backgroundImage || '/empty.png'})`};
   background-size: cover;
-  background-position: center;
+  background-position: center bottom;
   filter: blur(4px);
   position: absolute;
   top: -10%;
@@ -138,7 +138,7 @@ const MusicalTicket: React.FC<TicketProps> = ({ tickets, buyerName, showTime }) 
           <Ticket key={ticket.musical_id}>
             <Poster src={ticket.poster_image || defaultPoster} alt="Poster" />
             <DetailsContainer>
-              <Details />
+              <Details backgroundImage={ticket.poster_image} />
               <DarkOverlay />
               <GradientOverlay />
               <TextOverlay>
