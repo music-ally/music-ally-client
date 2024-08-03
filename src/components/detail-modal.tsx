@@ -14,6 +14,7 @@ interface MusicalDetails {
   theater_name: string;
   castings: string[];
   reviews: string[];
+  is_bookmark: boolean;
 }
 
 interface DetailModalProps {
@@ -166,9 +167,11 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
     const fetchData = async () => {
       try {
         console.log(`Fetching details for musical ID: ${musical_ID}`);
-        const musicalDetails = await token.get(`/musical/${musical_ID}`);
-        console.log("Musical details:", musicalDetails.data.data);
-        setMusicalDetails(musicalDetails.data.data);
+        const response = await token.get(`/musical/${musical_ID}`);
+        const musicalDetails = response.data.data;
+        console.log("Musical details:", musicalDetails);
+        setMusicalDetails(musicalDetails);
+        setIsBookmarked(musicalDetails.is_bookmark);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -177,8 +180,13 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
     fetchData();
   }, [musical_ID]);
 
-  const handleBookmarkClick = () => {
-    setIsBookmarked(!isBookmarked);
+  const handleBookmarkClick = async () => {
+    try {
+      await token.post(`/musical/${musical_ID}/bookmark`);
+      setIsBookmarked((prev) => !prev);
+    } catch (error) {
+      console.error("Error updating bookmark status:", error);
+    }
   };
 
   const handleReviewClick = () => {
