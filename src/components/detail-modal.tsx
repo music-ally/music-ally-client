@@ -9,10 +9,12 @@ interface MusicalDetails {
   musical_name: string;
   musical_genre: string;
   start_at: string;
+  end_at: string;
   theater_address: string;
   theater_name: string;
   castings: string[];
   reviews: string[];
+  is_bookmark: boolean;
 }
 
 interface DetailModalProps {
@@ -165,9 +167,11 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
     const fetchData = async () => {
       try {
         console.log(`Fetching details for musical ID: ${musical_ID}`);
-        const musicalDetails = await token.get(`/musical/${musical_ID}`);
-        console.log("Musical details:", musicalDetails.data.data);
-        setMusicalDetails(musicalDetails.data.data);
+        const response = await token.get(`/musical/${musical_ID}`);
+        const musicalDetails = response.data.data;
+        console.log("Musical details:", musicalDetails);
+        setMusicalDetails(musicalDetails);
+        setIsBookmarked(musicalDetails.is_bookmark);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -176,8 +180,13 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
     fetchData();
   }, [musical_ID]);
 
-  const handleBookmarkClick = () => {
-    setIsBookmarked(!isBookmarked);
+  const handleBookmarkClick = async () => {
+    try {
+      await token.post(`/musical/${musical_ID}/bookmark`);
+      setIsBookmarked((prev) => !prev);
+    } catch (error) {
+      console.error("Error updating bookmark status:", error);
+    }
   };
 
   const handleReviewClick = () => {
@@ -214,7 +223,9 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
               <Subtitle>{musicalDetails.musical_genre}</Subtitle>
               <Section>
                 <SectionTitle>공연 일정</SectionTitle>
-                <p>{musicalDetails.start_at}</p>
+                <p>
+                  {musicalDetails.start_at}-{musicalDetails.end_at}
+                </p>
               </Section>
               <Section>
                 <SectionTitle>공연 극장</SectionTitle>
@@ -231,7 +242,6 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
         </InfoContainer>
         <Section>
           <SectionTitle>공연 장소</SectionTitle>
-          <br />
           <NaverMap theater_address={musicalDetails.theater_address} />
           <p>{musicalDetails.theater_address}</p>
         </Section>
