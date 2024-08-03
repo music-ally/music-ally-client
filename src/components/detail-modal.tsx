@@ -7,9 +7,10 @@ import token from "./token";
 interface MusicalDetails {
   poster_image: string;
   musical_name: string;
-  genre: string;
+  musical_genre: string;
   start_at: string;
   theater_address: string;
+  theater_name: string;
   castings: string[];
   reviews: string[];
 }
@@ -210,10 +211,14 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
                   />
                 </BookmarkButton>
               </TitleContainer>
-              <Subtitle>{musicalDetails.genre}</Subtitle>
+              <Subtitle>{musicalDetails.musical_genre}</Subtitle>
               <Section>
                 <SectionTitle>공연 일정</SectionTitle>
                 <p>{musicalDetails.start_at}</p>
+              </Section>
+              <Section>
+                <SectionTitle>공연 극장</SectionTitle>
+                <p>{musicalDetails.theater_name}</p>
               </Section>
               {musicalDetails.castings.length > 0 && (
                 <Section>
@@ -227,7 +232,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
         <Section>
           <SectionTitle>공연 장소</SectionTitle>
           <br />
-          <NaverMap />
+          <NaverMap theater_address={musicalDetails.theater_address} />
           <p>{musicalDetails.theater_address}</p>
         </Section>
         <ReviewSection>
@@ -237,8 +242,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
           </ReviewButton>
           <ReviewcomponentSection>
             {musicalDetails.reviews.map((review, index) => (
-              // <ReviewComponent key={index} review={review} />
-              <ReviewComponent />
+              <ReviewComponent key={index} review={review} />
             ))}
           </ReviewcomponentSection>
         </ReviewSection>
