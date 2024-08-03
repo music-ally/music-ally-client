@@ -18,6 +18,7 @@ const ProfileImg = styled.img`
     width: 70px;
     border-radius: 50%;
     margin: 0 15px;
+    background-color: white;
 `;
 
 const Info = styled.div`

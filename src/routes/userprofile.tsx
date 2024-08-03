@@ -71,6 +71,7 @@ const ProfileImage = styled.img`
     height: 272px;
     border-radius: 50%;
     object-fit: cover;
+    background-color: white;
 `;
 
 const Nickname = styled.h3`
