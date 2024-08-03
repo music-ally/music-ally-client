@@ -264,7 +264,7 @@ export default function MyReviewModal({ reviewId, onClose }: ReviewModalProps) {
     const onModify = async () => {
         // 리뷰 수정 페이지로 이동.
         // reviewId 가져가기
-        navigate(`/review/edit/${reviewId}`);
+        navigate(`/fix-review/${reviewId}`);
         onClose();
     }
 
