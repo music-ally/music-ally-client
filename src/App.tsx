@@ -54,7 +54,7 @@ const router = createBrowserRouter([
       { path: 'search/musical', element: <DetailSearchMus /> },
       { path: 'search/actor', element: <DetailSearchAct /> },
       { path: 'see-review/:reviewId', element: <SeeReview /> },
-      { path: 'fix-review/:reviewId', element: <WriteReviewPage />}
+      { path: 'review/edit/:reviewId', element: <WriteReviewPage />}
 
     ]
   },
