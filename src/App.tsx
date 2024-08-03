@@ -19,6 +19,7 @@ import SeeReview from './routes/seereview';
 import { AuthProvider } from './components/AuthContext'; 
 import ProtectedRoute from './ProtectedRoute';
 import ActorMain from './routes/actormain'
+import WriteReviewPage from './routes/fixreview';
 
 const GlobalStyles = createGlobalStyle`
   * {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+      { path: '', element: <Home />},
       { path: 'home', element: <Home /> },
       { path: 'actor/musical', element: <ActorPage /> },
       { path: 'actor/:actorId', element: <ActorMain /> },
@@ -51,7 +53,9 @@ const router = createBrowserRouter([
       { path: 'search', element: <Search /> },
       { path: 'search/musical', element: <DetailSearchMus /> },
       { path: 'search/actor', element: <DetailSearchAct /> },
-      { path: 'see-review/:reviewId', element: <SeeReview /> }
+      { path: 'see-review/:reviewId', element: <SeeReview /> },
+      { path: 'fix-review/:reviewId', element: <WriteReviewPage />}
+
     ]
   },
   {
