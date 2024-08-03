@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import Actorcircle from '../components/actorcircle';
 import MusicalTicket from '../components/musicalticket';
 import SeeReview from '../components/seereview';
-import Cookies from 'js-cookie';
 
 // 스타일 컴포넌트
 const AppContainer = styled.div`
@@ -104,15 +103,17 @@ interface ReviewData {
 const SeeReviewPage: React.FC = () => {
   const { reviewId } = useParams<{ reviewId: string }>();
   const [reviewData, setReviewData] = useState<ReviewData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchReviewData = async () => {
       try {
-        // 쿠키에서 토큰 가져오기
-        const accessToken = Cookies.get("access_token");
-
+        const accessToken = localStorage.getItem("access_token");
         if (!accessToken) {
           console.error("No access token found");
+          setError('Authentication token not found.');
+          setLoading(false);
           return;
         }
 
@@ -126,16 +127,23 @@ const SeeReviewPage: React.FC = () => {
           setReviewData(response.data.data);
         } else {
           console.error('리뷰 데이터 조회 실패:', response.data.message);
+          setError(response.data.message || 'Failed to fetch review data.');
         }
       } catch (error) {
         console.error('리뷰 데이터 조회 중 오류 발생:', error);
+        setError('An error occurred while fetching review data.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchReviewData();
   }, [reviewId]);
 
-  if (!reviewData) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
+  if (!reviewData) return <div>No review data available.</div>;
 
   const { musical, actors, reviewer_profile_image, reviewer_nickname, reviewer_email, like_num, is_like, violence, fear, sensitivity, content, create_at } = reviewData;
 
