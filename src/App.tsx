@@ -20,6 +20,7 @@ import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './ProtectedRoute';
 import ActorMain from './routes/actormain'
 import WriteReviewPage from './routes/fixreview';
+import SeeReviewPage from './routes/fixreview';
 
 const GlobalStyles = createGlobalStyle`
   * {
@@ -54,7 +55,8 @@ const router = createBrowserRouter([
       { path: 'search/musical', element: <DetailSearchMus /> },
       { path: 'search/actor', element: <DetailSearchAct /> },
       { path: 'see-review/:reviewId', element: <SeeReview /> },
-      { path: 'review/edit/:reviewId', element: <WriteReviewPage />}
+      { path: 'review/edit/:reviewId', element: <WriteReviewPage />},
+      { path: 'fix-review/:reviewId', element: <SeeReviewPage />}
 
     ]
   },
