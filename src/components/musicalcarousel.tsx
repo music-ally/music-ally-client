@@ -1,6 +1,6 @@
-// MusicalCarousel.tsx
 import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import DetailModal from '../components/detail-modal'; // Import your DetailModal component
 
 // 글로벌 스타일 정의
 const GlobalStyle = createGlobalStyle`
@@ -39,6 +39,7 @@ const ImageRow = styled.div`
   align-items: center;
   gap: 17px;
   overflow: hidden;
+  width: 1100px; /* Adjust the width based on your design */
 `;
 
 const ImageContainer = styled.div`
@@ -53,6 +54,7 @@ const Image = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  cursor: pointer; /* Add cursor style to indicate clickable */
 `;
 
 const Button = styled.img`
@@ -84,20 +86,45 @@ interface MusicalCarouselProps {
 
 const MusicalCarousel: React.FC<MusicalCarouselProps> = ({ works }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedMusicalId, setSelectedMusicalId] = useState<string | null>(null);
 
   // works가 정의되어 있지 않을 경우를 대비하여 기본값 설정
   const validWorks = works || [];
 
   const handleLeftButtonClick = () => {
-    setCurrentIndex(prevIndex => (prevIndex === 0 ? Math.max(validWorks.length - 4, 0) : prevIndex - 4));
+    setCurrentIndex(prevIndex => {
+      // Move left with looping
+      return prevIndex === 0
+        ? validWorks.length > 4
+          ? validWorks.length - 4
+          : 0
+        : prevIndex - 4;
+    });
   };
 
   const handleRightButtonClick = () => {
-    setCurrentIndex(prevIndex => (prevIndex + 4) % validWorks.length);
+    setCurrentIndex(prevIndex => {
+      // Move right with looping
+      return (prevIndex + 4) % validWorks.length;
+    });
   };
 
-  // Display only valid images
-  const displayedImages = validWorks.slice(currentIndex, currentIndex + 4);
+  // Display only valid images with empty placeholders if needed
+  const displayedImages = Array.from({ length: 4 }, (_, index) => {
+    const actualIndex = currentIndex + index;
+    if (actualIndex < validWorks.length) {
+      return validWorks[actualIndex];
+    }
+    return { musical_id: `empty-${index}`, poster_image: '/empty.png' };
+  });
+
+  const handleImageClick = (musicalId: string) => {
+    setSelectedMusicalId(musicalId);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedMusicalId(null);
+  };
 
   return (
     <>
@@ -114,6 +141,7 @@ const MusicalCarousel: React.FC<MusicalCarouselProps> = ({ works }) => {
                   <Image 
                     src={work.poster_image || '/empty.png'} 
                     alt={`Poster ${index}`} 
+                    onClick={() => handleImageClick(work.musical_id)}
                     onError={(e) => (e.currentTarget.src = '/empty.png')} // Handle image load error
                   />
                 </ImageContainer>
@@ -125,6 +153,9 @@ const MusicalCarousel: React.FC<MusicalCarouselProps> = ({ works }) => {
           </Row>
         </ContentWrapper>
       </Container>
+      {selectedMusicalId && (
+        <DetailModal musical_ID={selectedMusicalId} onClose={handleCloseModal} />
+      )}
     </>
   );
 };

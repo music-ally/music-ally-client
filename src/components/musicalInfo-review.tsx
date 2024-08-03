@@ -65,12 +65,12 @@ interface Musical {
 
 interface Props {
   musicals?: Musical[];
-  onMusicalSelect: (musical_id: string) => void;
+  filteredMusicals: (musical_id: string) => void;
 }
 
-const MusicalInfo: React.FC<Props> = ({ musicals = [], onMusicalSelect }) => {
+const MusicalInfo: React.FC<Props> = ({ musicals = [], filteredMusicals }) => {
   const handleContainerClick = (musical_id: string) => {
-    onMusicalSelect(musical_id);
+    filteredMusicals(musical_id);
   };
 
   return (

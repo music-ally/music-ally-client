@@ -45,7 +45,7 @@ const ActorName = styled.h2`
 `;
 
 const Divider = styled.hr`
-  width: 850px;
+  width: 820px;
   border: 0;
   border-top: 1px solid #ddd;
   margin-bottom: 38px;
@@ -107,6 +107,10 @@ const Actorprofile: React.FC<{ actor?: Actor }> = ({ actor }) => {
         <InfoItem>
           <InfoLabel>신체조건</InfoLabel>
           <InfoValue>{defaultValue(actor.physical)}</InfoValue>
+        </InfoItem>
+        <InfoItem>
+          <InfoLabel>출연작</InfoLabel>
+          <InfoValue>{actor.works_count ? `${actor.works_count}개` : '-'}</InfoValue>
         </InfoItem>
       </InfoContainer>
     </ProfileContainer>

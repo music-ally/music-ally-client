@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import Poster from "/poster_basic.png"
+import Poster from "/poster_basic.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 
 const Overlay = styled.div`
     position: fixed;
@@ -13,15 +13,15 @@ const Overlay = styled.div`
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
-    display: flex; /* 중앙 정렬을 위해 추가 */
-    justify-content: center; /* 중앙 정렬을 위해 추가 */
-    align-items: center; /* 중앙 정렬을 위해 추가 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 const Modal = styled.div`
-    position: relative; /* 스크롤을 적용하기 위해 relative로 변경 */
+    position: relative;
     width: 712px;
-    height: 90vh; /* 화면의 90% 높이로 설정 */
+    height: 90vh;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
@@ -35,34 +35,31 @@ const ModalContent = styled.div`
     overflow-y: auto; 
     width: 100%;
 
-    /* 스크롤바 스타일 */
     &::-webkit-scrollbar {
-        width: 8px; /* 스크롤바의 너비 */
+        width: 8px;
     }
 
     &::-webkit-scrollbar-thumb {
-        background-color: #888; /* 스크롤바의 색상 */
-        border-radius: 10px; /* 스크롤바의 모서리 둥글기 */
+        background-color: #888;
+        border-radius: 10px;
     }
 
-    /* 스크롤바가 보이지 않도록 설정 */
     &::-webkit-scrollbar-track {
-        background: transparent; /* 스크롤바 트랙 배경 */
+        background: transparent;
     }
-
 `;
 
 const PosterImg = styled.img`
     width: 100%;
     height: 1012.64px;
-    background-size: cover; /* 배경 이미지 크기 조정 */
-    background-position: center; /* 배경 이미지 위치 조정 */
-    border-radius: 0 0 20px 20px; /* 모달의 아래쪽 모서리 둥글게 설정 */
-`
+    background-size: cover;
+    background-position: center;
+    border-radius: 0 0 20px 20px;
+`;
 
 const Review = styled.div`
     margin: 40px 48px 0 48px;
-`
+`;
 
 const Title = styled.div`
     font-family: Inter;
@@ -71,7 +68,6 @@ const Title = styled.div`
     line-height: 43.1px;
     letter-spacing: 0.05em;
     text-align: left;
-
 `;
 
 const Stars = styled.div`
@@ -81,7 +77,7 @@ const Stars = styled.div`
     font-size: 17px;
     color: #E5DDAB;
     justify-content: space-evenly;
-`
+`;
 
 const Icon = styled.img`
     width: 19px;
@@ -92,12 +88,12 @@ const Fear = styled.div`
     display: flex;
     flex: 1;
     gap: 8px;
-`
+`;
 
 const FearIcons: React.FC<{ count: number }> = ({ count }) => {
-    const totalIcons = 5; // 총 아이콘 수
-    const fullIconsCount = count; // _full 아이콘 수
-    const emptyIconsCount = totalIcons - count; // _empty 아이콘 수
+    const totalIcons = 5;
+    const fullIconsCount = count;
+    const emptyIconsCount = totalIcons - count;
 
     return (
         <>
@@ -115,20 +111,20 @@ const Sensitivity = styled.div`
     display: flex;
     flex: 1;
     gap: 8px;
-`
+`;
 
 const SensitivityIcons: React.FC<{ count: number }> = ({ count }) => {
-    const totalIcons = 5; // 총 아이콘 수
-    const fullIconsCount = count; // _full 아이콘 수
-    const emptyIconsCount = totalIcons - count; // _empty 아이콘 수
+    const totalIcons = 5;
+    const fullIconsCount = count;
+    const emptyIconsCount = totalIcons - count;
 
     return (
         <>
             {Array.from({ length: fullIconsCount }, (_, index) => (
-                <Icon key={`fear-full-${index}`} src="/sensitivity_full.svg" alt="violence full" />
+                <Icon key={`sensitivity-full-${index}`} src="/sensitivity_full.svg" alt="sensitivity full" />
             ))}
             {Array.from({ length: emptyIconsCount }, (_, index) => (
-                <Icon key={`fear-empty-${index}`} src="/sensitivity_empty.svg" alt="violence empty" />
+                <Icon key={`sensitivity-empty-${index}`} src="/sensitivity_empty.svg" alt="sensitivity empty" />
             ))}
         </>
     );
@@ -138,12 +134,12 @@ const Violence = styled.div`
     display: flex;
     flex: 1;
     gap: 8px;
-`
+`;
 
 const ViolenceIcons: React.FC<{ count: number }> = ({ count }) => {
-    const totalIcons = 5; // 총 아이콘 수
-    const fullIconsCount = count; // _full 아이콘 수
-    const emptyIconsCount = totalIcons - count; // _empty 아이콘 수
+    const totalIcons = 5;
+    const fullIconsCount = count;
+    const emptyIconsCount = totalIcons - count;
 
     return (
         <>
@@ -157,15 +153,13 @@ const ViolenceIcons: React.FC<{ count: number }> = ({ count }) => {
     );
 };
 
-
 const Contents = styled.div`
     font-family: Inter;
     font-size: 16px;
     text-align: left;
     color: #D0D0D0;
     margin: 30px 0;
-
-`
+`;
 
 const Button = styled.div`
     display: flex;
@@ -173,7 +167,7 @@ const Button = styled.div`
     width: 100%;
     margin: 30px 0;
     justify-content: space-evenly;
-`
+`;
 
 const DeleteButton = styled.button`
     background: none;
@@ -186,7 +180,6 @@ const DeleteButton = styled.button`
 `;
 
 const LoadingContainer = styled.div`
-    /* 로딩 메시지 스타일 추가 */
     position: fixed;
     top: 50%;
     left: 50%;
@@ -224,14 +217,12 @@ export default function MyReviewModal({ reviewId, onClose }: ReviewModalProps) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        
         const fetchReview = async () => {
             try {
-                // const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
-                const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage/review/${reviewId}/`,{
+                const accessToken = localStorage.getItem("access_token");
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage/review/${reviewId}/`, {
                     headers: {
-                        Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 });
                 setReviews(response.data.data);
@@ -244,12 +235,11 @@ export default function MyReviewModal({ reviewId, onClose }: ReviewModalProps) {
 
         fetchReview();
 
-        // 배경 스크롤 금지
         document.body.style.overflow = 'hidden';
         return () => {
-        document.body.style.overflow = 'auto';
+            document.body.style.overflow = 'auto';
         };
-    }, [reviewId]); // revieId 변경마다 호출
+    }, [reviewId]);
 
     if (loading) {
         return (
@@ -258,7 +248,7 @@ export default function MyReviewModal({ reviewId, onClose }: ReviewModalProps) {
                     <LoadingContainer>Loading...</LoadingContainer>
                 </Modal>
             </Overlay>
-        ); // 로딩 중일 때 로딩 메시지 표시
+        );
     }
 
     const onModify = async () => {
@@ -272,61 +262,58 @@ export default function MyReviewModal({ reviewId, onClose }: ReviewModalProps) {
         const confirmDelete = window.confirm(`${reviews.musical_name || 'Musical One'} 리뷰를 삭제하시겠습니까?`);
         if (confirmDelete) {
             try {
-                //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
-                const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
+                const accessToken = localStorage.getItem("access_token");
                 await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/myPage/review/${reviewId}`, {
                     headers: {
-                        Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 });
-                alert(`${reviews.musical_name || 'Musical One'} 리뷰 삭제가 완료되었습니다`)
+                alert(`${reviews.musical_name || 'Musical One'} 리뷰 삭제가 완료되었습니다`);
                 onClose();
                 window.location.reload();
             } catch (error) {
                 console.error('삭제 실패:', error);
-                alert('리뷰 삭제에 실패했습니다.'); // 삭제 실패 메시지
+                alert('리뷰 삭제에 실패했습니다.');
             }
         }
     };
 
     return (
         <Overlay onClick={onClose}>
-            <Modal onClick={(e) => e.stopPropagation()}> {/* 클릭 이벤트 중지로 모달 닫히지 않도록 설정 */}
-            
-            <ModalContent>
-            {reviews && reviews.review_id === reviewId && ( // review가 정의되고 review_id가 reviewId와 일치하는 경우에만 렌더링
-                <div key={reviews.review_id || '66a0e7348da2278779d22aba'}>
-                    <PosterImg src={reviews.poster_image || Poster} alt={reviews.musical_name || 'Musical One'} />
-                    <Review>
-                        <Title>{reviews.musical_name || 'Musical One'}</Title>
-                        <Stars>
-                            <Fear>
-                                공포
-                                <FearIcons count={reviews.fear || 2} />
-                            </Fear>
-                            <Sensitivity>
-                                선정성
-                                <SensitivityIcons count={reviews.sensitivity || 3} />
-                            </Sensitivity>
-                            <Violence>
-                                폭력성
-                                <ViolenceIcons count={reviews.violence || 4} />
-                            </Violence>
-                        </Stars>
-                        <Contents>{reviews.content || '초기 리뷰 내용입니다.'}</Contents>
-                    </Review>
-                </div>
-            )}
-                
-                <Button>
-                    <DeleteButton onClick={onModify}> 
-                        <img src="/Modify_btn.svg" />
-                    </DeleteButton>
-                    <DeleteButton onClick={onDelete}> 
-                        <img src="/Delete_btn.svg" />
-                    </DeleteButton>
-                </Button>
-            </ModalContent>
+            <Modal onClick={(e) => e.stopPropagation()}>
+                <ModalContent>
+                    {reviews && reviews.review_id === reviewId && (
+                        <div key={reviews.review_id || '66a0e7348da2278779d22aba'}>
+                            <PosterImg src={reviews.poster_image || Poster} alt={reviews.musical_name || 'Musical One'} />
+                            <Review>
+                                <Title>{reviews.musical_name || 'Musical One'}</Title>
+                                <Stars>
+                                    <Fear>
+                                        공포
+                                        <FearIcons count={reviews.fear || 2} />
+                                    </Fear>
+                                    <Sensitivity>
+                                        선정성
+                                        <SensitivityIcons count={reviews.sensitivity || 2} />
+                                    </Sensitivity>
+                                    <Violence>
+                                        폭력성
+                                        <ViolenceIcons count={reviews.violence || 2} />
+                                    </Violence>
+                                </Stars>
+                                <Contents>{reviews.content || '초기 리뷰 내용입니다.'}</Contents>
+                            </Review>
+                        </div>
+                    )}
+                    <Button>
+                        <DeleteButton onClick={onModify}>
+                            <img src="/Modify_btn.svg" />
+                        </DeleteButton>
+                        <DeleteButton onClick={onDelete}>
+                            <img src="/Delete_btn.svg" />
+                        </DeleteButton>
+                    </Button>
+                </ModalContent>
             </Modal>
         </Overlay>
     );

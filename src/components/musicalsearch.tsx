@@ -78,12 +78,19 @@ const MusicalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
+  const handleFilteredMusicals = (musical_id: string) => {
+    console.log(` ${musical_id} `); //이 부분만 뮤지컬티켓이나 writereview에 prop함수로 바꾸면 됨!
+  };
+
   return (
     <ModalContainer>
       <ModalContent ref={modalRef}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <MusicalSearchComponent setFilteredMusicals={setFilteredMusicals} />
-        <MusicalInfo musicals={filteredMusicals} />
+        <MusicalInfo
+          musicals={filteredMusicals}
+          filteredMusicals={handleFilteredMusicals}
+        />
       </ModalContent>
     </ModalContainer>
   );
