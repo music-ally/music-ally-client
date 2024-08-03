@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import DetailModal from '../detail-modal';
 
 // 글로벌 스타일 정의
 const GlobalStyle = createGlobalStyle`
@@ -84,6 +85,8 @@ interface Props {
 const UserBookmarkCaro: React.FC<Props> = ({ musicals }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayImages, setDisplayImages] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedReviewId, setSelectedReviewId] = useState<string>('');
 
   useEffect(() => {
     const newImages = [...musicals.map(musical => musical.poster_image)];
@@ -116,6 +119,15 @@ const UserBookmarkCaro: React.FC<Props> = ({ musicals }) => {
     });
   };
 
+  const handleImageClick = (musicalId: string) => {
+    setSelectedReviewId(musicalId);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   // const onBookmarkClick = () => {
   //   // 해당 뮤지컬 아이디를 가진 뮤지컬 상세 모달창 open
   // }
@@ -131,7 +143,7 @@ const UserBookmarkCaro: React.FC<Props> = ({ musicals }) => {
             )}
             <ImageRow>
               {displayImages.slice(currentIndex, currentIndex + 4).map((image, index) => (
-                <Image key={index} src={image} />
+                <Image key={index} src={image} onClick={() => handleImageClick(musicals[currentIndex + index].musical_id)}/>
               ))}
             </ImageRow>
             {displayImages.length > 4 && (
@@ -139,6 +151,7 @@ const UserBookmarkCaro: React.FC<Props> = ({ musicals }) => {
             )}
           </Row>
         </ContentWrapper>
+        {isModalOpen && <DetailModal musical_ID={selectedReviewId} onClose={handleCloseModal} />}
       </Container>
     </>
   );

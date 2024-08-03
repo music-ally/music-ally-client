@@ -78,7 +78,6 @@ const MyReviewCaro: React.FC<Props> = ({ reviews }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayImages, setDisplayImages] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string>('');
   const [selectedReviewId, setSelectedReviewId] = useState<string>('');
 
 
@@ -141,9 +140,7 @@ const handleImageClick = (reviewId: string) => {
             )}
           </Row>
         </ContentWrapper>
-        {/* 백엔드 연결하는 리뷰모달 MyReviewModal 만들기 */}
         {isModalOpen && <MyReviewModal reviewId={selectedReviewId} onClose={handleCloseModal} />}
-        {/* {isModalOpen && <ReviewModalTest reviewId={selectedReviewId} onClose={handleCloseModal} />} */}
       </Container>
     </>
   );
