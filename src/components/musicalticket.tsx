@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';  // Import axios or any other HTTP client
 
 interface MusicalData {
   musical_id: string;
@@ -10,7 +11,7 @@ interface MusicalData {
 }
 
 interface TicketProps {
-  tickets: MusicalData[];
+  musical_id: string;  // Modified to accept a single ID
   buyerName: string;
   showTime: string;
 }
@@ -130,49 +131,47 @@ const Time = styled.p`
   margin: 0;
 `;
 
-const MusicalTicket: React.FC<TicketProps> = ({ tickets, buyerName, showTime }) => {
+const MusicalTicket: React.FC<TicketProps> = ({ musical_id, buyerName, showTime }) => {
+  const [ticketData, setTicketData] = useState<MusicalData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMusicalData = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/musical/${musical_id}`);  // Adjust API endpoint as necessary
+        setTicketData(response.data);
+      } catch (err) {
+        setError('Failed to fetch ticket data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMusicalData();
+  }, [musical_id]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
-    <>
-      {tickets.length > 0 ? (
-        tickets.map((ticket) => (
-          <Ticket key={ticket.musical_id}>
-            <Poster src={ticket.poster_image || defaultPoster} alt="Poster" />
-            <DetailsContainer>
-              <Details backgroundImage={ticket.poster_image} />
-              <DarkOverlay />
-              <GradientOverlay />
-              <TextOverlay>
-                <Title>{ticket.musical_name || defaultMusicalName}</Title>
-                <Info>장 소 : {ticket.theater_name || defaultPlace}</Info>
-                <Info>일 시 : {ticket.watch_at ? new Date(ticket.watch_at).toLocaleDateString() : defaultDate}</Info>
-              </TextOverlay>
-              <BuyerInfo>
-                <BuyerName>예매자명 : {buyerName || defaultName}</BuyerName>
-                <Time>{showTime || new Date().toLocaleString()}</Time>
-              </BuyerInfo>
-            </DetailsContainer>
-          </Ticket>
-        ))
-      ) : (
-        <Ticket>
-          <Poster src={defaultPoster} alt="Default Poster" />
-          <DetailsContainer>
-            <Details />
-            <DarkOverlay />
-            <GradientOverlay />
-            <TextOverlay>
-              <Title>{defaultMusicalName}</Title>
-              <Info>{defaultPlace}</Info>
-              <Info>{defaultDate}</Info>
-            </TextOverlay>
-            <BuyerInfo>
-              <BuyerName>{defaultName}</BuyerName>
-              <Time>{new Date().toLocaleString()}</Time>
-            </BuyerInfo>
-          </DetailsContainer>
-        </Ticket>
-      )}
-    </>
+    <Ticket>
+      <Poster src={ticketData?.poster_image || defaultPoster} alt="Poster" />
+      <DetailsContainer>
+        <Details backgroundImage={ticketData?.poster_image} />
+        <DarkOverlay />
+        <GradientOverlay />
+        <TextOverlay>
+          <Title>{ticketData?.musical_name || defaultMusicalName}</Title>
+          <Info>장 소 : {ticketData?.theater_name || defaultPlace}</Info>
+          <Info>일 시 : {ticketData?.watch_at ? new Date(ticketData.watch_at).toLocaleDateString() : defaultDate}</Info>
+        </TextOverlay>
+        <BuyerInfo>
+          <BuyerName>예매자명 : {buyerName || defaultName}</BuyerName>
+          <Time>{showTime || new Date().toLocaleString()}</Time>
+        </BuyerInfo>
+      </DetailsContainer>
+    </Ticket>
   );
 };
 

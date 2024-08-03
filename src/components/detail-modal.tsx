@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import NaverMap from "../api/naver-map";
-import ReviewComponent from "./review";
+import ReviewComponent from "./detailmodal-review";
 import token from "./token";
 
 interface MusicalDetails {
@@ -224,7 +224,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
               <Section>
                 <SectionTitle>공연 일정</SectionTitle>
                 <p>
-                  {musicalDetails.start_at}-{musicalDetails.end_at}
+                  {musicalDetails.start_at} - {musicalDetails.end_at}
                 </p>
               </Section>
               <Section>

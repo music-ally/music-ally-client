@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import axios from 'axios'; 
-import NotifiLike from './notifi_like';
-import NotificationFollow from './notifi_follow'; 
-import ToggleButton from './notifi-toggle'; 
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import token from "./token";
+import NotifiLike from "./notifi_like";
+import NotificationFollow from "./notifi_follow";
+import ToggleButton from "./notifi-toggle";
 
 const NotificationContainer = styled.div`
   width: 400px;
@@ -19,9 +19,9 @@ const Header = styled.div`
 `;
 
 const NotifiTitle = styled.h2`
-  color: #2C2C2C;
+  color: #2c2c2c;
   text-align: center;
-  font-family: Inter;
+  font-family: Inter, sans-serif;
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
@@ -30,26 +30,23 @@ const NotifiTitle = styled.h2`
   text-shadow: none;
 `;
 
-interface NotificationProps {
-  type: 'like' | 'follow';
-  data: any; 
-}
-
-const Notification: React.FC<NotificationProps> = ({ type, data }) => {
+const Notification: React.FC = () => {
   const [isEnabled, setIsEnabled] = useState<boolean>(true);
   const [notifications, setNotifications] = useState<any[]>([]);
 
   const toggleNotifications = () => {
-    setIsEnabled(prev => !prev);
+    setIsEnabled((prev) => !prev);
   };
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('${process.env.VITE_BACKEND_URL}/notification');
-        setNotifications(response.data);
+        const response = await token.get("/notification/");
+        if (response.data.success) {
+          setNotifications(response.data.data.notifications);
+        }
       } catch (error) {
-        console.error('알림 데이터를 가져오는 중 오류 발생:', error);
+        console.error("알림 데이터를 가져오는 중 오류 발생:", error);
       }
     };
 
@@ -60,12 +57,45 @@ const Notification: React.FC<NotificationProps> = ({ type, data }) => {
     <NotificationContainer>
       <Header>
         <NotifiTitle>NOTIFICATION</NotifiTitle>
-        <ToggleButton isEnabled={isEnabled} toggleNotifications={toggleNotifications} />
+        <ToggleButton
+          isEnabled={isEnabled}
+          toggleNotifications={toggleNotifications}
+        />
       </Header>
       {isEnabled && (
         <>
-          {type === 'like' && <NotifiLike {...data} />}
-          {type === 'follow' && <NotificationFollow {...data} />}
+          {notifications.map((notification) => {
+            if (notification.type === "리뷰") {
+              const reviewLikeImages = notification.review_like_image || [];
+              return (
+                <NotifiLike
+                  key={notification.notification_id}
+                  posterImage={notification.poster_image}
+                  likes={[
+                    {
+                      nickname: notification.review_like_nickname,
+                      profileImage: reviewLikeImages[0] || "",
+                      musical_name: notification.musical_name,
+                    },
+                  ]}
+                  create_at={notification.create_at}
+                />
+              );
+            } else if (notification.type === "팔로우") {
+              return (
+                <NotificationFollow
+                  key={notification.notification_id}
+                  follower_nickname={notification.follower_nickname}
+                  follower_id={notification.follower_id}
+                  follower_image={notification.follower_image}
+                  is_followed={notification.is_followed}
+                  create_at={notification.create_at}
+                />
+              );
+            } else {
+              return null;
+            }
+          })}
         </>
       )}
     </NotificationContainer>
