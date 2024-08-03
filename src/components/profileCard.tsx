@@ -3,6 +3,8 @@ import React from "react";
 import styled from "styled-components";
 import Cookies from 'js-cookie'
 import { Navigate, useNavigate } from "react-router-dom";
+import profileimg from "/profileimg.png"
+
 
 const Card = styled.div`
     //height: 90px;
@@ -119,7 +121,7 @@ export default function ProfileCard(
     }
     return (
         <Card onClick={onCardClick}>
-            <ProfileImg src={profile_image}  />
+            <ProfileImg src={profile_image || profileimg}  />
                 <Info>
                     <Nickname>{nickname}</Nickname>
                     <Email>{email}</Email>
