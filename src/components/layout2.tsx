@@ -30,8 +30,8 @@ const Search = styled.div`
   gap: 9.926px;
   flex-shrink: 0;
   border-radius: 6.617px;
-  border: 0.827px solid #e0e0e0;
-  background: rgba(255, 255, 255, 0.9);
+  // border: 0.827px solid #e0e0e0;
+  background-color: transperant;
 `;
 
 const Nav = styled.nav`
