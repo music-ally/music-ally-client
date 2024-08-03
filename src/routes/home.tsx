@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Cookies from 'js-cookie';
 import { styled } from "styled-components";
 import Banner from "../components/banner";
-import Carousel from '../components/main-carousel';
+// import Carousel from '../components/main-carousel';
 
 
 const Wrapper = styled.div`
@@ -103,19 +103,19 @@ return (
       <LeftAlignedContainer>
         <BestReviewTitle>Musical Ranking</BestReviewTitle>
       </LeftAlignedContainer>
-      <Carousel/>
+      {/* <Carousel/> */}
       <LeftAlignedContainer>
         <BasicReviewTitle>본격 N회차! 회전문을 돌아보자</BasicReviewTitle>
       </LeftAlignedContainer>
-      <Carousel/>
+      {/* <Carousel/> */}
       <LeftAlignedContainer>
         <BasicReviewTitle>현생팔아뮤덕살기 님 주변에서 열리는 뮤지컬</BasicReviewTitle>
       </LeftAlignedContainer>
-      <Carousel/>
+      {/* <Carousel/> */}
       <LeftAlignedContainer>
         <BasicReviewTitle>믿고 보는 배우 ㅇㅇㅇ의 출연작</BasicReviewTitle>
       </LeftAlignedContainer>
-      <Carousel/>
+      {/* <Carousel/> */}
         </AppContainer>
     </Wrapper>
     );

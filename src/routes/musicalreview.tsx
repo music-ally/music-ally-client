@@ -1,12 +1,28 @@
+// src/components/App.tsx
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import BasicReview from "../components/basicreview";
 import BestReview from "../components/bestreview";
-import Pagination from "../components/pagination";
 import { useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie';
 
-// 전체 페이지 컨테이너 스타일
+// Review 타입 정의
+interface Review {
+  review_id: string;
+  reviewer_profile_image: string | null;
+  reviewer_nickname: string;
+  reviewer_email: string;
+  create_at: string;
+  like_num: number;
+  is_like: boolean;
+  fear: number;
+  sensitivity: number;
+  violence: number;
+  content: string;
+}
+
+// 스타일 정의
 const AppContainer = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
@@ -18,7 +34,6 @@ const AppContainer = styled.div`
   align-items: center;
 `;
 
-// 왼쪽 정렬을 위한 스타일
 const LeftAlignedContainer = styled.div`
   width: 100%;
   display: flex;
@@ -27,7 +42,6 @@ const LeftAlignedContainer = styled.div`
   margin-bottom: 20px;
 `;
 
-// BestReview 제목 스타일
 const BestReviewTitle = styled.h2`
   font-size: 75px;
   font-family: "Bebas", sans-serif;
@@ -42,7 +56,6 @@ const BestReviewTitle = styled.h2`
   font-weight: 300;
 `;
 
-// BasicReview 제목 스타일
 const BasicReviewTitle = styled.h2`
   font-size: 75px;
   font-family: "Bebas", sans-serif;
@@ -57,15 +70,13 @@ const BasicReviewTitle = styled.h2`
   font-weight: 300;
 `;
 
-// WriteIcon 이미지 스타일
 const WriteIcon = styled.img`
   width: 50px;
   height: 50px;
   margin-left: auto;
-  margin-right: 0px;
+  cursor: pointer;
 `;
 
-// BasicReview와 Pagination 사이의 수직 간격 스타일
 const VerticalSpacing = styled.div`
   margin-top: 45px;
   margin-bottom: 55px;
@@ -77,64 +88,180 @@ const HorizontalLine = styled.hr`
   margin: 75px 0;
 `;
 
+// 캐로셀 버튼 스타일
+const Button = styled.img`
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-170%);
+  z-index: 1;
+`;
+
+const LeftButton = styled(Button)`
+  left: 2px; /* 왼쪽 위치 조정 */
+`;
+
+const RightButton = styled(Button)`
+  right: 2px; /* 오른쪽 위치 조정 */
+`;
+
+// 캐로셀 컨테이너 스타일
+const CarouselContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1200px; /* 최대 너비 설정 */
+  height: 400px; /* 캐로셀 높이 설정 */
+`;
+
+// 캐로셀 내용 스타일
+const CarouselContent = styled.div`
+  display: flex;
+  transition: transform 0.3s ease;
+  width: 100%;
+  height: 100%;
+`;
+
+// 캐로셀 아이템 스타일
+const CarouselItem = styled.div`
+  flex: 0 0 100%; /* 한 아이템이 전체 너비를 차지하도록 설정 */
+  max-width: 100%; /* 아이템의 최대 너비를 100%로 설정 */
+  height: 100%; /* 아이템의 높이를 100%로 설정 */
+  box-sizing: border-box;
+`;
+
+// 페이지 네비게이션 스타일
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const PageNumber = styled.span<{ active: boolean }>`
+  padding: 10px;
+  margin: 0 5px;
+  cursor: pointer;
+  font-size: 20px;
+  color: ${({ active }) => (active ? "#E8E1B1" : "#A7A7A7")};
+  background: transparent; /* 배경색 투명 */
+  border-radius: 5px;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #E8E1B1;
+  }
+`;
+
 const App: React.FC = () => {
-  const [bestReviews, setBestReviews] = useState<any[]>([]);
-  const [allReviews, setAllReviews] = useState<any[]>([]);
-  const [totalPages, setTotalPages] = useState<number>(1); // 전체 페이지 수 상태 추가
-  const [currentPage, setCurrentPage] = useState<number>(1); // 현재 페이지 상태 추가
+  const [bestReviews, setBestReviews] = useState<Review[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const reviewsPerPage = 3;
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 데이터를 가져오는 API 호출
-    axios
-      .get("/api/review") // 여기에 실제 API URL을 입력!!
-      .then((response) => {
-        const { best_review, all_review, total_pages } = response.data.data;
-        setBestReviews(best_review);
-        setAllReviews(all_review);
-        setTotalPages(total_pages); // 전체 페이지 수 설정
-      })
-      .catch((error) => console.error("Error fetching reviews:", error));
+    const fetchReviews = async () => {
+      try {
+        // 쿠키에서 토큰 가져오기
+        const accessToken = Cookies.get("access_token");
+
+        if (!accessToken) {
+          console.error("No access token found");
+          return;
+        }
+
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/review`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+          },
+        });
+
+        console.log(response.data); // 응답 데이터 확인
+
+        const { best_review, all_review } = response.data.data;
+
+        // 데이터 검증
+        if (Array.isArray(best_review) && Array.isArray(all_review)) {
+          setBestReviews(best_review);
+        } else {
+          console.error("Unexpected data structure:", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+
+    fetchReviews();
   }, []);
 
-  const handleWriteReviewClick = () => {
-    navigate("/write-review");
+  const handleLeftButtonClick = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? bestReviews.length - 1 : prevIndex - 1
+    );
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    // 페이지가 변경될 때 데이터를 새로 가져오는 경우 추가
-    axios
-      .get(`/api/review?page=${page}`) // 페이지에 맞는 데이터 요청
-      .then((response) => {
-        const { all_review } = response.data.data;
-        setAllReviews(all_review);
-      })
-      .catch((error) => console.error("Error fetching page data:", error));
+  const handleRightButtonClick = () => {
+    setCurrentIndex((prevIndex) =>
+      (prevIndex + 1) % bestReviews.length
+    );
   };
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const paginatedReviews = bestReviews.slice(
+    currentPage * reviewsPerPage,
+    (currentPage + 1) * reviewsPerPage
+  );
+
+  const totalPages = Math.ceil(bestReviews.length / reviewsPerPage);
 
   return (
     <AppContainer>
       <LeftAlignedContainer>
         <BestReviewTitle>Best Review</BestReviewTitle>
       </LeftAlignedContainer>
-      <BestReview reviews={bestReviews} />
+      <CarouselContainer>
+        <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
+        <CarouselContent style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+          {bestReviews.map((review) => (
+            <CarouselItem key={review.review_id}>
+              <BestReview review={review} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
+      </CarouselContainer>
       <HorizontalLine />
       <LeftAlignedContainer>
         <BasicReviewTitle>ALL Review</BasicReviewTitle>
         <WriteIcon
           src="/write.png"
           alt="Write Icon"
-          onClick={handleWriteReviewClick}
+          onClick={() => navigate("/write-review")}
         />
       </LeftAlignedContainer>
-      {allReviews.map((review, index) => (
+      {paginatedReviews.map((review) => (
         <VerticalSpacing key={review.review_id}>
-          <BasicReview review={review} />{" "}
-          {/* BasicReview 컴포넌트는 리뷰 하나를 prop으로 받는다고 가정 */}
+          <BasicReview review={review} />
         </VerticalSpacing>
       ))}
-      <Pagination totalPages={totalPages} onPageChange={handlePageChange} />
+      <PaginationContainer>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <PageNumber
+            key={index}
+            active={index === currentPage}
+            onClick={() => handlePageChange(index)}
+          >
+            {index + 1}
+          </PageNumber>
+        ))}
+      </PaginationContainer>
     </AppContainer>
   );
 };

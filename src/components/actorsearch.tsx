@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import SearchContainerActor, { Actor } from './searchcontainer-act';
-import ActorInfo from './actorInfo';
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import ActorSearchComponent from "./searchcontainer-act";
+import ActorInfo from "./actorInfo-review";
+
+export interface Actor {
+  actor_id: string;
+  profile_image: string;
+  actor_name: string;
+  agency: string;
+  birthday: string;
+}
 
 const ModalContainer = styled.div`
   position: fixed;
@@ -20,8 +28,7 @@ const ModalContent = styled.div`
   background: #282828;
   padding: 20px;
   border-radius: 8px;
-  width: 80%;
-  max-width: 800px;
+  width: 1250px;
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
@@ -39,21 +46,42 @@ const CloseButton = styled.button`
 `;
 
 interface Props {
-  actors?: Actor[];
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ActorSearchModal: React.FC<Props> = ({ actors = [], isOpen, onClose }) => {
+const ActorSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [filteredActors, setFilteredActors] = useState<Actor[]>([]);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
     <ModalContainer>
-      <ModalContent>
+      <ModalContent ref={modalRef}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
-        <SearchContainerActor actors={actors} setFilteredActors={setFilteredActors} />
+        <ActorSearchComponent setFilteredActors={setFilteredActors} />
         <ActorInfo actors={filteredActors} />
       </ModalContent>
     </ModalContainer>

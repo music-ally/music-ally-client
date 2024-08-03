@@ -18,6 +18,7 @@ import DetailSearchMus from './routes/detailsearch-musical';
 import SeeReview from './routes/seereview';
 import { AuthProvider } from './components/AuthContext'; 
 import ProtectedRoute from './ProtectedRoute';
+import ActorMain from './routes/actormain'
 
 const GlobalStyles = createGlobalStyle`
   * {
@@ -43,6 +44,8 @@ const router = createBrowserRouter([
     children: [
       { path: 'home', element: <Home /> },
       { path: 'actor/musical', element: <ActorPage /> },
+      { path: 'actor/:actorId', element: <ActorMain /> },
+
       { path: 'review', element: <Review /> },
       { path: 'write-review', element: <WriteReview /> },
       { path: 'search', element: <Search /> },

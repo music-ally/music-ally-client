@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { FiSearch } from 'react-icons/fi';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { FiSearch } from "react-icons/fi";
+import styled from "styled-components";
+import token from "./token";
 
 export interface Musical {
   musical_id: string;
@@ -30,6 +31,7 @@ const SearchBox = styled.div`
   align-items: center;
   border-radius: 6px;
   padding: 5px 10px;
+  background-color: #ffffff;
 `;
 
 const SearchInput = styled.input`
@@ -48,7 +50,7 @@ const ResultsList = styled.ul`
   left: 0;
   width: 100%;
   background: white;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #e0e0e0;
   border-radius: 0 0 6px 6px;
   max-height: 200px;
   overflow-y: auto;
@@ -57,6 +59,7 @@ const ResultsList = styled.ul`
   margin: 0;
   color: black;
   list-style: none;
+  z-index: 1000;
 `;
 
 const ResultItem = styled.li`
@@ -70,79 +73,85 @@ const ResultItem = styled.li`
 const SearchComponent: React.FC = () => {
   const [musicals, setMusicals] = useState<Musical[]>([]);
   const [actors, setActors] = useState<Actor[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showResults, setShowResults] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
-    fetch('${import.meta.env.VITE_BACKEND_URL}/musical')
-      .then(response => response.json())
-      .then(data => setMusicals(data))
-      .catch(error => console.error('뮤지컬정보error:', error));
+    if (searchTerm) {
+      console.log("Search term:", searchTerm);
 
-    fetch('${import.meta.env.VITE_BACKEND_URL}/actor')
-      .then(response => response.json())
-      .then(data => setActors(data))
-      .catch(error => console.error('배우정보error:', error));
-  }, []);
+      token
+        .get(`/search/musical?keyword=${encodeURIComponent(searchTerm)}`)
+        .then((response) => {
+          setMusicals(response.data.data.musicals || []);
+          setShowResults(true);
+        })
+        .catch((error) => console.error("뮤지컬 정보 에러:", error));
+
+      token
+        .get(`/search/actor?keyword=${encodeURIComponent(searchTerm)}`)
+        .then((response) => {
+          setActors(response.data.data.actors || []);
+          setShowResults(true);
+        })
+        .catch((error) => console.error("배우 정보 에러:", error));
+    } else {
+      setMusicals([]);
+      setActors([]);
+      setShowResults(false);
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
-    setSearchTerm('');
-  }, [location]);
-  
-  const filteredMusicals = searchTerm
-    ? musicals.filter(musical =>
-        musical.musical_name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
+    console.log("Musicals state updated:", musicals);
+  }, [musicals]);
 
-  const filteredActors = searchTerm
-    ? actors.filter(actor =>
-        actor.actor_name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
+  useEffect(() => {
+    console.log("Actors state updated:", actors);
+  }, [actors]);
 
   const handleSearch = () => {
-    navigate('/search', { state: { musicals: filteredMusicals, actors: filteredActors } });
+    const musical_ids = musicals.map((musical) => musical.musical_id);
+    const actor_ids = actors.map((actor) => actor.actor_id);
+    setShowResults(false);
+    navigate("/search", {
+      state: { musical_id: musical_ids, actor_id: actor_ids, musicals, actors },
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
-  };
-
-  const handleMusicalItemClick = (id: string) => {
-    console.log(`musical ID: ${id}`);
-    handleSearch();
-  };
-
-  const handleActorItemClick = (id: string) => {
-    console.log(`actor ID: ${id}`);
-    handleSearch();
   };
 
   return (
     <Container>
       <SearchBox>
-        <FiSearch size={20} color="#251611" onClick={handleSearch} style={{ cursor: 'pointer' }} />
+        <FiSearch
+          size={20}
+          color="#251611"
+          onClick={handleSearch}
+          style={{ cursor: "pointer" }}
+        />
         <SearchInput
           type="text"
           placeholder="뮤지컬이 궁금해!"
           value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
           onKeyDown={handleKeyDown}
         />
       </SearchBox>
-      {searchTerm && (
+      {showResults && (
         <ResultsList>
-          {filteredMusicals.map(musical => (
-            <ResultItem key={musical.musical_id} onClick={() => handleMusicalItemClick(musical.musical_id)}>
+          {musicals.map((musical) => (
+            <ResultItem key={musical.musical_id} onClick={handleSearch}>
               {musical.musical_name}
             </ResultItem>
           ))}
-          {filteredActors.map(actor => (
-            <ResultItem key={actor.actor_id} onClick={() => handleActorItemClick(actor.actor_id)}>
+          {actors.map((actor) => (
+            <ResultItem key={actor.actor_id} onClick={handleSearch}>
               {actor.actor_name}
             </ResultItem>
           ))}

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // useNavigate 훅 추가
 
 // 스타일 정의
 const Container = styled.div`
@@ -13,33 +14,10 @@ const Container = styled.div`
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
-`;
-
-const ContentWrapper = styled.div<{ translate: number; width: number }>`
-  display: flex;
-  flex-direction: row;
-  transition: transform 0.3s ease-in-out;
-  transform: translateX(${props => props.translate}px);
-  width: ${props => props.width}px;
-`;
-
-const Slide = styled.div<{ minWidth: number }>`
-  min-width: ${props => props.minWidth}px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-`;
-
-const ImageWrapper = styled.div`
-  border-radius: 4.4px;
-  background: url('/musicalposter-1.jpeg') 50% 50% / 172.5px 244px no-repeat;
-  margin-right: 18.5px;
-  width: 172.5px;
-  height: 244px;
+  cursor: pointer; /* 클릭 가능하게 만들기 위해 추가 */
 `;
 
 const Content = styled.div`
-  margin-top: 1px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -216,25 +194,14 @@ const CommentText = styled.span<{ isExpanded: boolean }>`
   -webkit-box-orient: vertical;
 `;
 
-const CarouselButton = styled.img`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  z-index: 1;
+const ImageWrapper = styled.div<{ imageUrl: string }>`
+  border-radius: 4.4px;
+  background: url(${props => props.imageUrl}) 50% 50% / cover no-repeat;
+  margin-right: 18.5px;
+  width: 172.5px;
+  height: 244px;
 `;
 
-const LeftButton = styled(CarouselButton)`
-  left: 0px;
-`;
-
-const RightButton = styled(CarouselButton)`
-  right: 0px;
-`;
-
-// Review 타입 정의
 interface Review {
   review_id: string;
   reviewer_profile_image?: string;
@@ -247,164 +214,134 @@ interface Review {
   sensitivity: number;
   violence: number;
   content: string;
-}
-
-interface ReviewState {
-  liked: boolean;
-  likeCount: number;
-  isExpanded: boolean;
+  poster_image?: string; // 포스터 이미지 추가
 }
 
 interface BestReviewProps {
-  reviews: Review[];
+  review?: Review; // review를 옵셔널로 설정
 }
 
-const BestReview: React.FC<BestReviewProps> = ({ reviews }) => {
-  const [carouselIndex, setCarouselIndex] = React.useState(0);
-  const [likeStates, setLikeStates] = React.useState<ReviewState[]>(
-    reviews.map(review => ({
-      liked: review.is_like,
-      likeCount: review.like_num,
-      isExpanded: false,
-    }))
-  );
+const BestReview: React.FC<BestReviewProps> = ({ review = {} as Review }) => {
+  const [liked, setLiked] = React.useState(review.is_like || false);
+  const [likeCount, setLikeCount] = React.useState(review.like_num || 0);
+  const [isExpanded, setIsExpanded] = React.useState(false);
+  const navigate = useNavigate(); // useNavigate 훅 추가
 
-  const addLike = async (reviewId: string, index: number) => {
+  const addLike = async (reviewId: string) => {
     try {
-      const response = await axios.post(`/api/review/${reviewId}/like`);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
       if (response.status !== 200) {
         throw new Error('Failed to add like');
       }
-      setLikeStates(prevState => {
-        const newState = [...prevState];
-        newState[index] = { ...newState[index], liked: true, likeCount: newState[index].likeCount + 1 };
-        return newState;
-      });
     } catch (error) {
       console.error('Error adding like:', error);
     }
   };
 
-  const removeLike = async (reviewId: string, index: number) => {
+  const removeLike = async (reviewId: string) => {
     try {
-      const response = await axios.delete(`/api/review/${reviewId}/like`);
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
       if (response.status !== 200) {
         throw new Error('Failed to remove like');
       }
-      setLikeStates(prevState => {
-        const newState = [...prevState];
-        newState[index] = { ...newState[index], liked: false, likeCount: newState[index].likeCount - 1 };
-        return newState;
-      });
     } catch (error) {
       console.error('Error removing like:', error);
     }
   };
 
-  const handleLikeClick = (reviewId: string, index: number) => {
-    if (likeStates[index].liked) {
-      removeLike(reviewId, index);
-    } else {
-      addLike(reviewId, index);
+  const handleLikeClick = async () => {
+    try {
+      if (liked) {
+        await removeLike(review.review_id);
+        setLikeCount(prev => prev - 1);
+      } else {
+        await addLike(review.review_id);
+        setLikeCount(prev => prev + 1);
+      }
+      setLiked(prev => !prev);
+    } catch (error) {
+      console.error('Error handling like:', error);
     }
   };
 
-  const toggleExpandText = (index: number) => {
-    setLikeStates(prevState => {
-      const newState = [...prevState];
-      newState[index] = { ...newState[index], isExpanded: !newState[index].isExpanded };
-      return newState;
-    });
+  const toggleExpandText = () => {
+    setIsExpanded(prev => !prev);
   };
 
-  const handleLeftButtonClick = () => {
-    setCarouselIndex(prevIndex => (prevIndex > 0 ? prevIndex - 1 : reviews.length - 1));
-  };
-
-  const handleRightButtonClick = () => {
-    setCarouselIndex(prevIndex => (prevIndex < reviews.length - 1 ? prevIndex + 1 : 0));
+  // 리뷰 상세 페이지로 이동하는 핸들러
+  const handleReviewClick = () => {
+    navigate(`/see-review/${review.review_id}`);
   };
 
   return (
-    <Container>
-      <LeftButton src="/carouselbutton-left.png" alt="왼쪽 버튼" onClick={handleLeftButtonClick} />
-      <ContentWrapper translate={-carouselIndex * 1131} width={1131 * reviews.length}>
-        {reviews.map((review, index) => (
-          <Slide key={review.review_id} minWidth={1131}>
-            <ImageWrapper />
-            <Content>
-              <DateText>{new Date(review.create_at).toLocaleDateString()} {new Date(review.create_at).toLocaleTimeString()}</DateText>
-              <Header>
-                <UserInfo>
-                  <Avatar image={review.reviewer_profile_image} />
-                  <UserNameHandleWrapper>
-                    <UserNameText>{review.reviewer_nickname}</UserNameText>
-                    <UserHandle>{review.reviewer_email}</UserHandle>
-                  </UserNameHandleWrapper>
-                </UserInfo>
-                <LikeInfo>
-                  <LikeIcon
-                    src={likeStates[index].liked ? '/heart1.png' : '/heart.png'}
-                    liked={likeStates[index].liked}
-                    onClick={() => handleLikeClick(review.review_id, index)}
-                  />
-                  <LikeCount>{likeStates[index].likeCount}</LikeCount>
-                </LikeInfo>
-              </Header>
-              <TagsWrapper>
-                <TagGroup>
-                  <TagLabel>공포</TagLabel>
-                  <IconWrapper>
-                    {Array.from({ length: 5 }, (_, iconIndex) => (
-                      <Icon
-                        key={iconIndex}
-                        src={iconIndex < review.fear ? '/fear1.png' : '/fear2.png'}
-                        onClick={() => {}}
-                        onDoubleClick={() => {}}
-                      />
-                    ))}
-                  </IconWrapper>
-                </TagGroup>
-                <TagGroup>
-                  <TagLabel>선정성</TagLabel>
-                  <IconWrapper>
-                    {Array.from({ length: 5 }, (_, iconIndex) => (
-                      <Icon
-                        key={iconIndex}
-                        src={iconIndex < review.sensitivity ? '/sensationalism1.png' : '/sensationalism2.png'}
-                        onClick={() => {}}
-                        onDoubleClick={() => {}}
-                      />
-                    ))}
-                  </IconWrapper>
-                </TagGroup>
-                <TagGroup>
-                  <TagLabel>폭력성</TagLabel>
-                  <IconWrapper>
-                    {Array.from({ length: 5 }, (_, iconIndex) => (
-                      <Icon
-                        key={iconIndex}
-                        src={iconIndex < review.violence ? '/violence1.png' : '/violence2.png'}
-                        onClick={() => {}}
-                        onDoubleClick={() => {}}
-                      />
-                    ))}
-                  </IconWrapper>
-                </TagGroup>
-              </TagsWrapper>
-              <CommentSection>
-                <CommentText
-                  isExpanded={likeStates[index].isExpanded}
-                  onClick={() => toggleExpandText(index)}
-                >
-                  {review.content}
-                </CommentText>
-              </CommentSection>
-            </Content>
-          </Slide>
-        ))}
-      </ContentWrapper>
-      <RightButton src="/carouselbutton-right.png" alt="오른쪽 버튼" onClick={handleRightButtonClick} />
+    <Container onClick={handleReviewClick}> {/* 클릭 시 상세 페이지로 이동 */}
+      <ImageWrapper imageUrl={review.poster_image || '/default-poster.png'} /> {/* 포스터 이미지 적용 */}
+      <Content>
+        <DateText>{new Date(review.create_at).toLocaleDateString()} {new Date(review.create_at).toLocaleTimeString()}</DateText>
+        <Header>
+          <UserInfo>
+            <Avatar image={review.reviewer_profile_image} />
+            <UserNameHandleWrapper>
+              <UserNameText>{review.reviewer_nickname}</UserNameText>
+              <UserHandle>{review.reviewer_email}</UserHandle>
+            </UserNameHandleWrapper>
+          </UserInfo>
+          <LikeInfo>
+            <LikeIcon
+              src={liked ? '/heart1.png' : '/heart.png'}
+              liked={liked}
+              onClick={e => { e.stopPropagation(); handleLikeClick(); }} // 클릭 이벤트 버블링 방지
+            />
+            <LikeCount>{likeCount}</LikeCount>
+          </LikeInfo>
+        </Header>
+        <TagsWrapper>
+          <TagGroup>
+            <TagLabel>공포</TagLabel>
+            <IconWrapper>
+              {Array.from({ length: 5 }, (_, index) => (
+                <Icon
+                  key={index}
+                  src={index < review.fear ? '/fear1.png' : '/fear2.png'}
+                  onClick={() => {}}
+                  onDoubleClick={() => {}}
+                />
+              ))}
+            </IconWrapper>
+          </TagGroup>
+          <TagGroup>
+            <TagLabel>선정성</TagLabel>
+            <IconWrapper>
+              {Array.from({ length: 5 }, (_, index) => (
+                <Icon
+                  key={index}
+                  src={index < review.sensitivity ? '/sensationalism1.png' : '/sensationalism2.png'}
+                  onClick={() => {}}
+                  onDoubleClick={() => {}}
+                />
+              ))}
+            </IconWrapper>
+          </TagGroup>
+          <TagGroup>
+            <TagLabel>폭력성</TagLabel>
+            <IconWrapper>
+              {Array.from({ length: 5 }, (_, index) => (
+                <Icon
+                  key={index}
+                  src={index < review.violence ? '/violence1.png' : '/violence2.png'}
+                  onClick={() => {}}
+                  onDoubleClick={() => {}}
+                />
+              ))}
+            </IconWrapper>
+          </TagGroup>
+        </TagsWrapper>
+        <CommentSection>
+          <CommentText isExpanded={isExpanded} onClick={toggleExpandText}>
+            {review.content}
+          </CommentText>
+        </CommentSection>
+      </Content>
     </Container>
   );
 };

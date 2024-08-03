@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import styled from 'styled-components';
-import { useNavigate, useParams } from 'react-router-dom';
-import WriteReview from '../components/wirtereview';
-import MusicalTicket from '../components/musicalticket';
-import Actorcircle from '../components/actorcircle';
-import MusicalSearchModal from '../components/musicalsearch';
-import ActorSearchModal from '../components/actorsearch';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import styled from "styled-components";
+import { useNavigate, useParams } from "react-router-dom";
+import Cookies from "js-cookie";
+import WriteReview from "../components/writereview";
+import MusicalTicket from "../components/musicalticket";
+import Actorcircle from "../components/actorcircle";
+import MusicalSearchModal from "../components/musicalsearch";
+import ActorSearchModal from "../components/actorsearch";
 
 const AppContainer = styled.div`
-  background-image: url('/reviewpage.png');
+  background-image: url("/reviewpage.png");
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh;
@@ -30,9 +31,9 @@ const LeftAlignedContainer = styled.div`
 
 const MainTitle = styled.h1`
   font-size: 75px;
-  font-family: 'Bebas', sans-serif;
-  color: #BB9D59;
-  background: linear-gradient(to right, #E8E1B1, #BB9D59);
+  font-family: "Bebas", sans-serif;
+  color: #bb9d59;
+  background: linear-gradient(to right, #e8e1b1, #bb9d59);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -45,9 +46,9 @@ const MainTitle = styled.h1`
 
 const Title = styled.h2`
   font-size: 52px;
-  font-family: 'Bebas', sans-serif;
-  color: #BB9D59;
-  background: linear-gradient(to right, #E8E1B1, #BB9D59);
+  font-family: "Bebas", sans-serif;
+  color: #bb9d59;
+  background: linear-gradient(to right, #e8e1b1, #bb9d59);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -108,6 +109,12 @@ interface Actor {
   actor_name: string;
 }
 
+interface WriteReviewPageProps {
+  userName: string;
+  userHandle: string;
+  userProfileImage: string;
+}
+
 const WriteReviewPage: React.FC = () => {
   const navigate = useNavigate();
   const { review_id } = useParams<{ review_id: string }>();
@@ -115,58 +122,100 @@ const WriteReviewPage: React.FC = () => {
   const [actors, setActors] = useState<Actor[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
-  const [isActorSearchModalOpen, setIsActorSearchModalOpen] = useState<boolean>(false);
+  const [isActorSearchModalOpen, setIsActorSearchModalOpen] =
+    useState<boolean>(false);
   const [selectedTicket, setSelectedTicket] = useState<Musical | null>(null);
   const [selectedActor, setSelectedActor] = useState<Actor | null>(null);
   const [fear, setFear] = useState<number>(0);
   const [sensitivity, setSensitivity] = useState<number>(0);
   const [violence, setViolence] = useState<number>(0);
-  const [comment, setComment] = useState<string>('');
-  const [reviewerName, setReviewerName] = useState<string>('');
-  const [reviewerHandle, setReviewerHandle] = useState<string>('');
+  const [comment, setComment] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
+  const [userHandle, setUserHandle] = useState<string>("");
+  const [userProfileImage, setUserProfileImage] = useState<string>("");
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProfileData = async () => {
       try {
-        const ticketResponse = await axios.get('/api/musical');
-        const ticketsData: Musical[] = ticketResponse.data?.data || [];
-        setTickets(ticketsData);
+        const accessToken = Cookies.get("access_token");
 
-        const actorResponse = await axios.get('/api/actor');
-        const actorsData: Actor[] = actorResponse.data?.data?.actors || [];
-        setActors(actorsData);
+        if (!accessToken) {
+          console.error("No access token found");
+          return;
+        }
+
+        const profileResponse = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/review/writer/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        const profileData = profileResponse.data.data;
+        setUserProfileImage(profileData.reviewer_profile_image);
+        setUserName(profileData.reviewer_nickname);
+        setUserHandle(profileData.reviewer_email);
 
         setIsLoading(false);
       } catch (error) {
-        console.error('데이터 가져오기 오류:', error);
+        console.error("데이터 가져오기 오류:", error);
         setIsLoading(false);
       }
     };
 
-    fetchData();
+    fetchProfileData();
   }, []);
 
   useEffect(() => {
     if (review_id) {
       const fetchReviewData = async () => {
         try {
-          const response = await axios.get(`/api/review/${review_id}`);
+          const accessToken = Cookies.get("access_token");
+
+          if (!accessToken) {
+            console.error("No access token found");
+            return;
+          }
+
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/review/${review_id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
           const reviewData = response.data;
 
           setFear(reviewData.fear);
           setSensitivity(reviewData.sensitivity);
           setViolence(reviewData.violence);
           setComment(reviewData.content);
-          setReviewerName(reviewData.reviewer_nickname);
-          setReviewerHandle(reviewData.reviewer_email);
 
-          const ticketResponse = await axios.get(`/api/musical/${reviewData.musical_id}`);
+          const ticketResponse = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/musical/${
+              reviewData.musical_id
+            }`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
           setSelectedTicket(ticketResponse.data);
 
-          const actorResponse = await axios.get(`/api/actor/${reviewData.actor_id}`);
+          const actorResponse = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/actor/${reviewData.actor_id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
           setSelectedActor(actorResponse.data);
         } catch (error) {
-          console.error('리뷰 데이터 가져오기 오류:', error);
+          console.error("리뷰 데이터 가져오기 오류:", error);
         }
       };
 
@@ -174,7 +223,12 @@ const WriteReviewPage: React.FC = () => {
     }
   }, [review_id]);
 
-  const handleReviewChange = (fear: number, sensitivity: number, violence: number, content: string) => {
+  const handleReviewChange = (
+    fear: number,
+    sensitivity: number,
+    violence: number,
+    content: string
+  ) => {
     setFear(fear);
     setSensitivity(sensitivity);
     setViolence(violence);
@@ -183,24 +237,39 @@ const WriteReviewPage: React.FC = () => {
 
   const handleSaveReview = async () => {
     try {
-      const response = await axios.post('/api/review', {
-        fear,
-        sensitivity,
-        violence,
-        content: comment,
-        musical_id: selectedTicket?.musical_id,
-        actor_id: selectedActor?.actor_id,
-      });
+      const accessToken = Cookies.get("access_token");
+
+      if (!accessToken) {
+        console.error("No access token found");
+        return;
+      }
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/review/`,
+        {
+          fear,
+          sensitivity,
+          violence,
+          content: comment,
+          musical_id: selectedTicket?.musical_id,
+          actor_id: selectedActor?.actor_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
       if (response.data.success) {
-        alert('리뷰 저장 성공');
-        navigate('/seereview');
+        alert("리뷰 저장 성공");
+        navigate("/seereview");
       } else {
-        alert('리뷰 저장 실패');
+        alert("리뷰 저장 실패");
       }
     } catch (error) {
-      console.error('리뷰 저장 중 오류 발생:', error);
-      alert('리뷰 저장 실패');
+      console.error("리뷰 저장 중 오류 발생:", error);
+      alert("리뷰 저장 실패");
     }
   };
 
@@ -209,20 +278,20 @@ const WriteReviewPage: React.FC = () => {
       <LeftAlignedContainer>
         <MainTitle>
           MUSICAL
-          <SearchIcon1 
-            src="/search.png" 
-            alt="Search Icon" 
+          <SearchIcon1
+            src="/search.png"
+            alt="Search Icon"
             onClick={() => setIsSearchModalOpen(true)}
           />
         </MainTitle>
       </LeftAlignedContainer>
-      <MusicalTicket tickets={selectedTicket ? [selectedTicket] : tickets} />
+      <MusicalTicket tickets={selectedTicket ? [selectedTicket] : []} />
       <LeftAlignedContainer>
         <Title>
           ACTOR
-          <SearchIcon2 
-            src="/search.png" 
-            alt="Search Icon" 
+          <SearchIcon2
+            src="/search.png"
+            alt="Search Icon"
             onClick={() => setIsActorSearchModalOpen(true)}
           />
         </Title>
@@ -231,40 +300,39 @@ const WriteReviewPage: React.FC = () => {
         {isLoading ? (
           <p>Loading...</p>
         ) : (
-          actors.map((actor) => (
+          selectedActor && (
             <Actorcircle
-              key={actor.actor_id}
-              profile_image={actor.profile_image}
-              actor_name={actor.actor_name}
+              key={selectedActor.actor_id}
+              profile_image={selectedActor.profile_image}
+              actor_name={selectedActor.actor_name}
             />
-          ))
+          )
         )}
       </LeftAlignedContainer>
       <LeftAlignedContainer>
-        <Title>
-          REVIEW
-        </Title>
+        <Title>REVIEW</Title>
       </LeftAlignedContainer>
       <VerticalSpacing>
-        <WriteReview 
-          onChange={handleReviewChange} 
-          userName={reviewerName} 
-          userHandle={reviewerHandle} 
+        <WriteReview
+          onChange={handleReviewChange}
+          userName={userName}
+          userHandle={userHandle}
+          userProfileImage={userProfileImage}
         />
       </VerticalSpacing>
       <RightAlignedContainer>
         <RightAlignedContent>
-          <ConfirmIcon 
-            src="/confirm.png" 
-            alt="Confirm Icon" 
+          <ConfirmIcon
+            src="/confirm.png"
+            alt="Confirm Icon"
             onClick={handleSaveReview}
           />
         </RightAlignedContent>
       </RightAlignedContainer>
 
       {isSearchModalOpen && (
-        <MusicalSearchModal 
-          musicals={tickets} // musicals prop 추가
+        <MusicalSearchModal
+          musicals={tickets}
           isOpen={isSearchModalOpen}
           onSelect={(ticket) => {
             setSelectedTicket(ticket);
@@ -275,8 +343,8 @@ const WriteReviewPage: React.FC = () => {
       )}
 
       {isActorSearchModalOpen && (
-        <ActorSearchModal 
-          actors={actors} // 추가: actors prop 전달
+        <ActorSearchModal
+          actors={actors}
           isOpen={isActorSearchModalOpen}
           onSelect={(actor) => {
             setSelectedActor(actor);

@@ -5,9 +5,9 @@ interface WriteReviewProps {
   onChange: (fear: number, sensitivity: number, violence: number, content: string) => void;
   userName: string;
   userHandle: string;
+  userProfileImage: string; // Add this to handle user profile image
 }
 
-// 스타일 정의
 const Container = styled.div`
   border-radius: 15.6px;
   background: linear-gradient(to right, #5c1e19, #3c0d0a);
@@ -44,10 +44,10 @@ const UserInfo = styled.div`
   box-sizing: border-box;
 `;
 
-const Avatar = styled.div`
+const Avatar = styled.div<{ backgroundImage: string }>`
   box-shadow: 0px 2px 4.1px rgba(0, 0, 0, 0.25);
   border-radius: 27.3px;
-  background: url('/musicalposter-1.jpeg') 50% 50% / cover no-repeat;
+  background: url(${props => props.backgroundImage}) 50% 50% / cover no-repeat;
   margin-right: 8.7px;
   width: 54.6px;
   height: 54.6px;
@@ -83,9 +83,9 @@ const UserHandle = styled.div`
 const Warning = styled.div`
   font-family: 'Bebas', sans-serif;
   font-size: 32px;
-  color: #D3C187; /* 글자색 설정 */
-  margin-top: 0px; /* 태그와의 간격 설정 */
-  margin-bottom: 10px; /* 태그와의 간격 설정 */
+  color: #D3C187;
+  margin-top: 0px;
+  margin-bottom: 10px;
 `;
 
 const TagsWrapper = styled.div`
@@ -155,7 +155,8 @@ const CommentTextArea = styled.textarea`
   max-height: 400px;
   box-sizing: border-box;
 `;
-const WriteReview: React.FC<WriteReviewProps> = ({ onChange, userName, userHandle }) => {
+
+const WriteReview: React.FC<WriteReviewProps> = ({ onChange, userName, userHandle, userProfileImage }) => {
   const [ratings, setRatings] = useState<boolean[][]>([
     [false, false, false, false, false],
     [false, false, false, false, false],
@@ -198,7 +199,6 @@ const WriteReview: React.FC<WriteReviewProps> = ({ onChange, userName, userHandl
     }
   }, [comment]);
 
-  // 리뷰 데이터가 변경될 때마다 onChange 호출
   useEffect(() => {
     const fear = ratings[0].filter(Boolean).length;
     const sensitivity = ratings[1].filter(Boolean).length;
@@ -211,7 +211,7 @@ const WriteReview: React.FC<WriteReviewProps> = ({ onChange, userName, userHandl
       <ContentWrapper>
         <Header>
           <UserInfo>
-            <Avatar/>
+            <Avatar backgroundImage={userProfileImage} />
             <UserNameHandleWrapper>
               <UserNameText>{userName}</UserNameText>
               <UserHandle>@{userHandle}</UserHandle>
@@ -239,11 +239,7 @@ const WriteReview: React.FC<WriteReviewProps> = ({ onChange, userName, userHandl
               {ratings[1].map((value, index) => (
                 <Icon
                   key={index}
-                  src={
-                    value
-                      ? '/sensationalism1.png'
-                      : '/sensationalism2.png'
-                  }
+                  src={value ? '/sensationalism1.png' : '/sensationalism2.png'}
                   onClick={() => handleIconClick(1, index)}
                   onDoubleClick={() => handleIconReset(1, index)}
                 />

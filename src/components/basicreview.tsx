@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // 스타일 정의
 const Container = styled.div`
@@ -13,6 +14,7 @@ const Container = styled.div`
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
+  cursor: pointer; /* 클릭 가능하게 만들기 위해 추가 */
 `;
 
 const Content = styled.div`
@@ -212,6 +214,7 @@ interface Review {
   sensitivity: number;
   violence: number;
   content: string;
+  poster_image?: string; // 포스터 이미지 추가
 }
 
 interface BasicReviewProps {
@@ -222,10 +225,11 @@ const BasicReview: React.FC<BasicReviewProps> = ({ review }) => {
   const [liked, setLiked] = React.useState(review.is_like);
   const [likeCount, setLikeCount] = React.useState(review.like_num);
   const [isExpanded, setIsExpanded] = React.useState(false);
+  const navigate = useNavigate(); // useNavigate 훅 추가
 
   const addLike = async (reviewId: string) => {
     try {
-      const response = await axios.post(`/api/review/${reviewId}/like`);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
       if (response.status !== 200) {
         throw new Error('Failed to add like');
       }
@@ -236,7 +240,7 @@ const BasicReview: React.FC<BasicReviewProps> = ({ review }) => {
 
   const removeLike = async (reviewId: string) => {
     try {
-      const response = await axios.delete(`/api/review/${reviewId}/like`);
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}/like`);
       if (response.status !== 200) {
         throw new Error('Failed to remove like');
       }
@@ -260,9 +264,14 @@ const BasicReview: React.FC<BasicReviewProps> = ({ review }) => {
     setIsExpanded(prev => !prev);
   };
 
+  // 리뷰 상세 페이지로 이동하는 핸들러
+  const handleReviewClick = () => {
+    navigate(`/see-review/${review.review_id}`);
+  };
+
   return (
-    <Container>
-      <ImageWrapper imageUrl='/musicalposter-1.jpeg' /> {/* 예시 URL */}
+    <Container onClick={handleReviewClick}> {/* 클릭 시 상세 페이지로 이동 */}
+      <ImageWrapper imageUrl={review.poster_image || '/default-poster.png'} /> {/* 포스터 이미지 적용 */}
       <Content>
         <DateText>{new Date(review.create_at).toLocaleDateString()} {new Date(review.create_at).toLocaleTimeString()}</DateText>
         <Header>
@@ -277,7 +286,7 @@ const BasicReview: React.FC<BasicReviewProps> = ({ review }) => {
             <LikeIcon
               src={liked ? '/heart1.png' : '/heart.png'}
               liked={liked}
-              onClick={handleLikeClick}
+              onClick={e => { e.stopPropagation(); handleLikeClick(); }} // 클릭 이벤트 버블링 방지
             />
             <LikeCount>{likeCount}</LikeCount>
           </LikeInfo>

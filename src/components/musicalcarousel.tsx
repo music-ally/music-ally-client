@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// MusicalCarousel.tsx
+import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
 // 글로벌 스타일 정의
@@ -16,6 +17,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 72px;
 `;
 
 const ContentWrapper = styled.div`
@@ -35,13 +37,22 @@ const ImageRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 30px; /* 이미지 간격 조절 */
+  gap: 17px;
+  overflow: hidden;
+`;
+
+const ImageContainer = styled.div`
+  position: relative;
+  border-radius: 20.5px;
+  overflow: hidden;
+  width: 275.2px;
+  height: 389.3px;
 `;
 
 const Image = styled.img`
-  border-radius: 20.5px;
-  width: 275.2px;
-  height: 389.3px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
 const Button = styled.img`
@@ -51,7 +62,7 @@ const Button = styled.img`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 1;
+  z-index: 3;
 `;
 
 const LeftButton = styled(Button)`
@@ -62,62 +73,53 @@ const RightButton = styled(Button)`
   right: -25px;
 `;
 
-interface Props {}
+interface Work {
+  musical_id: string;
+  poster_image: string;
+}
 
-const Component: React.FC<Props> = () => {
+interface MusicalCarouselProps {
+  works: Work[];
+}
+
+const MusicalCarousel: React.FC<MusicalCarouselProps> = ({ works }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [displayImages, setDisplayImages] = useState<string[]>([]);
 
-  const images = [
-    "/musicalposter-1.jpeg",
-    "/musicalposter-2.jpeg",
-    "/musicalposter-3.jpeg",
-    "/musicalposter-4.jpeg",
-    "/musicalposter-5.jpeg",
-    "/musicalposter-6.jpeg",
-  ];
-
-  useEffect(() => {
-    const newImages = [...images];
-    const remainder = newImages.length % 4;
-    if (remainder !== 0) {
-      const emptySlots = 4 - remainder;
-      for (let i = 0; i < emptySlots; i++) {
-        newImages.push("/empty.png");
-      }
-    }
-    setDisplayImages(newImages);
-  }, [images]);
+  // works가 정의되어 있지 않을 경우를 대비하여 기본값 설정
+  const validWorks = works || [];
 
   const handleLeftButtonClick = () => {
-    setCurrentIndex((prevIndex) => {
-      const newIndex = prevIndex === 0 ? displayImages.length - 4 : prevIndex - 4;
-      return newIndex;
-    });
+    setCurrentIndex(prevIndex => (prevIndex === 0 ? Math.max(validWorks.length - 4, 0) : prevIndex - 4));
   };
 
   const handleRightButtonClick = () => {
-    setCurrentIndex((prevIndex) => {
-      const newIndex = prevIndex === displayImages.length - 4 ? 0 : prevIndex + 4;
-      return newIndex;
-    });
+    setCurrentIndex(prevIndex => (prevIndex + 4) % validWorks.length);
   };
+
+  // Display only valid images
+  const displayedImages = validWorks.slice(currentIndex, currentIndex + 4);
 
   return (
     <>
-      <GlobalStyle /> {/* 글로벌 스타일 적용 */}
+      <GlobalStyle />
       <Container>
         <ContentWrapper>
           <Row>
-            {displayImages.length > 4 && (
+            {validWorks.length > 4 && (
               <LeftButton src="/carouselbutton-left.png" alt="Left Button" onClick={handleLeftButtonClick} />
             )}
             <ImageRow>
-              {displayImages.slice(currentIndex, currentIndex + 4).map((image, index) => (
-                <Image key={index} src={image} />
+              {displayedImages.map((work, index) => (
+                <ImageContainer key={work.musical_id}>
+                  <Image 
+                    src={work.poster_image || '/empty.png'} 
+                    alt={`Poster ${index}`} 
+                    onError={(e) => (e.currentTarget.src = '/empty.png')} // Handle image load error
+                  />
+                </ImageContainer>
               ))}
             </ImageRow>
-            {displayImages.length > 4 && (
+            {validWorks.length > 4 && (
               <RightButton src="/carouselbutton-right.png" alt="Right Button" onClick={handleRightButtonClick} />
             )}
           </Row>
@@ -127,4 +129,4 @@ const Component: React.FC<Props> = () => {
   );
 };
 
-export default Component;
+export default MusicalCarousel;

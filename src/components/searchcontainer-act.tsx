@@ -1,19 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { FiSearch } from 'react-icons/fi';
-import styled from 'styled-components';
-
-export interface Actor {
-  actor_id: string;
-  imageUrl: string;
-  name: string;
-  agency: string;
-  birthday: string;
-}
-
-interface Props {
-  actors: Actor[];
-  setFilteredActors: (actors: Actor[]) => void;
-}
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import token from "./token";
+import { Actor } from "./actorsearch";
 
 const Container = styled.div`
   position: relative;
@@ -25,6 +13,7 @@ const SearchBox = styled.div`
   align-items: center;
   border-radius: 6px;
   padding: 5px 10px;
+  background-color: #ffffff;
 `;
 
 const SearchInput = styled.input`
@@ -43,7 +32,7 @@ const ResultsList = styled.ul`
   left: 0;
   width: 100%;
   background: white;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #e0e0e0;
   border-radius: 0 0 6px 6px;
   max-height: 200px;
   overflow-y: auto;
@@ -52,6 +41,7 @@ const ResultsList = styled.ul`
   margin: 0;
   color: black;
   list-style: none;
+  z-index: 1000;
 `;
 
 const ResultItem = styled.li`
@@ -62,34 +52,78 @@ const ResultItem = styled.li`
   }
 `;
 
-const SearchContainerActor: React.FC<Props> = ({ actors, setFilteredActors }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+interface Props {
+  setFilteredActors: (actors: Actor[]) => void;
+}
+
+const ActorSearchComponent: React.FC<Props> = ({ setFilteredActors }) => {
+  const [actors, setActors] = useState<Actor[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const fetchActors = () => {
+    token
+      .get(`/search/actor?keyword=${encodeURIComponent(searchTerm)}`)
+      .then((response) => {
+        setActors(response.data.data.actors || []);
+        setFilteredActors(response.data.data.actors || []);
+        setShowResults(true);
+      })
+      .catch((error) => console.error("배우 정보 에러:", error));
+  };
 
   useEffect(() => {
-    const filtered = searchTerm
-      ? actors.filter(actor =>
-          actor.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      : actors;
-    setFilteredActors(filtered);
-  }, [searchTerm, actors, setFilteredActors]);
+    if (searchTerm === "") {
+      setActors([]);
+      setFilteredActors([]);
+      setShowResults(false);
+    }
+  }, [searchTerm]);
+
+  useEffect(() => {
+    console.log("Actors state updated:", actors);
+  }, [actors]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      fetchActors();
+      setShowResults(false);
+    }
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(event.target as Node)
+    ) {
+      setShowResults(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <Container>
+    <Container ref={containerRef}>
       <SearchBox>
-        <FiSearch size={20} color="#251611" style={{ cursor: 'pointer' }} />
         <SearchInput
           type="text"
           placeholder="배우가 궁금해!"
           value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
       </SearchBox>
-      {searchTerm && (
+      {showResults && (
         <ResultsList>
-          {actors.map(actor => (
-            <ResultItem key={actor.actor_id}>
-              {actor.name}
+          {actors.map((actor) => (
+            <ResultItem key={actor.actor_id} onClick={fetchActors}>
+              {actor.actor_name}
             </ResultItem>
           ))}
         </ResultsList>
@@ -98,4 +132,4 @@ const SearchContainerActor: React.FC<Props> = ({ actors, setFilteredActors }) =>
   );
 };
 
-export default SearchContainerActor;
+export default ActorSearchComponent;

@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import styled from 'styled-components';
-import { useNavigate, useLocation } from 'react-router-dom';
-import MusicalInfo from '../components/musicalInfo';
-import ActorInfo from '../components/actorInfo';
+import React, { useEffect } from "react";
+import styled from "styled-components";
+import { useNavigate, useLocation } from "react-router-dom";
+import MusicalInfo from "../components/musicalInfo-search";
+import ActorInfo from "../components/actorInfo-search";
 
 const PageContainer = styled.div`
   width: 1280px;
@@ -11,9 +11,9 @@ const PageContainer = styled.div`
 `;
 
 const SectionTitle = styled.h2`
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 24px;
-  color: #FFFFFF;
+  color: #ffffff;
   margin: 20px 0;
 `;
 
@@ -22,7 +22,7 @@ const SectionWrapper = styled.div`
 `;
 
 const SeeMore = styled.div`
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 18px;
   color: #888888;
   text-align: right;
@@ -32,33 +32,48 @@ const SeeMore = styled.div`
 const SearchPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { musicals, actors } = location.state || { musicals: [], actors: [] };
+  const musical_id = location.state?.musical_id || [];
+  const actor_id = location.state?.actor_id || [];
+  const musicals = location.state?.musicals || [];
+  const actors = location.state?.actors || [];
+
+  useEffect(() => {
+    console.log("musical_id", musical_id);
+    console.log("actor_id", actor_id);
+  }, [musical_id, actor_id]);
 
   const handleSeeMoreMusicals = () => {
-    navigate('/search/musical', { state: { musicals } });
+    navigate("/search/musical", { state: { musicals } });
   };
 
   const handleSeeMoreActors = () => {
-    navigate('/search/actor', { state: { actors } });
+    navigate("/search/actor", { state: { actors } });
   };
-
-  useEffect(() => {
-    if (!musicals.length || !actors.length) {
-    }
-  }, [musicals, actors]);
 
   return (
     <PageContainer>
       <SectionWrapper>
         <SectionTitle>Musical ({musicals.length})</SectionTitle>
-        <MusicalInfo musicals={musicals.slice(0, 4)} />
-        <SeeMore onClick={handleSeeMoreMusicals}>More</SeeMore>
+        {musicals.length > 0 ? (
+          <>
+            <MusicalInfo musicals={musicals.slice(0, 4)} />
+            <SeeMore onClick={handleSeeMoreMusicals}>More</SeeMore>
+          </>
+        ) : (
+          <p>No musicals found</p>
+        )}
       </SectionWrapper>
 
       <SectionWrapper>
         <SectionTitle>Actor ({actors.length})</SectionTitle>
-        <ActorInfo actors={actors.slice(0, 4)} />
-        <SeeMore onClick={handleSeeMoreActors}>More</SeeMore>
+        {actors.length > 0 ? (
+          <>
+            <ActorInfo actors={actors.slice(0, 4)} />
+            <SeeMore onClick={handleSeeMoreActors}>More</SeeMore>
+          </>
+        ) : (
+          <p>No actors found</p>
+        )}
       </SectionWrapper>
     </PageContainer>
   );
