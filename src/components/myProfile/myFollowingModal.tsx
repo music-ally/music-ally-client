@@ -2,7 +2,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import ProfileCard from "../profileCard";
-import Cookies from 'js-cookie'
 
 const Overlay = styled.div`
   position: fixed;
@@ -24,8 +23,6 @@ const Modal = styled.div`
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    //justify-content: center;
-    //background-color: aliceblue;
     background: #212121;
     z-index: 1000;
 `
@@ -114,7 +111,7 @@ const LoadingContainer = styled.div`
 `;
 
 interface Following {
-    user_id: string; // 실제 타입에 맞게 수정
+    user_id: string;
     nickname: string;
     email: string;
     is_following: string; // '팔로잉' 또는 '팔로우'와 같은 문자열
@@ -132,7 +129,6 @@ export default function MyFollowingModal ({ onClose } : FollowingModalProps) {
         // api 호출
         const fetchFollowings = async () => {
             try {
-                //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
                 const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/myPage/following`, {
                     headers: {

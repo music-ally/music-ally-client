@@ -226,7 +226,6 @@ export default function EditProfile() {
     useEffect(() => {
         const fetchData = async() => {
             try {
-                //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
                 const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
 
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/mypage`, {
@@ -285,18 +284,12 @@ export default function EditProfile() {
 
     
     const imgRef = useRef<HTMLInputElement | null>(null);
-    // 프로필 사진 업로드 버튼
-    // 업로드 후 바로 미리보기. formdata 저장
     const onFileChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         const { name } = e.target as HTMLInputElement;
 
         if(e.target.files && e.target.files[0]) {
             const file: File = e.target.files[0];
-            // setFormData(prev => ({
-            //     ...prev,
-            //     [name]: file
-            // }));
 
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -306,10 +299,6 @@ export default function EditProfile() {
 
         } else {
             setImgFile(profileimg);
-            // setFormData(prev => ({
-            //     ...prev,
-            //     [name]: null
-            // }));
         }
 
         setChangedFields(prevFields => ({
@@ -356,7 +345,7 @@ export default function EditProfile() {
     };
 
     interface ChangedFields {
-        [key: string]: string | undefined; // 각 필드는 string 또는 undefined일 수 있음
+        [key: string]: string | undefined;
     }
 
     const onSubmit = async(e : React.FormEvent<HTMLFormElement>) => {
@@ -393,12 +382,11 @@ export default function EditProfile() {
                 if (key === 'profile_image') {
                     formData.append(key, changedFields[key]); // 이미지 파일 추가
                 } else {
-                    updateData[key] = changedFields[key]; // 동적으로 추가
+                    updateData[key] = changedFields[key];
                 }
             }
         }
 
-/* */
         try {
             const accessToken = localStorage.getItem("access_token");
             if (Object.keys(updateData).length > 0) {

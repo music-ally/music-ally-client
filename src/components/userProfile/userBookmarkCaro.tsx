@@ -63,16 +63,6 @@ const RightButton = styled(Button)`
   right: -25px;
 `;
 
-// Bookmark array 불러오기
-
-/*
-"bookmarks": {
-    "musicals": [
-        musical_id: ,
-        poster_image: ,
-    ]
-}
-*/
 interface Bookmark {
   musical_id: string;
   poster_image: string;
@@ -128,13 +118,9 @@ const UserBookmarkCaro: React.FC<Props> = ({ musicals }) => {
     setIsModalOpen(false);
   };
 
-  // const onBookmarkClick = () => {
-  //   // 해당 뮤지컬 아이디를 가진 뮤지컬 상세 모달창 open
-  // }
-
   return (
     <>
-      <GlobalStyle /> {/* 글로벌 스타일 적용 */}
+      <GlobalStyle />
       <Container>
         <ContentWrapper>
           <Row>

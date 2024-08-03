@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { LeftHalf, Name, RightHalf, RightWrapper, Row1, Switcher, Title, Wrapper } from "../components/auth-components";
+import { LeftHalf, Name, RightHalf, RightWrapper, Switcher, Title, Wrapper } from "../components/auth-components";
 import styled, { createGlobalStyle } from "styled-components";
 import isPropValid from '@emotion/is-prop-valid';
 import GenderSelect from "../components/gender-select";
@@ -229,24 +229,7 @@ export default function SignUp() {
         }
 
         try{
-            // 회원가입 정보 백엔드 전달
-            // 비밀번호 확인, required 필수는 프론트에서 처리
-            // 백에서는 email과 nickname이 unique한지 확인
-            /*
-            console.log({
-                email,
-                password, // 비밀번호 확인은 서버에서 다시 검증해야 합니다.
-                nickname,
-                gender,
-                birthday: `${year}-${month}-${day}`, // 생년월일을 하나의 문자열로 조합
-                homearea_name: address,
-            });
-
-            navigate("/login");
-            */
-
-            // 회원가입 정보 백엔드로 전달
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/join`, {
+            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/join`, {
                 email,
                 password,
                 nickname,
@@ -259,8 +242,6 @@ export default function SignUp() {
             alert(`${nickname}님 회원가입이 완료되었습니다!!`)
             navigate("/login");
 
-            // 백엔드에서 반환된 데이터를 콘솔에 출력 (개발 목적)
-            console.log(response.data);
 
             } catch (error) {
                 // 오류 발생 시 처리 로직
