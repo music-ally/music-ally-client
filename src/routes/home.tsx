@@ -3,6 +3,11 @@ import { useEffect } from "react";
 import Cookies from 'js-cookie';
 import { styled } from "styled-components";
 import Banner from "../components/banner";
+import TopRankCaro from "../components/mainCaro/topRankCaro";
+import OnGoingCaro from "../components/mainCaro/onGoingCaro";
+import NearCaro from "../components/mainCaro/nearCaro";
+import MostReviewCaro from "../components/mainCaro/mostReviewCaro";
+import MostBookmarkCaro from "../components/mainCaro/mostBookmarkCaro";
 // import Carousel from '../components/main-carousel';
 
 
@@ -91,7 +96,7 @@ export default function Home() {
 
     useEffect(() => {
         if (accessToken) {
-            Cookies.set('access_token', accessToken, {expires: 1});
+            localStorage.getItem("access_token");
         }
     }, [accessToken]);
     
@@ -103,20 +108,24 @@ return (
       <LeftAlignedContainer>
         <BestReviewTitle>Musical Ranking</BestReviewTitle>
       </LeftAlignedContainer>
-      {/* <Carousel/> */}
+      <TopRankCaro />
       <LeftAlignedContainer>
         <BasicReviewTitle>본격 N회차! 회전문을 돌아보자</BasicReviewTitle>
       </LeftAlignedContainer>
-      {/* <Carousel/> */}
+      <OnGoingCaro />
       <LeftAlignedContainer>
         <BasicReviewTitle>현생팔아뮤덕살기 님 주변에서 열리는 뮤지컬</BasicReviewTitle>
       </LeftAlignedContainer>
-      {/* <Carousel/> */}
+      <NearCaro />
       <LeftAlignedContainer>
-        <BasicReviewTitle>믿고 보는 배우 ㅇㅇㅇ의 출연작</BasicReviewTitle>
+        <BasicReviewTitle>리뷰 Best 뮤지컬</BasicReviewTitle>
       </LeftAlignedContainer>
-      {/* <Carousel/> */}
-        </AppContainer>
+      <MostReviewCaro />
+      <LeftAlignedContainer>
+        <BasicReviewTitle>북마크 Best 뮤지컬</BasicReviewTitle>
+      </LeftAlignedContainer>
+      <MostBookmarkCaro />
+    </AppContainer>
     </Wrapper>
     );
 };
