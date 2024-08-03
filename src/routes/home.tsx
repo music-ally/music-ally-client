@@ -1,15 +1,16 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import Cookies from 'js-cookie';
-import { styled } from "styled-components";
+import { createGlobalStyle, styled } from "styled-components";
 import Banner from "../components/banner";
 import TopRankCaro from "../components/mainCaro/topRankCaro";
 import OnGoingCaro from "../components/mainCaro/onGoingCaro";
 import NearCaro from "../components/mainCaro/nearCaro";
 import MostReviewCaro from "../components/mainCaro/mostReviewCaro";
 import MostBookmarkCaro from "../components/mainCaro/mostBookmarkCaro";
-// import Carousel from '../components/main-carousel';
 
+const GlobalStyle = createGlobalStyle`
+  font-family: 'Inter';
+`;
 
 const Wrapper = styled.div`
     display: flex;
@@ -102,6 +103,8 @@ export default function Home() {
     
 
 return (
+  <>
+    <GlobalStyle />
     <Wrapper>
     <AppContainer>
          <Banner />
@@ -127,5 +130,6 @@ return (
       <MostBookmarkCaro />
     </AppContainer>
     </Wrapper>
+  </>
     );
 };

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import Poster from "/poster_basic.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
 
 const Overlay = styled.div`
     position: fixed;

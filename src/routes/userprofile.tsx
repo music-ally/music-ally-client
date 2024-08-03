@@ -2,13 +2,11 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { createGlobalStyle, styled } from "styled-components";
 import profileimg from "/profileimg.png"
-import Component from "../components/myProfile/myReviewCaro";
 import axios from "axios";
 import FollowerModal from "../components/userProfile/followerModal";
 import FollowingModal from "../components/userProfile/followingModal";
 import UserReviewCaro from "../components/userProfile/userReviewCaro";
 import UserBookmarkCaro from "../components/userProfile/userBookmarkCaro";
-import Cookies from 'js-cookie'
 
 const GlobalStyle = createGlobalStyle`
   font-family: 'Inter';
@@ -179,7 +177,6 @@ export default function UserProfile() {
 
     useEffect(() => {
         const fetchUser = async () => {
-            //const accessToken = Cookies.get("access_token"); // 쿠키에서 access_token 가져오기
             const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`, {
@@ -188,7 +185,6 @@ export default function UserProfile() {
                     },
                 });
                 setUser(response.data.data);
-                console.log(response.data.data);
             } catch (error) {
                 console.error('Fetching profile error : ', error);
             } finally {
@@ -217,7 +213,7 @@ export default function UserProfile() {
                     },
                 });
 
-            } else { // 나 자신인데 왜 본인이 아닌건가요
+            } else {
                 console.log('본인입니다')
             }
 
