@@ -128,7 +128,7 @@ const ActorDetail: React.FC = () => {
         );
 
         setActor(actorResponse.data.data);
-        console.log("Actor data:", actorResponse.data.data); // 데이터 확인
+        console.log("Actor data:", actorResponse.data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

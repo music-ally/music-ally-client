@@ -5,7 +5,6 @@ import axios from "axios";
 import BasicReview from "../components/basicreview";
 import BestReview from "../components/bestreview";
 import { useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
 
 // Review 타입 정의
 interface Review {
@@ -54,6 +53,8 @@ const BestReviewTitle = styled.h2`
   display: flex;
   align-items: center;
   font-weight: 300;
+    margin-bottom: 30px;
+
 `;
 
 const BasicReviewTitle = styled.h2`
@@ -68,6 +69,7 @@ const BasicReviewTitle = styled.h2`
   display: flex;
   align-items: center;
   font-weight: 300;
+  
 `;
 
 const WriteIcon = styled.img`
@@ -79,13 +81,13 @@ const WriteIcon = styled.img`
 
 const VerticalSpacing = styled.div`
   margin-top: 45px;
-  margin-bottom: 55px;
+  margin-bottom: 5px;
 `;
 
 const HorizontalLine = styled.hr`
   width: 1131px;
-  border-top: 1px solid #d1d1d1;
-  margin: 75px 0;
+  border-top: 1px solid #b0b0b0; /* Darker gray color for the line */
+  margin-bottom: 80px;
 `;
 
 // 캐로셀 버튼 스타일
@@ -95,7 +97,7 @@ const Button = styled.img`
   cursor: pointer;
   position: absolute;
   top: 50%;
-  transform: translateY(-170%);
+  transform: translateY(-50%);
   z-index: 1;
 `;
 
@@ -166,8 +168,8 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        // 쿠키에서 토큰 가져오기
-        const accessToken = Cookies.get("access_token");
+        // 로컬 스토리지에서 access token 가져오기
+        const accessToken = localStorage.getItem("access_token");
 
         if (!accessToken) {
           console.error("No access token found");

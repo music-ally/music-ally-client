@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import MusicalSearchComponent from "./searchcontainer-mus";
 import MusicalInfo from "./musicalInfo-review";
+import MusicalTicket from "./musicalticket";
 
 interface Musical {
   musical_id: string;
@@ -53,6 +54,9 @@ interface Props {
 
 const MusicalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [filteredMusicals, setFilteredMusicals] = useState<Musical[]>([]);
+  const [selectedMusicalId, setSelectedMusicalId] = useState<string | null>(
+    null
+  );
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -79,7 +83,7 @@ const MusicalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const handleFilteredMusicals = (musical_id: string) => {
-    console.log(` ${musical_id} `); //이 부분만 뮤지컬티켓이나 writereview에 prop함수로 바꾸면 됨!
+    setSelectedMusicalId(musical_id);
   };
 
   return (
@@ -91,6 +95,7 @@ const MusicalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
           musicals={filteredMusicals}
           filteredMusicals={handleFilteredMusicals}
         />
+        {selectedMusicalId && <MusicalTicket musical_id={selectedMusicalId} />}
       </ModalContent>
     </ModalContainer>
   );
