@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import BasicReview from "../components/basicreview";
 import MusicalCarousel from "../components/musicalcarousel";
 import Actorprofile from "../components/actorprofile";
-import ActorInfo from "../components/actorInfo-search"; 
 
 const AppContainer = styled.div`
   background-size: cover;
@@ -29,20 +28,23 @@ const LeftAlignedContainer = styled.div`
 
 const Title = styled.h2`
   font-size: 34px;
-  font-family: 'Inter', sans-serif;
-  color: #EBEBEB;
+  font-family: "Inter", sans-serif;
+  color: #ebebeb;
   display: flex;
   align-items: center;
 `;
 
-const VerticalSpacing = styled.div<{ topMargin?: number; bottomMargin?: number }>`
+const VerticalSpacing = styled.div<{
+  topMargin?: number;
+  bottomMargin?: number;
+}>`
   margin-top: ${({ topMargin }) => topMargin || 10}px;
   margin-bottom: ${({ bottomMargin }) => bottomMargin || 0}px;
 `;
 
 const HorizontalLine = styled.hr`
   width: 1131px;
-  border-top: 1px solid #D1D1D1;
+  border-top: 1px solid #d1d1d1;
   margin: 75px 0;
 `;
 
@@ -63,7 +65,7 @@ const PageNumber = styled.span<{ active: boolean }>`
   transition: color 0.3s;
 
   &:hover {
-    color: #E8E1B1;
+    color: #e8e1b1;
   }
 `;
 
@@ -100,7 +102,7 @@ interface Actor {
   reviews: Review[];
 }
 
-const App: React.FC = () => {
+const ActorDetail: React.FC = () => {
   const { actorId } = useParams<{ actorId: string }>();
   const [actor, setActor] = useState<Actor | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -109,23 +111,26 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const accessToken = Cookies.get('access_token');
+        const accessToken = Cookies.get("access_token");
 
         if (!accessToken) {
-          console.error('No access token found');
+          console.error("No access token found");
           return;
         }
 
-        const actorResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/actor/${actorId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const actorResponse = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/actor/${actorId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
         setActor(actorResponse.data.data);
-        console.log('Actor data:', actorResponse.data.data); // 데이터 확인
+        console.log("Actor data:", actorResponse.data.data); // 데이터 확인
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -139,7 +144,10 @@ const App: React.FC = () => {
   // 페이지네이션 로직
   const indexOfLastReview = currentPage * reviewsPerPage;
   const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
-  const currentReviews = actor.reviews.slice(indexOfFirstReview, indexOfLastReview);
+  const currentReviews = actor.reviews.slice(
+    indexOfFirstReview,
+    indexOfLastReview
+  );
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -163,13 +171,13 @@ const App: React.FC = () => {
       <VerticalSpacing topMargin={30}>
         {currentReviews.length > 0 ? (
           <>
-            {currentReviews.map(review => (
+            {currentReviews.map((review) => (
               <VerticalSpacing key={review.review_id}>
                 <BasicReview review={review} />
               </VerticalSpacing>
             ))}
             <PaginationContainer>
-              {[...Array(totalPages).keys()].map(page => (
+              {[...Array(totalPages).keys()].map((page) => (
                 <PageNumber
                   key={page + 1}
                   onClick={() => handlePageChange(page + 1)}
@@ -188,4 +196,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default ActorDetail;

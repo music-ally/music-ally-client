@@ -224,7 +224,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
               <Section>
                 <SectionTitle>공연 일정</SectionTitle>
                 <p>
-                  {musicalDetails.start_at}-{musicalDetails.end_at}
+                  {musicalDetails.start_at} - {musicalDetails.end_at}
                 </p>
               </Section>
               <Section>
