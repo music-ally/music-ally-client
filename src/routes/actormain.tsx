@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
-import BasicReview from '../components/basicreview';
-import MusicalCarousel from '../components/musicalcarousel';
-import Actorprofile from '../components/actorprofile';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import styled from "styled-components";
+import { useParams } from "react-router-dom";
+import BasicReview from "../components/basicreview";
+import MusicalCarousel from "../components/musicalcarousel";
+import Actorprofile from "../components/actorprofile";
+import ActorInfo from "../components/actorInfo-search"; 
 
 const AppContainer = styled.div`
   background-size: cover;
