@@ -1,10 +1,12 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 80px;
+  width: 200px;
+  height: 500px;
 `;
 
 const ImageContainer = styled.div`
@@ -12,13 +14,13 @@ const ImageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom : 80px;
+  margin-bottom: 80px;
 `;
 
 const Image = styled.img`
-  border-radius: 13.68px;
-  width: 250.9px;
-  height: 354.98px;
+  border-radius: 10px;
+  width: 240px;
+  height: 315px;
 `;
 
 const MusicalInfoContainer = styled.div`
@@ -29,23 +31,23 @@ const MusicalInfoContainer = styled.div`
 `;
 
 const MusicalName = styled.div`
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: black;
   font-size: 23.49px;
   line-height: 1.5;
-  color: #FAFAFA;
+  color: #fafafa;
 `;
 
 const ConcertHall = styled.div`
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 18.07px;
-  color: #ECECEC;
+  color: #ececec;
   margin: 14px 0 0 0;
   letter-spacing: 5%;
 `;
 
 const PerformanceDate = styled.div`
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 18.07px;
   color: #888888;
   letter-spacing: 5%;
@@ -74,10 +76,12 @@ const MusicalInfo: React.FC<Props> = ({ musicals = [] }) => {
             <MusicalInfoContainer>
               <MusicalName>{musical.musical_name}</MusicalName>
               <ConcertHall>{musical.theater_name}</ConcertHall>
-              <PerformanceDate>{musical.start_at}-{musical.end_at}</PerformanceDate>
+              <PerformanceDate>
+                {musical.start_at}-{musical.end_at}
+              </PerformanceDate>
             </MusicalInfoContainer>
           </ImageContainer>
-        )) 
+        ))
       ) : (
         <div>No musicals available</div>
       )}

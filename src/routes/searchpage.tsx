@@ -50,20 +50,13 @@ const SearchPage: React.FC = () => {
     navigate("/search/actor", { state: { actors } });
   };
 
-  const filteredMusicals = musicals.filter((musical) =>
-    musical_id.includes(musical.musical_id)
-  );
-  const filteredActors = actors.filter((actor) =>
-    actor_id.includes(actor.actor_id)
-  );
-
   return (
     <PageContainer>
       <SectionWrapper>
-        <SectionTitle>Musical ({filteredMusicals.length})</SectionTitle>
-        {filteredMusicals.length > 0 ? (
+        <SectionTitle>Musical ({musicals.length})</SectionTitle>
+        {musicals.length > 0 ? (
           <>
-            <MusicalInfo musicals={filteredMusicals.slice(0, 4)} />
+            <MusicalInfo musicals={musicals.slice(0, 4)} />
             <SeeMore onClick={handleSeeMoreMusicals}>More</SeeMore>
           </>
         ) : (
@@ -72,10 +65,10 @@ const SearchPage: React.FC = () => {
       </SectionWrapper>
 
       <SectionWrapper>
-        <SectionTitle>Actor ({filteredActors.length})</SectionTitle>
-        {filteredActors.length > 0 ? (
+        <SectionTitle>Actor ({actors.length})</SectionTitle>
+        {actors.length > 0 ? (
           <>
-            <ActorInfo actors={filteredActors.slice(0, 4)} />
+            <ActorInfo actors={actors.slice(0, 4)} />
             <SeeMore onClick={handleSeeMoreActors}>More</SeeMore>
           </>
         ) : (

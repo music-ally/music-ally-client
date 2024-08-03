@@ -74,6 +74,7 @@ const SearchComponent: React.FC = () => {
   const [musicals, setMusicals] = useState<Musical[]>([]);
   const [actors, setActors] = useState<Actor[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showResults, setShowResults] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -84,6 +85,7 @@ const SearchComponent: React.FC = () => {
         .get(`/search/musical?keyword=${encodeURIComponent(searchTerm)}`)
         .then((response) => {
           setMusicals(response.data.data.musicals || []);
+          setShowResults(true);
         })
         .catch((error) => console.error("뮤지컬 정보 에러:", error));
 
@@ -91,11 +93,13 @@ const SearchComponent: React.FC = () => {
         .get(`/search/actor?keyword=${encodeURIComponent(searchTerm)}`)
         .then((response) => {
           setActors(response.data.data.actors || []);
+          setShowResults(true);
         })
         .catch((error) => console.error("배우 정보 에러:", error));
     } else {
       setMusicals([]);
       setActors([]);
+      setShowResults(false);
     }
   }, [searchTerm]);
 
@@ -107,27 +111,18 @@ const SearchComponent: React.FC = () => {
     console.log("Actors state updated:", actors);
   }, [actors]);
 
-  const handleSearch = (musical_id?: string, actor_id?: string) => {
-    navigate("/search", { state: { musical_id, actor_id } });
+  const handleSearch = () => {
+    const musical_ids = musicals.map((musical) => musical.musical_id);
+    const actor_ids = actors.map((actor) => actor.actor_id);
+    setShowResults(false);
+    navigate("/search", {
+      state: { musical_id: musical_ids, actor_id: actor_ids, musicals, actors },
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const foundMusical = musicals.find((musical) =>
-        musical.musical_name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-
-      const foundActor = actors.find((actor) =>
-        actor.actor_name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-
-      if (foundMusical) {
-        handleSearch(foundMusical.musical_id, undefined);
-      } else if (foundActor) {
-        handleSearch(undefined, foundActor.actor_id);
-      } else {
-        handleSearch(undefined, undefined);
-      }
+      handleSearch();
     }
   };
 
@@ -137,11 +132,7 @@ const SearchComponent: React.FC = () => {
         <FiSearch
           size={20}
           color="#251611"
-          onClick={() =>
-            handleKeyDown({
-              key: "Enter",
-            } as React.KeyboardEvent<HTMLInputElement>)
-          }
+          onClick={handleSearch}
           style={{ cursor: "pointer" }}
         />
         <SearchInput
@@ -152,21 +143,15 @@ const SearchComponent: React.FC = () => {
           onKeyDown={handleKeyDown}
         />
       </SearchBox>
-      {searchTerm && (
+      {showResults && (
         <ResultsList>
           {musicals.map((musical) => (
-            <ResultItem
-              key={musical.musical_id}
-              onClick={() => handleSearch(musical.musical_id, undefined)}
-            >
+            <ResultItem key={musical.musical_id} onClick={handleSearch}>
               {musical.musical_name}
             </ResultItem>
           ))}
           {actors.map((actor) => (
-            <ResultItem
-              key={actor.actor_id}
-              onClick={() => handleSearch(undefined, actor.actor_id)}
-            >
+            <ResultItem key={actor.actor_id} onClick={handleSearch}>
               {actor.actor_name}
             </ResultItem>
           ))}
