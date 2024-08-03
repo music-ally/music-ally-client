@@ -108,6 +108,10 @@ const Actorprofile: React.FC<{ actor?: Actor }> = ({ actor }) => {
           <InfoLabel>신체조건</InfoLabel>
           <InfoValue>{defaultValue(actor.physical)}</InfoValue>
         </InfoItem>
+        <InfoItem>
+          <InfoLabel>출연작</InfoLabel>
+          <InfoValue>{actor.works_count ? `${actor.works_count}개` : '-'}</InfoValue>
+        </InfoItem>
       </InfoContainer>
     </ProfileContainer>
   );

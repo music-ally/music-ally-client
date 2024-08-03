@@ -8,11 +8,10 @@ import MusicalCarousel from '../components/musicalcarousel';
 import Actorprofile from '../components/actorprofile';
 
 const AppContainer = styled.div`
-  background-image: url('/actorpage.png');
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh;
-  padding: 162px 74px 100px;
+  padding: 0px 74px 100px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -31,14 +30,13 @@ const Title = styled.h2`
   font-size: 34px;
   font-family: 'Inter', sans-serif;
   color: #EBEBEB;
-  margin: 0 74px;
   display: flex;
   align-items: center;
 `;
 
 const VerticalSpacing = styled.div<{ topMargin?: number; bottomMargin?: number }>`
-  margin-top: ${({ topMargin }) => topMargin || 45}px;
-  margin-bottom: ${({ bottomMargin }) => bottomMargin || 55}px;
+  margin-top: ${({ topMargin }) => topMargin || 10}px;
+  margin-bottom: ${({ bottomMargin }) => bottomMargin || 0}px;
 `;
 
 const HorizontalLine = styled.hr`
@@ -124,6 +122,9 @@ const App: React.FC = () => {
         <MusicalCarousel works={actor.works} />
       </VerticalSpacing>
       <HorizontalLine />
+      <LeftAlignedContainer>
+        <Title>연관 리뷰</Title>
+      </LeftAlignedContainer>
       <VerticalSpacing topMargin={30}>
         {actor.reviews && actor.reviews.length > 0 ? (
           actor.reviews.map(review => (
