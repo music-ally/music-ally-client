@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import NaverMap from "../api/naver-map";
-import ReviewComponent from "./review";
+import ReviewComponent from "./detailmodal-review";
 import token from "./token";
 
 interface MusicalDetails {
