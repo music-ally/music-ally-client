@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import axiosInstance from "./token";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import axios from 'axios';
 
 interface MusicalData {
   musical_id: string;
@@ -11,16 +11,16 @@ interface MusicalData {
 }
 
 interface TicketProps {
-  musical_id: string;
+  musical_id: string;  // Modified to accept a single ID
   buyerName: string;
   showTime: string;
 }
 
-const defaultPoster = "/default-poster.png";
-const defaultMusicalName = "MUSICALLY";
-const defaultPlace = "장소: -";
-const defaultDate = "일시: -";
-const defaultName = "예매자명: -";
+const defaultPoster = '/default-poster.png';
+const defaultMusicalName = 'MUSICALLY';
+const defaultPlace = '장소: -';
+const defaultDate = '일시: -';
+const defaultName = '예매자명: -';
 
 const Ticket = styled.div`
   display: flex;
@@ -49,8 +49,7 @@ const DetailsContainer = styled.div`
 const Details = styled.div<{ backgroundImage?: string }>`
   width: 120%;
   height: 120%;
-  background-image: ${({ backgroundImage }) =>
-    `url(${backgroundImage || "/empty.png"})`};
+  background-image: ${({ backgroundImage }) => `url(${backgroundImage || '/empty.png'})`};
   background-size: cover;
   background-position: center bottom;
   filter: blur(4px);
@@ -94,19 +93,19 @@ const TextOverlay = styled.div`
 
 const Title = styled.h1`
   font-size: 47px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 600;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  color: #f2f2f2;
+  color: #F2F2F2;
   margin: 0;
 `;
 
 const Info = styled.p`
   font-size: 24px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 600;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  color: #f1f1f1;
+  color: #F1F1F1;
   margin: 20px 0;
 `;
 
@@ -117,7 +116,7 @@ const BuyerInfo = styled.div`
   right: 20px;
   display: flex;
   justify-content: space-between;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   color: #888888;
   font-size: 16px;
   font-weight: 600;
@@ -132,11 +131,7 @@ const Time = styled.p`
   margin: 0;
 `;
 
-const MusicalTicket: React.FC<TicketProps> = ({
-  musical_id,
-  buyerName,
-  showTime,
-}) => {
+const MusicalTicket: React.FC<TicketProps> = ({ musical_id, buyerName, showTime }) => {
   const [ticketData, setTicketData] = useState<MusicalData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -144,10 +139,20 @@ const MusicalTicket: React.FC<TicketProps> = ({
   useEffect(() => {
     const fetchMusicalData = async () => {
       try {
-        const response = await axiosInstance.get(`/musical/${musical_id}`);
+        const accessToken = localStorage.getItem("access_token");
+        if (!accessToken) {
+          throw new Error("No access token found");
+        }
+
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/musical/${musical_id}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 포함
+          },
+        });
+
         setTicketData(response.data);
       } catch (err) {
-        setError("Failed to fetch ticket data");
+        setError('Failed to fetch ticket data');
       } finally {
         setLoading(false);
       }
@@ -169,12 +174,7 @@ const MusicalTicket: React.FC<TicketProps> = ({
         <TextOverlay>
           <Title>{ticketData?.musical_name || defaultMusicalName}</Title>
           <Info>장 소 : {ticketData?.theater_name || defaultPlace}</Info>
-          <Info>
-            일 시 :{" "}
-            {ticketData?.watch_at
-              ? new Date(ticketData.watch_at).toLocaleDateString()
-              : defaultDate}
-          </Info>
+          <Info>일 시 : {ticketData?.watch_at ? new Date(ticketData.watch_at).toLocaleDateString() : defaultDate}</Info>
         </TextOverlay>
         <BuyerInfo>
           <BuyerName>예매자명 : {buyerName || defaultName}</BuyerName>
