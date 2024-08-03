@@ -13,6 +13,7 @@ const ImageContainer = styled.div`
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
+  cursor: pointer;
 `;
 
 const Image = styled.img`
@@ -61,14 +62,22 @@ interface Actor {
 
 interface Props {
   actors?: Actor[];
+  onSelectActor: (actor: Actor) => void;
 }
 
-const ActorInfo: React.FC<Props> = ({ actors = [] }) => {
+const ActorInfoReview: React.FC<Props> = ({ actors = [], onSelectActor }) => {
+  const handleContainerClick = (actor: Actor) => {
+    onSelectActor(actor);
+  };
+
   return (
     <Container>
       {actors.length > 0 ? (
         actors.map((actor, index) => (
-          <ImageContainer key={index}>
+          <ImageContainer
+            key={index}
+            onClick={() => handleContainerClick(actor)}
+          >
             <Image src={actor.profile_image} alt={actor.actor_name} />
             <ActorInfoContainer>
               <ActorName>{actor.actor_name}</ActorName>
@@ -84,4 +93,4 @@ const ActorInfo: React.FC<Props> = ({ actors = [] }) => {
   );
 };
 
-export default ActorInfo;
+export default ActorInfoReview;
