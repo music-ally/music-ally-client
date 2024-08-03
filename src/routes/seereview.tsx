@@ -68,7 +68,6 @@ const LeftAlignedActorContainer = styled.div`
   align-items: center;
   margin-top: 30px;
   margin-bottom: 50px;
-  margin-left: 180px;
   gap: 32px;
 `;
 
