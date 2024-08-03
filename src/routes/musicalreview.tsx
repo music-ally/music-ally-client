@@ -53,6 +53,8 @@ const BestReviewTitle = styled.h2`
   display: flex;
   align-items: center;
   font-weight: 300;
+    margin-bottom: 30px;
+
 `;
 
 const BasicReviewTitle = styled.h2`
@@ -67,6 +69,7 @@ const BasicReviewTitle = styled.h2`
   display: flex;
   align-items: center;
   font-weight: 300;
+  
 `;
 
 const WriteIcon = styled.img`
@@ -78,13 +81,13 @@ const WriteIcon = styled.img`
 
 const VerticalSpacing = styled.div`
   margin-top: 45px;
-  margin-bottom: 55px;
+  margin-bottom: 5px;
 `;
 
 const HorizontalLine = styled.hr`
   width: 1131px;
   border-top: 1px solid #b0b0b0; /* Darker gray color for the line */
-  margin: 75px 0;
+  margin-bottom: 80px;
 `;
 
 // 캐로셀 버튼 스타일
