@@ -45,6 +45,27 @@ const HorizontalLine = styled.hr`
   margin: 75px 0;
 `;
 
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const PageNumber = styled.span<{ active: boolean }>`
+  padding: 10px;
+  margin: 0 5px;
+  cursor: pointer;
+  font-size: 20px;
+  color: ${({ active }) => (active ? "#E8E1B1" : "#A7A7A7")};
+  background: transparent; /* 배경색 투명 */
+  border-radius: 5px;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #E8E1B1;
+  }
+`;
+
 interface Musical {
   musical_id: string;
   poster_image: string;
@@ -81,6 +102,8 @@ interface Actor {
 const App: React.FC = () => {
   const { actorId } = useParams<{ actorId: string }>();
   const [actor, setActor] = useState<Actor | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 3;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,6 +135,17 @@ const App: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+  // 페이지네이션 로직
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = actor.reviews.slice(indexOfFirstReview, indexOfLastReview);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const totalPages = Math.ceil(actor.reviews.length / reviewsPerPage);
+
   return (
     <AppContainer>
       <Actorprofile actor={actor} />
@@ -126,12 +160,25 @@ const App: React.FC = () => {
         <Title>연관 리뷰</Title>
       </LeftAlignedContainer>
       <VerticalSpacing topMargin={30}>
-        {actor.reviews && actor.reviews.length > 0 ? (
-          actor.reviews.map(review => (
-            <VerticalSpacing key={review.review_id}>
-              <BasicReview review={review} />
-            </VerticalSpacing>
-          ))
+        {currentReviews.length > 0 ? (
+          <>
+            {currentReviews.map(review => (
+              <VerticalSpacing key={review.review_id}>
+                <BasicReview review={review} />
+              </VerticalSpacing>
+            ))}
+            <PaginationContainer>
+              {[...Array(totalPages).keys()].map(page => (
+                <PageNumber
+                  key={page + 1}
+                  onClick={() => handlePageChange(page + 1)}
+                  active={currentPage === page + 1}
+                >
+                  {page + 1}
+                </PageNumber>
+              ))}
+            </PaginationContainer>
+          </>
         ) : (
           <div>No reviews available.</div>
         )}
