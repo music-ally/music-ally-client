@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
-import { useNavigate, useParams } from 'react-router-dom';
-import WriteReview from '../components/writereview';
-import MusicalTicket from '../components/musicalticket';
 import Actorcircle from '../components/actorcircle';
+import MusicalTicket from '../components/musicalticket';
+import Cookies from 'js-cookie';
 
+// 스타일 컴포넌트
 const AppContainer = styled.div`
-  background-image: url('/reviewpage.png');
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh;
@@ -37,7 +37,6 @@ const MainTitle = styled.h1`
   margin: 6px 0;
   display: flex;
   align-items: center;
-  margin-left: 20px;
   font-weight: 300;
 `;
 
@@ -60,16 +59,14 @@ const VerticalSpacing = styled.div`
   margin-bottom: 30px;
 `;
 
-const SearchIcon1 = styled.img`
-  width: 80px;
-  height: 80px;
-  cursor: pointer;
-`;
-
-const SearchIcon2 = styled.img`
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
+const LeftAlignedActorContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 50px;
+  gap: 32px;
 `;
 
 const ConfirmIcon = styled.img`
@@ -83,14 +80,73 @@ const RightAlignedContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-top: 20px;
-  margin-left: -80px;
+  margin-top: 30px;
+  margin-left: -30px;
 `;
 
-const RightAlignedContent = styled.div`
-  display: flex;
-  align-items: center;
+const EditContainer = styled.div`
+  margin-top: 20px;
+  width: 100%;
+  max-width: 1000px; // 최대 너비 설정
+  display: flex; // 플렉스 박스 사용
+  flex-wrap: wrap; // 항목들이 줄 바꿈을 하도록 설정
+  gap: 20px; // 항목들 간의 간격 설정
 `;
+
+const TextArea = styled.textarea`
+  width: 1000px; // 가로 사이즈를 800으로 고정
+  height: 150px; // 높이 설정
+  margin-bottom: 20px;
+  padding: 10px;
+  font-size: 16px;
+  background: #FFFCE5;
+  border: 10px solid #500908; // 빨간색 테두리
+  border-radius: 5px;
+  resize: none; // 크기 조절 비활성화
+  box-shadow: 0 0 0 0px #500908; // 빨간색 그림자
+`;
+
+const InputContainer = styled.div`
+  background: #500908; // 배경색 설정
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #500908; // 테두리 색상 추가
+  flex: 1; // 항목이 가능한 공간을 차지하도록 설정
+  min-width: 200px; // 최소 너비 설정
+`;
+
+const Label = styled.label`
+  display: block;
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #FFFCE5;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  background: #FFFCE5;
+  border-radius: 4px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+// 상수 정의
+const MIN_RATING = 0;
+const MAX_RATING = 5;
+
+// 타입 정의
+interface Actor {
+  actor_id: string;
+  profile_image: string;
+  actor_name: string;
+}
 
 interface Musical {
   musical_id: string;
@@ -100,157 +156,190 @@ interface Musical {
   poster_image: string;
 }
 
-interface Actor {
-  actor_id: string;
-  profile_image: string;
-  actor_name: string;
+interface ReviewData {
+  review_id: string;
+  musical: Musical;
+  actors: Actor[];
+  reviewer_profile_image: string | null;
+  reviewer_nickname: string;
+  reviewer_email: string;
+  like_num: number;
+  is_like: boolean;
+  violence: number;
+  fear: number;
+  sensitivity: number;
+  content: string;
+  create_at: string;
 }
 
-const WriteReviewPage: React.FC = () => {
+const SeeReviewPage: React.FC = () => {
+  const { reviewId } = useParams<{ reviewId: string }>();
+  const [reviewData, setReviewData] = useState<ReviewData | null>(null);
+  const [updatedContent, setUpdatedContent] = useState<string>('');
+  const [updatedViolence, setUpdatedViolence] = useState<number>(0);
+  const [updatedFear, setUpdatedFear] = useState<number>(0);
+  const [updatedSensitivity, setUpdatedSensitivity] = useState<number>(0);
+  const [error, setError] = useState<string | null>(null); // 에러 메시지 상태
   const navigate = useNavigate();
-  const { review_id } = useParams<{ review_id: string }>();
-  const [tickets, setTickets] = useState<Musical[]>([]);
-  const [actors, setActors] = useState<Actor[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
-  const [isActorSearchModalOpen, setIsActorSearchModalOpen] = useState<boolean>(false);
-  const [selectedTicket, setSelectedTicket] = useState<Musical | null>(null);
-  const [selectedActor, setSelectedActor] = useState<Actor | null>(null);
-  const [fear, setFear] = useState<number>(0);
-  const [sensitivity, setSensitivity] = useState<number>(0);
-  const [violence, setViolence] = useState<number>(0);
-  const [comment, setComment] = useState<string>('');
-  const [reviewerName, setReviewerName] = useState<string>('');
-  const [reviewerHandle, setReviewerHandle] = useState<string>('');
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchReviewData = async () => {
       try {
-        const ticketResponse = await axios.get('/api/musical');
-        const ticketsData: Musical[] = ticketResponse.data?.data || [];
-        setTickets(ticketsData);
+        const accessToken = Cookies.get("access_token");
 
-        const actorResponse = await axios.get('/api/actor');
-        const actorsData: Actor[] = actorResponse.data?.data?.actors || [];
-        setActors(actorsData);
+        if (!accessToken) {
+          console.error("No access token found");
+          return;
+        }
 
-        setIsLoading(false);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        if (response.data.success) {
+          const data = response.data.data;
+          setReviewData(data);
+          setUpdatedContent(data.content);
+          setUpdatedViolence(data.violence);
+          setUpdatedFear(data.fear);
+          setUpdatedSensitivity(data.sensitivity);
+        } else {
+          console.error('리뷰 데이터 조회 실패:', response.data.message);
+          setError('리뷰 데이터 조회 실패');
+        }
       } catch (error) {
-        console.error('데이터 가져오기 오류:', error);
-        setIsLoading(false);
+        console.error('리뷰 데이터 조회 중 오류 발생:', error);
+        setError('리뷰 데이터 조회 중 오류 발생');
       }
     };
 
-    fetchData();
-  }, []);
+    fetchReviewData();
+  }, [reviewId]);
 
-  useEffect(() => {
-    if (review_id) {
-      const fetchReviewData = async () => {
-        try {
-          const response = await axios.get(`/api/review/${review_id}`);
-          const reviewData = response.data;
-
-          setFear(reviewData.fear);
-          setSensitivity(reviewData.sensitivity);
-          setViolence(reviewData.violence);
-          setComment(reviewData.content);
-          setReviewerName(reviewData.reviewer_nickname);
-          setReviewerHandle(reviewData.reviewer_email);
-
-          const ticketResponse = await axios.get(`/api/musical/${reviewData.musical_id}`);
-          setSelectedTicket(ticketResponse.data);
-
-          const actorResponse = await axios.get(`/api/actor/${reviewData.actor_id}`);
-          setSelectedActor(actorResponse.data);
-        } catch (error) {
-          console.error('리뷰 데이터 가져오기 오류:', error);
-        }
-      };
-
-      fetchReviewData();
-    }
-  }, [review_id]);
-
-  const handleReviewChange = (fear: number, sensitivity: number, violence: number, content: string) => {
-    setFear(fear);
-    setSensitivity(sensitivity);
-    setViolence(violence);
-    setComment(content);
+  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<number>>) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    // 입력값을 숫자로 변환하고 최대값을 5로 제한
+    const value = Math.max(MIN_RATING, Math.min(MAX_RATING, Number(event.target.value)));
+    setter(value);
   };
 
-  const handleSaveReview = async () => {
+  const handleSaveEdit = async () => {
     try {
-      const response = await axios.post('/api/review', {
-        fear,
-        sensitivity,
-        violence,
-        content: comment,
-        musical_id: selectedTicket?.musical_id,
-        actor_id: selectedActor?.actor_id,
+      const accessToken = Cookies.get("access_token");
+
+      if (!accessToken) {
+        console.error("No access token found");
+        return;
+      }
+
+      const response = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/review/${reviewId}`, {
+        content: updatedContent,
+        violence: updatedViolence,
+        fear: updatedFear,
+        sensitivity: updatedSensitivity
+      }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
 
       if (response.data.success) {
-        alert('리뷰 저장 성공');
-        navigate('/seereview');
+        alert('리뷰 수정 성공');
+        setReviewData(prevData => prevData ? { ...prevData, content: updatedContent, violence: updatedViolence, fear: updatedFear, sensitivity: updatedSensitivity } : null);
+        navigate(-1); // 이전 페이지로 돌아가기
       } else {
-        alert('리뷰 저장 실패');
+        alert('리뷰 수정 실패');
       }
     } catch (error) {
-      console.error('리뷰 저장 중 오류 발생:', error);
-      alert('리뷰 저장 실패');
+      console.error('리뷰 수정 중 오류 발생:', error);
+      setError('리뷰 수정 중 오류 발생');
     }
   };
+
+  if (!reviewData) return <div>Loading...</div>;
+
+  const { musical, actors, reviewer_profile_image, reviewer_nickname, reviewer_email, create_at } = reviewData;
 
   return (
     <AppContainer>
       <LeftAlignedContainer>
-        <MainTitle>
-          MUSICAL
-        </MainTitle>
+        <MainTitle>MUSICAL</MainTitle>
       </LeftAlignedContainer>
-      <MusicalTicket tickets={selectedTicket ? [selectedTicket] : tickets} />
+      <MusicalTicket
+        tickets={[{
+          musical_id: musical.musical_id,
+          musical_name: musical.musical_name,
+          theater_name: musical.theater_name,
+          watch_at: musical.watch_at,
+          poster_image: musical.poster_image
+        }]}
+        buyerName={reviewer_nickname}
+        showTime={new Date(create_at).toLocaleString()}
+      />
       <LeftAlignedContainer>
-        <Title>
-          ACTOR
-        </Title>
+        <Title>ACTOR</Title>
       </LeftAlignedContainer>
+      <LeftAlignedActorContainer>
+        {actors.map(actor => (
+          <Actorcircle
+            key={actor.actor_id}
+            profile_image={actor.profile_image}
+            actor_name={actor.actor_name}
+          />
+        ))}
+      </LeftAlignedActorContainer>
       <LeftAlignedContainer>
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-          actors.map((actor) => (
-            <Actorcircle
-              key={actor.actor_id}
-              profile_image={actor.profile_image}
-              actor_name={actor.actor_name}
-            />
-          ))
-        )}
-      </LeftAlignedContainer>
-      <LeftAlignedContainer>
-        <Title>
-          REVIEW
-        </Title>
+        <Title>REVIEW</Title>
       </LeftAlignedContainer>
       <VerticalSpacing>
-        <WriteReview 
-          onChange={handleReviewChange} 
-          userName={reviewerName} 
-          userHandle={reviewerHandle} 
-        />
+        <EditContainer>
+          <InputContainer>
+            <Label htmlFor="violence">폭력성</Label>
+            <Input
+              type="number"
+              id="violence"
+              value={updatedViolence}
+              onChange={handleInputChange(setUpdatedViolence)}
+              min={MIN_RATING}
+              max={MAX_RATING}
+            />
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor="fear">공포</Label>
+            <Input
+              type="number"
+              id="fear"
+              value={updatedFear}
+              onChange={handleInputChange(setUpdatedFear)}
+              min={MIN_RATING}
+              max={MAX_RATING}
+            />
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor="sensitivity">선정성</Label>
+            <Input
+              type="number"
+              id="sensitivity"
+              value={updatedSensitivity}
+              onChange={handleInputChange(setUpdatedSensitivity)}
+              min={MIN_RATING}
+              max={MAX_RATING}
+            />
+          </InputContainer>
+          {error && <div style={{ color: 'red', marginBottom: '20px' }}>{error}</div>} {/* 에러 메시지 표시 */}
+          <TextArea value={updatedContent} onChange={e => setUpdatedContent(e.target.value)} />
+          <RightAlignedContainer>
+            <ConfirmIcon
+              src="/confirm.png"
+              alt="Save Icon"
+              onClick={handleSaveEdit}
+            />
+          </RightAlignedContainer>
+        </EditContainer>
       </VerticalSpacing>
-      <RightAlignedContainer>
-        <RightAlignedContent>
-          <ConfirmIcon 
-            src="/confirm.png" 
-            alt="Confirm Icon" 
-            onClick={handleSaveReview}
-          />
-        </RightAlignedContent>
-      </RightAlignedContainer>
     </AppContainer>
   );
 };
 
-export default WriteReviewPage;
+export default SeeReviewPage;
