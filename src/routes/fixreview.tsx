@@ -226,7 +226,7 @@ const SeeReviewPage: React.FC = () => {
 
   const handleSaveEdit = async () => {
     try {
-      const accessToken = Cookies.get("access_token");
+      const accessToken = localStorage.getItem("access_token"); // 로컬 스토리지에서 access_token 가져오기
 
       if (!accessToken) {
         console.error("No access token found");
