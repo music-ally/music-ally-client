@@ -9,7 +9,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   padding: 16px 20px 15px 20px;
-  width: 931px;
+  width: 911px;
   box-sizing: border-box;
   position: relative;
   overflow: hidden;

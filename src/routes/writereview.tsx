@@ -7,7 +7,7 @@ import WriteReview from "../components/writereview";
 import MusicalTicket from "../components/musicalticket2";
 import Actorcircle from "../components/actorcircle";
 import MusicalSearchModal from "../components/musicalsearch";
-import ActorSearchModal from "../components/actorsearch";
+import ActorSearchModal, { Actor } from "../components/actorsearch";
 
 const AppContainer = styled.div`
   background-image: url("/reviewpage.png");
@@ -107,12 +107,6 @@ interface Musical {
   theater_name: string;
   watch_at: string;
   poster_image: string;
-}
-
-interface Actor {
-  actor_id: string;
-  profile_image: string;
-  actor_name: string;
 }
 
 const WriteReviewPage: React.FC = () => {
