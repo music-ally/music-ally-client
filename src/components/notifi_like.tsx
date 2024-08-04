@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-
+import default_profile from "../assets/default_profile.png";
+import default_post from "../assets/carousel_basic.png";
 const NotificationWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -46,6 +47,7 @@ const Timestamp = styled.div`
   bottom: 20px;
   left: 75px;
 `;
+
 const MusicalName = styled.h2`
   display: relative;
   width: 69px;
@@ -75,6 +77,7 @@ const NotifiText = styled.span`
   top: 44px;
   left: 75px;
 `;
+
 interface User {
   nickname: string;
   profileImage: string;
@@ -99,20 +102,25 @@ const NotifiLike: React.FC<LikeNotificationProps> = ({
 
   return (
     <NotificationWrapper>
-      <PosterImage src={posterImage} alt="Poster" />
+      <PosterImage src={posterImage || default_post} alt="Poster" />
       <MusicalName>{LikeUser.musical_name}</MusicalName>
       {likes.length === 1 ? (
-        <NotifiText>{LikeUser.nickname}님이 내 리뷰를 좋아합니다</NotifiText>
+        <NotifiText>
+          {LikeUser.nickname || "(알수없음)"}님이 내 리뷰를 좋아합니다
+        </NotifiText>
       ) : (
         <NotifiText>
-          {LikeUser.nickname}님 외 {additionalLikesCount}명이 내 리뷰를
-          좋아합니다
+          {LikeUser.nickname || "(알수없음)"}님 외 {additionalLikesCount}명이 내
+          리뷰를 좋아합니다
         </NotifiText>
       )}
       <ProfileImages>
-        <ProfileImage src={LikeUser.profileImage} alt="Profile" />
+        <ProfileImage src={default_profile} alt="Profile" />
         {additionalLikesCount > 0 && likes[1] && (
-          <ProfileImage src={likes[1].profileImage} alt="Profile" />
+          <ProfileImage
+            src={likes[1].profileImage || default_profile}
+            alt="Profile"
+          />
         )}
       </ProfileImages>
       <Timestamp>{new Date(create_at).toLocaleString()}</Timestamp>
