@@ -267,13 +267,7 @@ const SeeReviewPage: React.FC = () => {
         <MainTitle>MUSICAL</MainTitle>
       </LeftAlignedContainer>
       <MusicalTicket
-        tickets={[{
-          musical_id: musical.musical_id,
-          musical_name: musical.musical_name,
-          theater_name: musical.theater_name,
-          watch_at: musical.watch_at,
-          poster_image: musical.poster_image
-        }]}
+        musical_id={musical.musical_id}
         buyerName={reviewer_nickname}
         showTime={new Date(create_at).toLocaleString()}
       />
