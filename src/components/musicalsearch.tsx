@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import MusicalSearchComponent from "./searchcontainer-mus";
 import MusicalInfo from "./musicalInfo-review";
-import MusicalTicket from "./musicalticket";
 
 interface Musical {
   musical_id: string;
@@ -50,13 +49,11 @@ const CloseButton = styled.button`
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  onSelect: (musical: Musical) => void; // 선택된 뮤지컬 데이터를 부모로 전달하는 콜백
 }
 
-const MusicalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
+const MusicalSearchModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
   const [filteredMusicals, setFilteredMusicals] = useState<Musical[]>([]);
-  const [selectedMusicalId, setSelectedMusicalId] = useState<string | null>(
-    null
-  );
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -83,7 +80,12 @@ const MusicalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const handleFilteredMusicals = (musical_id: string) => {
-    setSelectedMusicalId(musical_id);
+    const selectedMusical = filteredMusicals.find(
+      (musical) => musical.musical_id === musical_id
+    );
+    if (selectedMusical) {
+      onSelect(selectedMusical);
+    }
   };
 
   return (
@@ -95,7 +97,6 @@ const MusicalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
           musicals={filteredMusicals}
           filteredMusicals={handleFilteredMusicals}
         />
-        {selectedMusicalId && <MusicalTicket musical_id={selectedMusicalId} />}
       </ModalContent>
     </ModalContainer>
   );
