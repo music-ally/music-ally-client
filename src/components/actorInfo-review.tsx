@@ -65,7 +65,7 @@ interface Props {
   onSelectActor: (actor: Actor) => void;
 }
 
-const ActorInfoReview: React.FC<Props> = ({ actors = [], onSelectActor }) => {
+const ActorInfo: React.FC<Props> = ({ actors = [], onSelectActor }) => {
   const handleContainerClick = (actor: Actor) => {
     onSelectActor(actor);
   };
@@ -93,4 +93,4 @@ const ActorInfoReview: React.FC<Props> = ({ actors = [], onSelectActor }) => {
   );
 };
 
-export default ActorInfoReview;
+export default ActorInfo;

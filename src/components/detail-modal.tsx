@@ -29,13 +29,12 @@ const ModalBackground = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Darker and more opaque background */
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 `;
-
 
 const ModalContainer = styled.div`
   background-color: #1a1a1a;
@@ -63,14 +62,12 @@ const CloseButton = styled.button`
 `;
 
 const HorizontalLine = styled.hr`
-  width: 980px; /* Adjust the width as needed */
-  border-top: 1px solid #a0a0a0; /* Darker shade of gray */
-  margin: 75px auto; /* Center-aligns the line */
-  border-radius: 5px; /* Optional: Add some border-radius for a rounded look */
-  /* Optionally add a box-shadow for a subtle 3D effect */
+  width: 980px;
+  border-top: 1px solid #a0a0a0;
+  margin: 75px auto;
+  border-radius: 5px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 `;
-
 
 const Poster = styled.img`
   width: 360px;
@@ -112,24 +109,22 @@ const Title = styled.h2`
   margin: 0px 0;
   display: flex;
   align-items: center;
-  font-weight: 700; /* Adjust the weight here */
+  font-weight: 700;
 `;
-
 
 const Subtitle = styled.p`
   margin: 10px 0;
-    color:#e8e1b1;
+  color: #e8e1b1;
   font-size: 20px;
-    margin-top: 17px;
+  margin-top: 17px;
   margin-bottom: 33px;
 `;
 
 const Section = styled.div`
   margin-top: 25px;
   margin-bottom: 40px;
-    font-size: 16px;
-      color: #EBEBEB;
-
+  font-size: 16px;
+  color: #ebebeb;
 `;
 
 const SectionTitle = styled.h2`
@@ -144,7 +139,7 @@ const SectionTitle = styled.h2`
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-  font-weight: 700; /* Adjust the weight here */
+  font-weight: 700;
 `;
 
 const SectionTitle2 = styled.h2`
@@ -159,7 +154,7 @@ const SectionTitle2 = styled.h2`
   margin-bottom: 20px;
   display: flex;
   align-items: center;
-  font-weight: 700; /* Adjust the weight here */
+  font-weight: 700;
 `;
 
 const SectionTitle3 = styled.h2`
@@ -174,7 +169,7 @@ const SectionTitle3 = styled.h2`
   margin-bottom: 30px;
   display: flex;
   align-items: center;
-  font-weight: 700; /* Adjust the weight here */
+  font-weight: 700;
 `;
 
 const Cast = styled.p`
@@ -195,10 +190,8 @@ const BookmarkIcon = styled.img`
   margin-left: 200px;
 `;
 
-
 const ReviewSection = styled.div`
   margin-top: 20px;
-
 `;
 
 const ReviewcomponentSection = styled.div`
@@ -312,7 +305,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
           </Info>
         </InfoContainer>
         <Section>
-        <HorizontalLine/>
+          <HorizontalLine />
           <SectionTitle2>공연 장소</SectionTitle2>
           <NaverMap theater_address={musicalDetails.theater_address} />
           <p>{musicalDetails.theater_address}</p>
@@ -334,5 +327,3 @@ const DetailModal: React.FC<DetailModalProps> = ({ musical_ID, onClose }) => {
 };
 
 export default DetailModal;
-
-
