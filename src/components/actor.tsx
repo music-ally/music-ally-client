@@ -14,11 +14,13 @@ const Title = styled.h1`
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+    margin-left: 50px;
+
 `;
 
 const Container = styled.div`
-  margin-top: 200px;
+  margin-top: 170px;
 `;
 
 const Actor: React.FC = () => {

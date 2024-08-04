@@ -118,8 +118,7 @@ const ActorCarousel: React.FC<ActorCarouselProps> = ({ actorId }) => {
             token.get(`/actor/${id}`).then((response) => ({
               src: response.data.data.profile_image || "/empty.png",
               name: response.data.data.actor_name,
-              id: response.data.data._id,
-            }))
+              id: response.data.data.actor_id,            }))
           )
         );
         setImages(allImages);
