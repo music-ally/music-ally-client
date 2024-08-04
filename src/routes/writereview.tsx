@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import WriteReview from "../components/writereview";
-import MusicalTicket from "../components/musicalticket";
+import MusicalTicket from "../components/musicalticket2";
 import Actorcircle from "../components/actorcircle";
 import MusicalSearchModal from "../components/musicalsearch";
 import ActorSearchModal from "../components/actorsearch";
@@ -73,6 +73,12 @@ const SearchIcon2 = styled.img`
   width: 50px;
   height: 50px;
   cursor: pointer;
+`;
+
+const Ticket = styled.img`
+  width: 1080px;
+  height: 400px;
+  display: ${(props: { isVisible: boolean }) => (props.isVisible ? 'block' : 'none')};
 `;
 
 const ConfirmIcon = styled.img`
@@ -277,6 +283,10 @@ const WriteReviewPage: React.FC = () => {
           />
         </MainTitle>
       </LeftAlignedContainer>
+      <Ticket
+        src="/ticket.png"
+        isVisible={!selectedTicket}
+      />
       {selectedTicket && (
         <MusicalTicket
           musical_id={selectedTicket.musical_id}

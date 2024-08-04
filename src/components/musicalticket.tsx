@@ -19,8 +19,8 @@ interface TicketProps {
 
 const defaultPoster = "/default-poster.png";
 const defaultMusicalName = "MUSICALLY";
-const defaultPlace = "장소: -";
-const defaultDate = "일시: -";
+const defaultPlace = "-";
+const defaultDate = "-";
 const defaultName = "예매자명: -";
 
 const Ticket = styled.div`
