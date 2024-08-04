@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
-import Cookies from "js-cookie";
 import WriteReview from "../components/writereview";
 import MusicalTicket from "../components/musicalticket2";
 import Actorcircle from "../components/actorcircle";
@@ -129,7 +128,7 @@ const WriteReviewPage: React.FC = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const accessToken = Cookies.get("access_token");
+        const accessToken = localStorage.getItem("access_token");
 
         if (!accessToken) {
           console.error("No access token found");
@@ -163,7 +162,7 @@ const WriteReviewPage: React.FC = () => {
     if (review_id) {
       const fetchReviewData = async () => {
         try {
-          const accessToken = Cookies.get("access_token");
+          const accessToken = localStorage.getItem("access_token");
 
           if (!accessToken) {
             console.error("No access token found");
@@ -186,9 +185,7 @@ const WriteReviewPage: React.FC = () => {
           setComment(reviewData.content);
 
           const ticketResponse = await axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/musical/${
-              reviewData.musical_id
-            }`,
+            `${import.meta.env.VITE_BACKEND_URL}/musical/${reviewData.musical_id}`,
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -229,7 +226,7 @@ const WriteReviewPage: React.FC = () => {
 
   const handleSaveReview = async () => {
     try {
-      const accessToken = Cookies.get("access_token");
+      const accessToken = localStorage.getItem("access_token");
 
       if (!accessToken) {
         console.error("No access token found");
