@@ -48,9 +48,10 @@ const CloseButton = styled.button`
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  onSelect: (actor: Actor) => void; // 선택된 배우 데이터를 부모로 전달하는 콜백
 }
 
-const ActorSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
+const ActorSearchModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
   const [filteredActors, setFilteredActors] = useState<Actor[]>([]);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -75,6 +76,15 @@ const ActorSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
     };
   }, [isOpen, onClose]);
 
+  const handleFilteredActors = (actor_id: string) => {
+    const selectedActor = filteredActors.find(
+      (actor) => actor.actor_id === actor_id
+    );
+    if (selectedActor) {
+      onSelect(selectedActor);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -82,7 +92,7 @@ const ActorSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
       <ModalContent ref={modalRef}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <ActorSearchComponent setFilteredActors={setFilteredActors} />
-        <ActorInfo actors={filteredActors} />
+        <ActorInfo actors={filteredActors} onSelect={handleFilteredActors} />
       </ModalContent>
     </ModalContainer>
   );
