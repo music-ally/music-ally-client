@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-
+import defaultImage from "../assets/default_profile.png";
 const NotificationContainer = styled.div`
   display: flex;
   align-items: center;
@@ -79,7 +79,7 @@ const NotificationFollow: React.FC<NotificationFollowProps> = ({
 
   return (
     <NotificationContainer>
-      <ProfileImage src={follower_image} alt={follower_nickname} />
+      <ProfileImage src={defaultImage} alt={follower_nickname} />
       <NotifiText>
         {follower_nickname}님이 회원님을 팔로우하기 시작했습니다.
       </NotifiText>
