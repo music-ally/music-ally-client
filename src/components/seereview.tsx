@@ -200,6 +200,7 @@ interface SeeReviewProps {
   fear: number;
   sensitivity: number;
   content: string;
+  userId: string;
 }
 
 const SeeReview: React.FC<SeeReviewProps> = ({
@@ -212,7 +213,8 @@ const SeeReview: React.FC<SeeReviewProps> = ({
   violence,
   fear,
   sensitivity,
-  content
+  content,
+  userId
 }) => {
   const [likeCount, setLikeCount] = useState(likeNum);
   const [liked, setLiked] = useState(isLike);
@@ -260,7 +262,7 @@ const SeeReview: React.FC<SeeReviewProps> = ({
 
   const handleAvatarClick = (event: React.MouseEvent) => {
     event.stopPropagation(); // 클릭 이벤트 버블링 방지
-    navigate(`/profile/${reviewId}`); // 프로필 페이지로 이동
+    navigate(`/profile/${userId}`); // 프로필 페이지로 이동
   };
 
   return (

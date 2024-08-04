@@ -98,6 +98,7 @@ interface ReviewData {
   sensitivity: number;
   content: string;
   create_at: string;
+  reviewer_id: string;
 }
 
 const SeeReviewPage: React.FC = () => {
@@ -145,7 +146,7 @@ const SeeReviewPage: React.FC = () => {
 
   if (!reviewData) return <div>No review data available.</div>;
 
-  const { musical, actors, reviewer_profile_image, reviewer_nickname, reviewer_email, like_num, is_like, violence, fear, sensitivity, content, create_at } = reviewData;
+  const { musical, actors, reviewer_profile_image, reviewer_nickname, reviewer_email, like_num, is_like, violence, fear, sensitivity, content, create_at, reviewer_id, review_id } = reviewData;
 
   return (
     <AppContainer>
@@ -174,6 +175,8 @@ const SeeReviewPage: React.FC = () => {
       </LeftAlignedContainer>
       <VerticalSpacing>
         <SeeReview
+          reviewId={review_id}
+          userId={reviewer_id}
           reviewerProfileImage={reviewer_profile_image}
           reviewerNickname={reviewer_nickname}
           reviewerEmail={reviewer_email}
