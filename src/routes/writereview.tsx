@@ -109,21 +109,9 @@ interface Actor {
   actor_name: string;
 }
 
-interface WriteReviewPageProps {
-  userName: string;
-  userHandle: string;
-  userProfileImage: string;
-}
-
 const WriteReviewPage: React.FC = () => {
   const navigate = useNavigate();
   const { review_id } = useParams<{ review_id: string }>();
-  const [tickets, setTickets] = useState<Musical[]>([]);
-  const [actors, setActors] = useState<Actor[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
-  const [isActorSearchModalOpen, setIsActorSearchModalOpen] =
-    useState<boolean>(false);
   const [selectedTicket, setSelectedTicket] = useState<Musical | null>(null);
   const [selectedActor, setSelectedActor] = useState<Actor | null>(null);
   const [fear, setFear] = useState<number>(0);
@@ -133,6 +121,10 @@ const WriteReviewPage: React.FC = () => {
   const [userName, setUserName] = useState<string>("");
   const [userHandle, setUserHandle] = useState<string>("");
   const [userProfileImage, setUserProfileImage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
+  const [isActorSearchModalOpen, setIsActorSearchModalOpen] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -285,7 +277,13 @@ const WriteReviewPage: React.FC = () => {
           />
         </MainTitle>
       </LeftAlignedContainer>
-      <MusicalTicket tickets={selectedTicket ? [selectedTicket] : []} />
+      {selectedTicket && (
+        <MusicalTicket
+          musical_id={selectedTicket.musical_id}
+          buyerName={userName}
+          showTime={selectedTicket.watch_at}
+        />
+      )}
       <LeftAlignedContainer>
         <Title>
           ACTOR
@@ -332,25 +330,23 @@ const WriteReviewPage: React.FC = () => {
 
       {isSearchModalOpen && (
         <MusicalSearchModal
-          musicals={tickets}
           isOpen={isSearchModalOpen}
+          onClose={() => setIsSearchModalOpen(false)}
           onSelect={(ticket) => {
             setSelectedTicket(ticket);
             setIsSearchModalOpen(false);
           }}
-          onClose={() => setIsSearchModalOpen(false)}
         />
       )}
 
       {isActorSearchModalOpen && (
         <ActorSearchModal
-          actors={actors}
           isOpen={isActorSearchModalOpen}
+          onClose={() => setIsActorSearchModalOpen(false)}
           onSelect={(actor) => {
             setSelectedActor(actor);
             setIsActorSearchModalOpen(false);
           }}
-          onClose={() => setIsActorSearchModalOpen(false)}
         />
       )}
     </AppContainer>
