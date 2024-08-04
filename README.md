@@ -1,4 +1,5 @@
 ## music-ally
+![image](https://github.com/user-attachments/assets/2a271027-eb12-4e0e-9221-7a3edd541caf)
 
 🌟숙명 중앙 동아리 SOLUX 송티티 팀
 
